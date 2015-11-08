@@ -1,5 +1,6 @@
 # Lagerverwaltung
 Web Application zur Lagerverwaltung, Backend: Django, Rest Framework, Frontend: Angular.js, Bootstrap
+
 pip list:
 
 Django (1.8.3)
