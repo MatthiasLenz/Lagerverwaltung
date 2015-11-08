@@ -3,7 +3,8 @@ artikelApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider
       .when('/artikel', {
-        templateUrl: 'static/html/articlelist.html',
+		templateUrl: 'static/html/articlelist.html',
+		controller: 'ArtikelCtrl'
       })
 	 .when('/bestellmodul', {
         templateUrl: 'static/html/bestellmodul.html',
