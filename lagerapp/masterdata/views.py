@@ -42,7 +42,9 @@ class StockViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
     
-class NatureViewSet(viewsets.ReadOnlyModelViewSet):
+class NatureViewSet(mixins.RetrieveModelMixin,
+                    mixins.ListModelMixin,
+                    viewsets.GenericViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
@@ -53,10 +55,11 @@ class NatureViewSet(viewsets.ReadOnlyModelViewSet):
     You may have failed to include the related model in your API, or incorrectly 
     configured the `lookup_field` attribute on this field.
     """
-    #select only entries which have related products.
-    queryset = Nature.objects.raw('select distinct n.ID as [id], n.name as [Name], n.title as [Title], n.titlegrade as [Titlegrade], n.remark as [Remark] from nature n left join product p on n.id = p.resourcenatureid where p.id is not Null or n.title = 1')
+    #We only want Nature entries which have related products. Obtain a list of IDs with a raw query and filter against this list.
+    nature_ids = Nature.objects.raw('select distinct n.ID as [id] from nature n left join product p on n.id = p.resourcenatureid where p.id is not Null or n.title = 1')
+    queryset = Nature.objects.filter(pk__in = [nature.id for nature in nature_ids])
     serializer_class = NatureSerializer
-    pagination_class = None #wow, da muss man auch erst einmal drauf kommen, dass das automatisch abgefangen wird. Hiermit wird praktisch die Option gesetzt keine pagination zu benutzen
+    pagination_class = None
     
 class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -73,7 +76,9 @@ class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (CustomSearchFilter, filters.OrderingFilter,)
     search_fields = ('id','prodid','stockid')
         
-class ProductViewSet(viewsets.ReadOnlyModelViewSet): 
+class ProductViewSet(mixins.RetrieveModelMixin,
+                     mixins.ListModelMixin,
+                     viewsets.GenericViewSet): 
     """
     This viewset automatically provides `list` and `detail` actions.
     equivalent to ReadOnlyModelViewSet, but inherit from mixins instead.
