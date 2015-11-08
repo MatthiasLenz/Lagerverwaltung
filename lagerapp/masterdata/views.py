@@ -53,7 +53,8 @@ class NatureViewSet(viewsets.ReadOnlyModelViewSet):
     You may have failed to include the related model in your API, or incorrectly 
     configured the `lookup_field` attribute on this field.
     """
-    queryset = Nature.objects.all()
+    #select only entries which have related products.
+    queryset = Nature.objects.raw('select distinct n.ID as [id], n.name as [Name], n.title as [Title], n.titlegrade as [Titlegrade], n.remark as [Remark] from nature n left join product p on n.id = p.resourcenatureid where p.id is not Null or n.title = 1')
     serializer_class = NatureSerializer
     pagination_class = None #wow, da muss man auch erst einmal drauf kommen, dass das automatisch abgefangen wird. Hiermit wird praktisch die Option gesetzt keine pagination zu benutzen
     

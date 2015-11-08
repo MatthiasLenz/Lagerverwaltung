@@ -86,7 +86,7 @@ class Product(models.Model):
     defaultsupplier = models.CharField(db_column='DefaultSupplier', max_length=15, blank=True) # Field name made lowercase.
     salespriceforquot = models.NullBooleanField(db_column='SalesPriceForQuot') # Field name made lowercase.
     #resourcenatureid = models.CharField(db_column='ResourceNatureID', max_length=15, blank=True) # Field name made lowercase.
-    resourcenatureid =  models.ForeignKey(Nature, db_column='ResourceNatureID', blank=True, null=True) # Field name made lowercase.
+    resourcenatureid =  models.ForeignKey(Nature, db_column='ResourceNatureID', blank=True, null=True, related_name='products') # Field name made lowercase.
     macropriceimportcomponents = models.NullBooleanField(db_column='MacroPriceImportComponents') # Field name made lowercase.
     keywords = models.CharField(db_column='Keywords', max_length=255, blank=True) # Field name made lowercase.
     piecesstockmode = models.NullBooleanField(db_column='PiecesStockMode') # Field name made lowercase.

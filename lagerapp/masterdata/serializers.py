@@ -15,19 +15,19 @@ class StockDataSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id','rowid','stockid','prodid','quantitymin', 'quantitymax', 'quantitycur', 'quantityavail','location')
 
 class NatureSerializer(serializers.HyperlinkedModelSerializer):
-    def __init__(self, *args, **kwargs):
-        """Only used for debugging. Extend init to print repr of Serializer instance."""
+    """def __init__(self, *args, **kwargs):
+        #Only used for debugging. Extend init to print repr of Serializer instance.
         super(NatureSerializer, self).__init__(*args, **kwargs)
-        print(repr(self))
+        print(repr(self))"""
     class Meta:
         model = Nature
         fields = ('url', 'id', 'title','name')
         
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
-    def __init__(self, *args, **kwargs):
-        """Only used for debugging. Extend init to print repr of Serializer instance."""
+    """def __init__(self, *args, **kwargs):
+        #Only used for debugging. Extend init to print repr of Serializer instance.
         super(ProductSerializer, self).__init__(*args, **kwargs)
-        print(repr(self))
+        print(repr(self))"""
     nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
     class Meta:
         model = Product

@@ -23,15 +23,6 @@
   <!--<form ng-submit="updateList()">-->
   <form class="form-inline" role="form">
 	 Suche: <input ng-model="query">
-     Filtern nach Artikelgruppe: <div class="form-group">
-	 <select class="form-control" ng-model="resourcenatureid" ng-options="nature.id as nature.name group by nature.title for nature in resourcenatureids"></select>
-	  <!--<select class="form-control" data-size="10" ng-model="resourcenatureid" >
-		  <option value="" selected>Alle</option>
-		  <optgroup label="{{group.name}}" ng-repeat="group in resourcenatureids" >
-			<option value="{{value.id}}" ng-repeat="value in group.values">{{value.name}}</option>
-		  </optgroup>
-	  </select>-->
-		</div>
  </form>
   
 
@@ -53,8 +44,8 @@
 	<th ng-click="setOrder('defaultsupplier')" ng-class="{sort: getOrder() == 'defaultsupplier', sortable:true}">
       Standard Lieferant <b ng-class="sortDirection('defaultsupplier')"></b>
     </th>
-	<th ng-click="setOrder('resourcenatureid')" ng-class="{sort: getOrder() == 'resourcenatureid', sortable:true}">
-      Artikelgruppe <b ng-class="sortDirection('resourcenatureid')"></b>
+	<th>
+      Artikelgruppe <select style="width:100px;" ng-model="resourcenatureid" ng-options="nature.id as nature.name group by nature.title for nature in resourcenatureids"></select>
     </th>
   </thead>
   <tbody>
