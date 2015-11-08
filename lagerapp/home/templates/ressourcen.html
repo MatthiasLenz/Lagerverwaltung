@@ -1,0 +1,98 @@
+{% verbatim %}
+  <!DOCTYPE html>
+<html ng-app="artikelApp">
+<head>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+  <script src="http://jashkenas.github.io/underscore/underscore-min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-resource.js"></script>
+  <meta charset="utf-8">
+  <title>Lagerverwaltung</title>
+  
+  {% endverbatim %}
+  {% load staticfiles %}
+  <script src="{% static "js/ressourcen.js" %}"></script>
+  <link rel="stylesheet" href="{% static "css/list.css" %}">
+   {% verbatim %}
+</head>
+<body ng-controller="ArtikelCtrl">
+  <div id="header">
+  <h2>Lager</h2>
+    <p>Artikelstamm
+  </div>
+  <!--<form ng-submit="updateList()">-->
+  <form class="form-inline" role="form">
+	 Suche: <input ng-model="query">
+     Filtern nach Artikelgruppe: <div class="form-group">
+	 <select class="form-control" ng-model="resourcenatureid" ng-options="nature.id as nature.name group by nature.title for nature in resourcenatureids"></select>
+	  <!--<select class="form-control" data-size="10" ng-model="resourcenatureid" >
+		  <option value="" selected>Alle</option>
+		  <optgroup label="{{group.name}}" ng-repeat="group in resourcenatureids" >
+			<option value="{{value.id}}" ng-repeat="value in group.values">{{value.name}}</option>
+		  </optgroup>
+	  </select>-->
+		</div>
+ </form>
+  
+
+<table class="table">
+  <thead>
+    <th ng-click="setOrder('id')" ng-class="{sort: getOrder() == 'id', sortable:true}">
+      ID <b ng-class="sortDirection('id')"></b>
+    </th>
+    <th ng-click="setOrder('name1')" ng-class="{sort: getOrder() == 'name1', sortable:true}">
+      Bezeichnung <b ng-class="sortDirection('name1')"></b>
+    </th>
+	<th>Einheit</th>
+	<th ng-click="setOrder('stockcur')" ng-class="{sort: getOrder() == 'stockcur', sortable:true}">
+      Stock verfügbar <b ng-class="sortDirection('stockcur')"></b>
+    </th>
+	<th ng-click="setOrder('netpurchaseprice')" ng-class="{sort: getOrder() == 'netpurchaseprice', sortable:true}">
+      Netto Preis <b ng-class="sortDirection('netpurchaseprice')"></b>
+    </th>
+	<th ng-click="setOrder('defaultsupplier')" ng-class="{sort: getOrder() == 'defaultsupplier', sortable:true}">
+      Standard Lieferant <b ng-class="sortDirection('defaultsupplier')"></b>
+    </th>
+	<th ng-click="setOrder('resourcenatureid')" ng-class="{sort: getOrder() == 'resourcenatureid', sortable:true}">
+      Artikelgruppe <b ng-class="sortDirection('resourcenatureid')"></b>
+    </th>
+  </thead>
+  <tbody>
+    <tr ng-repeat="item in items" ng-class="{title: item.title}">
+      <td><a ng-href="{{item.url}}">{{item.id}}</td>
+      <td>{{item.name1}}</td>
+	  <td><span ng-class="{hide:item.title}">{{item.unit1}}</span></td> 
+	  <td><span ng-class="{hide:item.title}">{{item.stockcur}}</span></td>
+	  <td><span ng-class="{hide:item.title}">{{item.netpurchaseprice}}</span></td>
+	  <td><span ng-class="{hide:item.title}">{{item.defaultsupplier}}</span></td>
+	  <td><span ng-class="{hide:item.title}"><a href="{{item.resourcenatureid}}">{{item.nature}}</a></span></td>
+    </tr>
+  </tbody>
+  </table>
+
+  <ul class="pager">
+    <li>
+        <select title="Page Size" ng-model="perPage">
+		<option value="10">10</option>
+		<option value="20">20</option>
+		<option value="50">50</option>
+		<option value="100">100</option>
+		<option value="200">200</option>
+	   </select>
+    </li>
+    <li ng-click="previousPage()" ng-class="{disabled:page == 1}">
+      <a>Previous</a>
+    </li>
+    <li ng-click="nextPage()" ng-class="{disabled:page==lastPage}">
+      <a>Next</a>
+    </li>
+    <li>
+	 <input  type="text" name="page" ng-model="page" style="width: 30px;"><label>/{{lastPage}}</label>
+    </li>
+  </ul>
+
+</body>
+</html>
+ {% endverbatim %}
+ 
+  

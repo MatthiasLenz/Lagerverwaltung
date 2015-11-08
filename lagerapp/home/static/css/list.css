@@ -1,0 +1,42 @@
+.sortable{
+  cursor:pointer;
+  color:#428BCA;
+}
+.sortable:hover{
+  text-decoration:underline;
+}
+#header {
+  text-align:center;
+}
+body{
+  margin:10px;
+}
+.sort-caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.3em;
+  border: 0;
+  content: "";
+}
+
+.sort .asc {
+  vertical-align: super;
+  border-bottom: 4px solid #000000;
+  border-right: 4px solid transparent;
+  border-top: none;
+  border-left: 4px solid transparent;
+}
+.sort .desc {
+  vertical-align: super;
+  border-top: 4px solid #000000;
+  border-right: 4px solid transparent;
+  border-bottom: none;
+  border-left: 4px solid transparent;
+}
+li a { cursor:pointer;}
+
+tr.title { font-weight: bold; }
+tr.title +tr { border-top: 2px solid #DDD;}
+
+tr td { border-top:none !important;}

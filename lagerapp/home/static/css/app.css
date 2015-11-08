@@ -1,0 +1,9 @@
+body
+{
+	margin: 0 auto;
+	margin-left:30px;
+}
+.title{
+	font-weight: bold;
+}
+hr{border-top: 1px solid #CCC;}

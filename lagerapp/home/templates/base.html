@@ -1,0 +1,42 @@
+ {% verbatim %}
+  <!DOCTYPE html>
+ <html ng-app="Lager">
+
+ <head>
+     <meta charset="utf-8">
+     <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">
+     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.js"></script>
+	 <script type="text/javascript" src="//cdn.jsdelivr.net/lodash/2.1.0/lodash.compat.min.js"></script>
+     <script type="text/javascript" src="http://cdn.jsdelivr.net/restangular/latest/restangular.js"></script>
+{% endverbatim %}
+{% load staticfiles %}
+	<script src="{% static "js/app.js" %}"></script>
+	<link rel="stylesheet" href="{% static "css/app.css" %}">
+ {% verbatim %}
+ </head>
+ <body ng-controller="LagerController as lager">
+	<!--  Lager Header  -->
+    <header>
+      <h1 class="text-center">Lager</h1>
+      <h2 class="text-center">– Verwaltung –</h2>
+    </header>
+	<div class="container-fluid">
+		<div class="row" ng-repeat="product in lager.products" ng-class="{title : product.title == true}">
+			<span ng-show="product.title == true"><hr/></span>
+			<div class="col-md-1">{{product.id}}</div>
+			<div class="col-md-7">{{product.name1}}</div>
+			<div class="col-md-1">
+			<span ng-if="product.title == false">
+				<span ng-show="product.stockcur!=null">{{product.stockcur}}</span>
+				<span ng-show="product.stockcur==null">kein Wert</span>
+			</span>
+			</div>
+			<div class="col-md-3"><em ng-show="product.title == false">{{product.netpurchaseprice | currency:"€"}}</em></div>
+		</div>
+	</div>
+	
+ </body>
+ </html>
+ {% endverbatim %}
+ 
+  
