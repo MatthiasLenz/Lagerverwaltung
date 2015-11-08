@@ -17,14 +17,23 @@
 </head>
 <body ng-controller="ArtikelCtrl">
   <div id="header">
-  <h2>Lager</h2>
-    <p>Artikelstamm
+  <h2>Lagermodul</h2>
   </div>
+
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#">Artikel Stammdaten</a></li>
+    <li><a href="#">Bestellmodul</a></li>
+    <li><a href="#">Lagereingang</a></li>
+    <li><a href="#">Lagerausgang</a></li>
+    <li><a href="#">Lagerverwaltung</a></li>
+    <li><a href="#">Verrechnungen</a></li>
+  </ul>
+  <br/>
   <!--<form ng-submit="updateList()">-->
   <form  role="form">
 	 Suche: <input style="width:30%;" class="form-control" placeholder="ID, Bezeichnung oder Artikelgruppe" ng-model="query">
  </form>
-  
+  <br/>
 
 <table class="table">
   <thead>
