@@ -1,34 +1,5 @@
-{% verbatim %}
-  <!DOCTYPE html>
-<html ng-app="artikelApp">
-<head>
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
-  <script src="http://jashkenas.github.io/underscore/underscore-min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-resource.js"></script>
-  <meta charset="utf-8">
-  <title>Lagerverwaltung</title>
-  
-  {% endverbatim %}
-  {% load staticfiles %}
-  <script src="{% static "js/ressourcen.js" %}"></script>
-  <link rel="stylesheet" href="{% static "css/list.css" %}">
-   {% verbatim %}
-</head>
-<body ng-controller="ArtikelCtrl">
-  <div id="header">
-  <h2>Lagermodul</h2>
-  </div>
+<div>
 
-  <ul class="nav nav-tabs">
-    <li class="active"><a href="#">Artikel Stammdaten</a></li>
-    <li><a href="#">Bestellmodul</a></li>
-    <li><a href="#">Lagereingang</a></li>
-    <li><a href="#">Lagerausgang</a></li>
-    <li><a href="#">Lagerverwaltung</a></li>
-    <li><a href="#">Verrechnungen</a></li>
-  </ul>
-  <br/>
   <!--<form ng-submit="updateList()">-->
   <form  role="form">
 	 Suche: <input style="width:30%;" class="form-control" placeholder="ID, Bezeichnung oder Artikelgruppe" ng-model="query">
@@ -91,8 +62,4 @@
     </li>
   </ul>
 
-</body>
-</html>
- {% endverbatim %}
- 
-  
+</div>

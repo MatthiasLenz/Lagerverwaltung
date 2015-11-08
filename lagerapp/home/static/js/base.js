@@ -1,4 +1,28 @@
-var artikelApp = angular.module('artikelApp', ['ngResource']);          
+var artikelApp = angular.module('artikelApp', ['ngRoute','ngResource']);          
+artikelApp.config(['$routeProvider',
+  function($routeProvider) {
+    $routeProvider
+      .when('/artikel', {
+        templateUrl: 'static/html/articlelist.html',
+      })
+	 .when('/bestellmodul', {
+        templateUrl: 'static/html/bestellmodul.html',
+      })
+	 .when('/lagereingang', {
+        templateUrl: 'static/html/lagereingang.html',
+      })
+	  .when('/lagerausgang', {
+        templateUrl: 'static/html/lagerausgang.html',
+      })
+	 .when('/lagerverwaltung', {
+        templateUrl: 'static/html/lagerverwaltung.html',
+      })	 
+	  .when('/verrechnungen', {
+        templateUrl: 'static/html/verrechnungen.html',
+      })
+	  .otherwise({templateUrl: 'static/html/articlelist.html',})
+	  ;
+  }]);
 artikelApp.factory("Nature", function ($resource) {
 	return $resource(
 	  "/api/nature/:id", {id: "@id" },{"reviews": {'method': 'GET', 'params': {'reviews_only': "true"}, isArray: true}}
@@ -21,7 +45,19 @@ artikelApp.factory("Product",
 	}
 ); */
 artikelApp.controller('ArtikelCtrl', function($scope,$resource,Nature) {  
-      
+  $scope.title = 'Artikel Stammdaten';
+  $scope.tabs = [	{title: 'Artikel Stammdaten', url: 'artikel'}, 
+				{title: 'Bestellmodul', url: 'bestellmodul'}, 
+				{title: 'Lagereingang', url: 'lagereingang'}, 
+				{title: 'Lagerausgang', url: 'lagerausgang'}, 
+				{title: 'Lagerverwaltung', url: 'lagerverwaltung'},
+				{title: 'Verrechnungen', url: 'verrechnungen'}];    
+  $scope.currentTab = 'artikel';
+  $scope.onClickTab = function (tab) { 
+		$scope.currentTab = tab.url; 
+		$scope.title = tab.title; 
+	}
+  $scope.isActiveTab = function(tabUrl) { return tabUrl == $scope.currentTab; }
   window.scope=$scope;
   $scope.ordering= "id";
   $scope.page = 1;

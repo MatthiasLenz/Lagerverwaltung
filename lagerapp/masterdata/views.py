@@ -49,12 +49,7 @@ class NatureViewSet(mixins.RetrieveModelMixin,
     This viewset automatically provides `list` and `detail` actions.
     """
     lookup_value_regex = '[-A-Za-z0-9.]*' # hatte hier statt * ein +, wodurch ein aufruf von nature-detail mit leerem resourcenatureid nicht möglich war
-    """ 
-    ImproperlyConfigured at /api/product/
-    Could not resolve URL for hyperlinked relationship using view name "nature-detail". 
-    You may have failed to include the related model in your API, or incorrectly 
-    configured the `lookup_field` attribute on this field.
-    """
+
     #We only want Nature entries which have related products. Obtain a list of IDs with a raw query and filter against this list.
     nature_ids = Nature.objects.raw('select distinct n.ID as [id] from nature n left join product p on n.id = p.resourcenatureid where p.id is not Null or n.title = 1')
     queryset = Nature.objects.filter(pk__in = [nature.id for nature in nature_ids])
