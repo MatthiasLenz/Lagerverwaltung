@@ -18,15 +18,14 @@
   <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
 </head>
-<body ng-controller="BaseCtrl">
+<body ng-controller="BaseCtrl as base">
   <div id="header">
-    <h2>{{title}}</h2>
+    <h2>{{base.title}}</h2>
   </div>
-  
 	<ul class="nav nav-tabs">
-		<li 	ng-repeat="tab in tabs" 
-			ng-class="{active:isActiveTab(tab.url)}" 
-			ng-click="onClickTab(tab)"><a href="" ui-sref="{{tab.url}}">{{tab.title}}</a>
+		<li 	ng-repeat="tab in base.tabs" 
+			ng-class="{active:base.isActiveTab(tab.url)}" 
+			ng-click="base.onClickTab(tab)"><a href="" ui-sref="{{tab.url}}">{{tab.title}}</a>
 		</li>
 	</ul>
   <br/>

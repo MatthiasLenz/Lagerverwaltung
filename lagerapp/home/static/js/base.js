@@ -18,7 +18,8 @@ artikelApp.config(function($stateProvider, $urlRouterProvider) {
     .state('artikel', {
       url: '/artikel',
       templateUrl: 'static/html/articlelist.html',
-	  controller: 'ArtikelCtrl'
+	  controller: 'ArtikelCtrl',
+	  controllerAs: 'artikel'
     })
     .state('bestellmodul', {
       url: '/bestellmodul',

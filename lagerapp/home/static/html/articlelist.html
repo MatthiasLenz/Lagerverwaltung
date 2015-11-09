@@ -8,28 +8,28 @@
 
 <table class="table">
   <thead>
-    <th ng-click="setOrder('id')" ng-class="{sort: getOrder() == 'id', sortable:true}">
-      ID <b ng-class="sortDirection('id')"></b>
+    <th ng-click="artikel.setOrder('id')" ng-class="{sort: getOrder() == 'id', sortable:true}">
+      ID <b ng-class="artikel.sortDirection('id')"></b>
     </th>
-    <th ng-click="setOrder('name1')" ng-class="{sort: getOrder() == 'name1', sortable:true}">
-      Bezeichnung <b ng-class="sortDirection('name1')"></b>
+    <th ng-click="artikel.setOrder('name1')" ng-class="{sort: artikel.getOrder() == 'name1', sortable:true}">
+      Bezeichnung <b ng-class="artikel.sortDirection('name1')"></b>
     </th>
 	<th>Einheit</th>
-	<th ng-click="setOrder('stockcur')" ng-class="{sort: getOrder() == 'stockcur', sortable:true}">
-      Stock verfügbar <b ng-class="sortDirection('stockcur')"></b>
+	<th ng-click="artikel.setOrder('stockcur')" ng-class="{sort: artikel.getOrder() == 'stockcur', sortable:true}">
+      Stock verfügbar <b ng-class="artikel.sortDirection('stockcur')"></b>
     </th>
-	<th ng-click="setOrder('netpurchaseprice')" ng-class="{sort: getOrder() == 'netpurchaseprice', sortable:true}">
-      Netto Preis <b ng-class="sortDirection('netpurchaseprice')"></b>
+	<th ng-click="artikel.setOrder('netpurchaseprice')" ng-class="{sort: artikel.getOrder() == 'netpurchaseprice', sortable:true}">
+      Netto Preis <b ng-class="artikel.sortDirection('netpurchaseprice')"></b>
     </th>
-	<th ng-click="setOrder('defaultsupplier')" ng-class="{sort: getOrder() == 'defaultsupplier', sortable:true}">
-      Standard Lieferant <b ng-class="sortDirection('defaultsupplier')"></b>
+	<th ng-click="artikel.setOrder('defaultsupplier')" ng-class="{sort: artikel.getOrder() == 'defaultsupplier', sortable:true}">
+      Standard Lieferant <b ng-class="artikel.sortDirection('defaultsupplier')"></b>
     </th>
 	<th>
-      Artikelgruppe <select style="width:100px;" ng-model="resourcenatureid" ng-options="nature.id as nature.name group by nature.title for nature in resourcenatureids"></select>
+      Artikelgruppe <select style="width:100px;" ng-model="artikel.resourcenatureid" ng-options="nature.id as nature.name group by nature.title for nature in artikel.resourcenatureids"></select>
     </th>
   </thead>
   <tbody>
-    <tr ng-repeat="item in items" ng-class="{title: item.title}">
+    <tr ng-repeat="item in artikel.items" ng-class="{title: item.title}">
       <td><a ng-href="{{item.url}}">{{item.id}}</td>
       <td>{{item.name1}}</td>
 	  <td><span ng-class="{hide:item.title}">{{item.unit1}}</span></td> 
@@ -43,22 +43,20 @@
 
   <ul class="pager">
     <li>
-        <select title="Page Size" ng-model="perPage">
-		<option value="10">10</option>
-		<option value="20">20</option>
-		<option value="50">50</option>
-		<option value="100">100</option>
-		<option value="200">200</option>
-	   </select>
+	<select style="width:100px;" ng-model="artikel.perPage" 
+		ng-options="number for number in [10,20,50,100,200]">
+	</select>
     </li>
-    <li ng-click="previousPage()" ng-class="{disabled:page == 1}">
+
+   
+    <li ng-click="artikel.previousPage()" ng-class="{disabled:artikel.page == 1}">
       <a>Previous</a>
     </li>
-    <li ng-click="nextPage()" ng-class="{disabled:page==lastPage}">
+    <li ng-click="artikel.nextPage()" ng-class="{disabled:artikel.page==artikel.lastPage}">
       <a>Next</a>
     </li>
     <li>
-	 <input  type="text" name="page" ng-model="page" style="width: 30px;"><label>/{{lastPage}}</label>
+	 <input  type="text" name="page" ng-model="artikel.page" style="width: 30px;"><label>/{{artikel.lastPage}}</label>
     </li>
   </ul>
 
