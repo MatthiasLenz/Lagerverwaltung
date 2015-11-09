@@ -19,11 +19,14 @@ artikelApp.config(function($stateProvider, $urlRouterProvider) {
       url: '/artikel',
       templateUrl: 'static/html/articlelist.html',
 	  controller: 'ArtikelCtrl',
-	  controllerAs: 'artikel'
+	  controllerAs: 'artikel',
+      persist: true
     })
     .state('bestellmodul', {
       url: '/bestellmodul',
       templateUrl: 'static/html/bestellmodul.html',
+      controller: 'BestellungCtrl',
+	  controllerAs: 'bst'
     })
     .state('lagereingang', {
       url: '/lagereingang',

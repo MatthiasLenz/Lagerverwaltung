@@ -1,1 +1,10 @@
-Bestellmodul
+<form  role="form">
+	 <label>Lieferant</label> <input style="width:30%;" class="form-control" placeholder="Lieferant" ng-model="bst.supplier">
+	 <label>Bestelldatum</label> <input style="width:30%;" class="form-control" placeholder="Datum" ng-model="bst.date">
+     <label>Artikel</label> <input style="width:30%;" class="form-control" placeholder="Artikel" ng-model="bst.article">
+     <label>{{ bst.article }}</label><br/>
+     <label>Menge</label> <input style="width:30%;" class="form-control" placeholder="Menge" ng-model="bst.amount">
+     <label>Referenz</label> <input style="width:30%;" class="form-control" placeholder="Kostenstelle" ng-model="bst.projectid">
+     <label>Baustelle: {{ bst.baustelle }}</label>
+     <label>Bauleiter: {{ bst.bauleiter }}</label>
+ </form>
