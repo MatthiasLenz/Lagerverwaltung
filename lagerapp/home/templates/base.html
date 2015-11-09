@@ -6,6 +6,7 @@
   <script src="http://jashkenas.github.io/underscore/underscore-min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular-route.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-resource.js"></script>
   <meta charset="utf-8">
   <title>Lagermodul</title>
@@ -20,13 +21,14 @@
     <h2>{{title}}</h2>
   </div>
   
-	<ul class="nav nav-tabs" >
+	<ul class="nav nav-tabs">
 		<li 	ng-repeat="tab in tabs" 
 			ng-class="{active:isActiveTab(tab.url)}" 
-			ng-click="onClickTab(tab)"><a href="#/{{tab.url}}">{{tab.title}}</a></li>
+			ng-click="onClickTab(tab)"><a href="" ui-sref="{{tab.url}}">{{tab.title}}</a>
+		</li>
 	</ul>
   <br/>
-  <div ng-view></div
+  <div ui-view></div
 </body>
 </html>
 {% endverbatim %}

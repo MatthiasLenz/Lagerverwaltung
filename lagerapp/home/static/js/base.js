@@ -1,29 +1,46 @@
-var artikelApp = angular.module('artikelApp', ['ngRoute','ngResource']);          
-artikelApp.config(['$routeProvider',
-  function($routeProvider) {
-    $routeProvider
-      .when('/artikel', {
-		templateUrl: 'static/html/articlelist.html',
-		controller: 'ArtikelCtrl'
-      })
-	 .when('/bestellmodul', {
-        templateUrl: 'static/html/bestellmodul.html',
-      })
-	 .when('/lagereingang', {
-        templateUrl: 'static/html/lagereingang.html',
-      })
-	  .when('/lagerausgang', {
-        templateUrl: 'static/html/lagerausgang.html',
-      })
-	 .when('/lagerverwaltung', {
-        templateUrl: 'static/html/lagerverwaltung.html',
-      })	 
-	  .when('/verrechnungen', {
-        templateUrl: 'static/html/verrechnungen.html',
-      })
-	  .otherwise({templateUrl: 'static/html/articlelist.html',})
-	  ;
-  }]);
+var artikelApp = angular.module('artikelApp', ['ui.router','ngResource']);     
+
+artikelApp.config(["$locationProvider", function($locationProvider) {
+  //disable this, if the app is being used by html5 incompatible browsers.
+  $locationProvider.html5Mode({
+    enabled: true,
+    requireBase: false
+  });
+}]);
+
+artikelApp.config(function($stateProvider, $urlRouterProvider) {
+  //
+  // For any unmatched url, redirect to /state1
+  $urlRouterProvider.otherwise("/artikel");
+  //
+  // Now set up the states
+  $stateProvider
+    .state('artikel', {
+      url: '/artikel',
+      templateUrl: 'static/html/articlelist.html'
+    })
+    .state('bestellmodul', {
+      url: '/bestellmodul',
+      templateUrl: 'static/html/bestellmodul.html',
+    })
+    .state('lagereingang', {
+      url: '/lagereingang',
+      templateUrl: 'static/html/lagereingang.html',
+    })
+    .state('lagerausgang', {
+      url: '/lagerausgang',
+      templateUrl: 'static/html/lagerausgang.html',
+    })    
+	.state('lagerverwaltung', {
+      url: '/lagerverwaltung',
+      templateUrl: 'static/html/lagerverwaltung.html',
+    })
+	.state('verrechnungen', {
+      url: '/verrechnungen',
+      templateUrl: 'static/html/verrechnungen.html',
+    });
+});
+
 artikelApp.factory("Nature", function ($resource) {
 	return $resource(
 	  "/api/nature/:id", {id: "@id" },{"reviews": {'method': 'GET', 'params': {'reviews_only': "true"}, isArray: true}}
@@ -45,6 +62,7 @@ artikelApp.factory("Product",
 		});
 	}
 ); */
+
 artikelApp.controller('ArtikelCtrl', function($scope,$resource,Nature) {  
   $scope.title = 'Artikel Stammdaten';
   $scope.tabs = [	{title: 'Artikel Stammdaten', url: 'artikel'}, 
