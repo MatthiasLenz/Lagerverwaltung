@@ -13,10 +13,12 @@
   {% endverbatim %}
   {% load staticfiles %}
   <script src="{% static "js/base.js" %}"></script>
+  <script src="{% static "js/controllers/artikelController.js" %}"></script>
+  <script src="{% static "js/controllers/baseController.js" %}"></script>
   <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
 </head>
-<body ng-controller="ArtikelCtrl">
+<body ng-controller="BaseCtrl">
   <div id="header">
     <h2>{{title}}</h2>
   </div>
