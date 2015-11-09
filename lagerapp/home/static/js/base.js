@@ -17,7 +17,8 @@ artikelApp.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('artikel', {
       url: '/artikel',
-      templateUrl: 'static/html/articlelist.html'
+      templateUrl: 'static/html/articlelist.html',
+	  controller: 'ArtikelCtrl'
     })
     .state('bestellmodul', {
       url: '/bestellmodul',
@@ -46,22 +47,6 @@ artikelApp.factory("Nature", function ($resource) {
 	  "/api/nature/:id", {id: "@id" },{"reviews": {'method': 'GET', 'params': {'reviews_only': "true"}, isArray: true}}
     );
 }); 
-/*    How to transform a query to a paginated resource, so that it returns the results directly
-artikelApp.factory("Product", 
-	function ($resource) {
-		return $resource("/api/product/:id", {},{
-		   //override .query 
-		   query: {
-                method: 'GET',
-                url: 'api/product/',
-                isArray: true,
-                transformResponse: function(data, headers) {
-                    return angular.fromJson(data).results;
-                },
-            }, 
-		});
-	}
-); */
 
 artikelApp.controller('ArtikelCtrl', function($scope,$resource,Nature) {  
   $scope.title = 'Artikel Stammdaten';
@@ -117,10 +102,10 @@ artikelApp.controller('ArtikelCtrl', function($scope,$resource,Nature) {
       $scope.lastPage = Math.ceil(data.count/$scope.perPage);
     });
   };
-  $scope.$watchCollection('[page,ordering,perPage]',function(){
+  $scope.$watchCollection('[page,ordering]',function(){
     $scope.updateList(false );
   });
-  $scope.$watchCollection('[query,resourcenatureid]',function(){
+  $scope.$watchCollection('[query,resourcenatureid,perPage]',function(){
     //search and filter operations change the resulting size
     $scope.updateList(true);
   });
@@ -164,3 +149,19 @@ artikelApp.controller('ArtikelCtrl', function($scope,$resource,Nature) {
   
 
  });
+ /*    How to transform a query to a paginated resource, so that it returns the results directly
+artikelApp.factory("Product", 
+	function ($resource) {
+		return $resource("/api/product/:id", {},{
+		   //override .query 
+		   query: {
+                method: 'GET',
+                url: 'api/product/',
+                isArray: true,
+                transformResponse: function(data, headers) {
+                    return angular.fromJson(data).results;
+                },
+            }, 
+		});
+	}
+); */
