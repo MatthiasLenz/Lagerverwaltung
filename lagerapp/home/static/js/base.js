@@ -1,14 +1,14 @@
-var artikelApp = angular.module('artikelApp', ['ui.router','ngResource']);     
+angular.module('artikelApp', ['ui.router','ngResource'])
 
-artikelApp.config(["$locationProvider", function($locationProvider) {
+.config(["$locationProvider", function($locationProvider) {
   //disable this, if the app is being used by html5 incompatible browsers.
   $locationProvider.html5Mode({
     enabled: true,
     requireBase: false
   });
-}]);
+}])
 
-artikelApp.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider) {
   //
   // For any unmatched url, redirect to /state1
   $urlRouterProvider.otherwise("/artikel");
@@ -44,9 +44,9 @@ artikelApp.config(function($stateProvider, $urlRouterProvider) {
       url: '/verrechnungen',
       templateUrl: 'static/html/verrechnungen.html',
     });
-});
+})
 
-artikelApp.factory("Nature", function ($resource) {
+.factory("Nature", function ($resource) {
 	return $resource(
 	  "/api/nature/:id", {id: "@id" },{"reviews": {'method': 'GET', 'params': {'reviews_only': "true"}, isArray: true}}
     );
