@@ -1,5 +1,5 @@
 angular.module('baseApp').
-controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', function ($scope, $resource, Nature) {
+controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'Product', function ($scope, $resource, Nature, Product) {
     var vm = this;
     window.scope = vm;
     vm.ordering = "id";
@@ -7,13 +7,19 @@ controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', function ($scope, $r
     vm.perPage = 20;
     vm.query = '';
     vm.resourcenatureid = null;
+    vm.productAll = Product.query();
+    vm.productAll.$promise.then(function (result) {
+        vm.productAll = result;
+    });
     var product = $resource(
         '/api/product/:id',
         {per_page: 20, q: ""},
         {query: {method: 'GET', isArray: false}}
     );
-    var nature = Nature.query({}, function () {
-        vm.resourcenatureids = [{"id": "", "name": "- Bitte auswählen -", "title": ""}];
+    vm.resourcenatureids = [{"id": "", "name": "- Bitte auswählen -", "title": ""}];
+
+    var nature = Nature.query();
+    nature.$promise.then(function (result) {
         var titleDescr = "";
         nature.forEach(function (item, index, array) {
             if (item.title) {
@@ -24,7 +30,7 @@ controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', function ($scope, $r
             }
         });
     });
-    vm.test1 = Nature.get({'id': '90230000'});
+    //vm.test1 = Nature.get({'id': '90230000'});
 
     vm.updateList = function (resetPage) {
         /*var query = vm.query+" in:title repo:angular/angular.js";*/

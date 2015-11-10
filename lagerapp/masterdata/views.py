@@ -79,8 +79,9 @@ class ProductViewSet(mixins.RetrieveModelMixin,
     equivalent to ReadOnlyModelViewSet, but inherit from mixins instead.
     """
     lookup_value_regex = '[-A-Za-z0-9.]*' #custom, because we are using dots in our product ids 
-    
-    queryset = Product.objects.all()
+
+    queryset = Product.objects.all().prefetch_related('nature')
+    print(queryset.query)
     serializer_class = ProductSerializer
 
     pagination_class = LargeResultsSetPagination
@@ -90,4 +91,17 @@ class ProductViewSet(mixins.RetrieveModelMixin,
     #Suche in zu resourcenatureid gehörendem Namen, über das Related Field resourcenatureid__name
     search_fields = ('id','name1','resourcenatureid__name')
     #ToDo: ordering_fields = ()
-    
+
+
+class CompleteProductViewSet(mixins.RetrieveModelMixin,
+                             mixins.ListModelMixin,
+                             viewsets.GenericViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    equivalent to ReadOnlyModelViewSet, but inherit from mixins instead.
+    """
+    # lookup_value_regex = '[-A-Za-z0-9.]*' #custom, because we are using dots in our product ids
+    queryset = Product.objects.all().prefetch_related('nature')
+    print(queryset.query)
+    serializer_class = ProductSerializer
+    # ToDo: Faster Serialization

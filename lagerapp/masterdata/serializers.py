@@ -22,7 +22,8 @@ class NatureSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Nature
         fields = ('url', 'id', 'title','name')
-        
+
+
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     """def __init__(self, *args, **kwargs):
         #Only used for debugging. Extend init to print repr of Serializer instance.
