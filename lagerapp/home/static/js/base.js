@@ -1,4 +1,4 @@
-angular.module('artikelApp', ['ui.router', 'ngResource']).
+angular.module('baseApp', ['ui.router', 'ngResource', 'baseApp.Services']).
 
 config(["$locationProvider", function ($locationProvider) {
     //disable this, if the app is being used by html5 incompatible browsers.
@@ -8,7 +8,7 @@ config(["$locationProvider", function ($locationProvider) {
     });
 }]).
 
-config(function ($stateProvider, $urlRouterProvider) {
+config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
     //
     // For any unmatched url, redirect to /state1
     $urlRouterProvider.otherwise("/artikel");
@@ -44,19 +44,7 @@ config(function ($stateProvider, $urlRouterProvider) {
             url: '/verrechnungen',
             templateUrl: 'static/html/verrechnungen.html',
         });
-}).
-
-factory("Nature", function ($resource) {
-    return $resource(
-        "/api/nature/:id", {id: "@id"}, {
-            "reviews": {
-                'method': 'GET',
-                'params': {'reviews_only': "true"},
-                isArray: true
-            }
-        }
-    );
-});
+}]);
 
 /*    How to transform a query to a paginated resource, so that it returns the results directly
  artikelApp.factory("Product",

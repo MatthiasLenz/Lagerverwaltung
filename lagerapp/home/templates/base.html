@@ -1,6 +1,6 @@
 {% verbatim %}
   <!DOCTYPE html>
-<html ng-app="artikelApp">
+<html ng-app="baseApp">
 <head>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
   <script src="http://jashkenas.github.io/underscore/underscore-min.js"></script>
@@ -16,21 +16,24 @@
   <script src="{% static "js/controllers/artikelController.js" %}"></script>
   <script src="{% static "js/controllers/bestellungController.js" %}"></script>
   <script src="{% static "js/controllers/baseController.js" %}"></script>
+  <script src="{% static "js/services/natureService.js" %}"></script>
   <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
 </head>
-<body ng-controller="BaseCtrl as base">
-  <div id="header">
-    <h2>{{base.title}}</h2>
-  </div>
-	<ul class="nav nav-tabs">
-		<li 	ng-repeat="tab in base.tabs" 
-			ng-class="{active:base.isActiveTab(tab.url)}" 
-			ng-click="base.onClickTab(tab)"><a href="" ui-sref="{{tab.url}}">{{tab.title}}</a>
-		</li>
-	</ul>
-  <br/>
-  <div ui-view></div
+<body>
+    <div ng-controller="BaseCtrl as base">
+        <div id="header">
+        <h2>{{base.title}}</h2>
+      </div>
+        <ul class="nav nav-tabs">
+            <li 	ng-repeat="tab in base.tabs"
+                ng-class="{active:base.isActiveTab(tab.url)}"
+                ng-click="base.onClickTab(tab)"><a href="" ui-sref="{{tab.url}}">{{tab.title}}</a>
+            </li>
+        </ul>
+      <br/>
+    </div>
+    <div ui-view></div>
 </body>
 </html>
 {% endverbatim %}

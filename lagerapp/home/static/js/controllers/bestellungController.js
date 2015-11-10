@@ -1,4 +1,4 @@
-angular.module('artikelApp').
+angular.module('baseApp').
 controller('BestellungCtrl', function ($scope, $resource) {
     var vm = this;
     vm.article = "";

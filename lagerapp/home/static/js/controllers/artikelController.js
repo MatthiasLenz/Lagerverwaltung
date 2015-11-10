@@ -1,7 +1,7 @@
-angular.module('artikelApp').
-controller('ArtikelCtrl', function ($scope, $resource, Nature) {
-    window.scope = vm;
+angular.module('baseApp').
+controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', function ($scope, $resource, Nature) {
     var vm = this;
+    window.scope = vm;
     vm.ordering = "id";
     vm.page = 1;
     vm.perPage = 20;
@@ -87,4 +87,4 @@ controller('ArtikelCtrl', function ($scope, $resource, Nature) {
     };
 
 
-});
+}]);
