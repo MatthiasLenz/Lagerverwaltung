@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from masterdata.models import Stock, StockData, Product, Nature
+from masterdata.models import Stock, StockData, Product, Nature, ProductSupplier
 #from django.contrib.auth.models import User
 
 
@@ -32,12 +32,17 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
     # supplier = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    supplier = serializers.SlugRelatedField(many=True, read_only=True, slug_field='supplierid')
+    supplier = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productsupplier-detail")
     class Meta:
         model = Product
         fields = ('url','id', 'name1','detailedname1','title','marked','unit1','grosspurchaseprice','netpurchaseprice', 'stockcur', 'stockavail','salesmargin','salesprice','taxcodeinvoice',
                   'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid', 'nature', 'supplier')
 
+
+class ProductSupplierSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ProductSupplier
+        fields = ('url', 'prodid', 'supplierid', 'purchaseprice')
 
 class FastProductSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,7 +1,7 @@
 #encoding=UTF-8
-from masterdata.models import Stock, StockData, Product, Nature
+from masterdata.models import Stock, StockData, Product, Nature, ProductSupplier
 from masterdata.serializers import StockSerializer, StockDataSerializer, ProductSerializer, NatureSerializer, \
-    FastProductSerializer
+    FastProductSerializer, ProductSupplierSerializer
 from rest_framework import viewsets, mixins
 from rest_framework import pagination
 from rest_framework import filters
@@ -42,7 +42,15 @@ class StockViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
-    
+
+
+class ProductSupplierViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = ProductSupplier.objects.all()
+    serializer_class = ProductSupplierSerializer
+
 class NatureViewSet(mixins.RetrieveModelMixin,
                     mixins.ListModelMixin,
                     viewsets.GenericViewSet):
