@@ -8,9 +8,10 @@ router.register(r'stock', views.StockViewSet)
 router.register(r'stockdata', views.StockDataViewSet)
 router.register(r'nature', views.NatureViewSet)
 router.register(r'product', views.ProductViewSet, base_name='product')
-router.register(r'productAll', views.CompleteProductViewSet, base_name='productAll')
+
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
 urlpatterns = [
-    url(r'^api/', include(router.urls))
+    url(r'^api/', include(router.urls)),
+    url(r'^api/productall/', views.CompleteProductView.as_view(), name='productALL')
 ]

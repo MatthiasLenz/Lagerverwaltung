@@ -30,8 +30,16 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         super(ProductSerializer, self).__init__(*args, **kwargs)
         print(repr(self))"""
 
-    # nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
+    nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
     class Meta:
         model = Product
         fields = ('url','id', 'name1','detailedname1','title','marked','unit1','grosspurchaseprice','netpurchaseprice', 'stockcur', 'stockavail','salesmargin','salesprice','taxcodeinvoice',
+                  'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid', 'nature')
+
+
+class FastProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ('id', 'name1', 'detailedname1', 'title', 'marked', 'unit1', 'grosspurchaseprice', 'netpurchaseprice',
+                  'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
                   'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')

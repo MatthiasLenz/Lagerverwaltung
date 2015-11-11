@@ -1,6 +1,7 @@
 #encoding=UTF-8
 from masterdata.models import Stock, StockData, Product, Nature
-from masterdata.serializers import StockSerializer, StockDataSerializer, ProductSerializer, NatureSerializer
+from masterdata.serializers import StockSerializer, StockDataSerializer, ProductSerializer, NatureSerializer, \
+    FastProductSerializer
 from rest_framework import viewsets, mixins
 from rest_framework import pagination
 from rest_framework import filters
@@ -93,16 +94,15 @@ class ProductViewSet(mixins.RetrieveModelMixin,
     #ToDo: ordering_fields = ()
 
 
-class CompleteProductViewSet(mixins.RetrieveModelMixin,
-                             mixins.ListModelMixin,
-                             viewsets.GenericViewSet):
+from rest_framework.views import APIView
+
+
+class CompleteProductView(APIView):
     """
-    This viewset automatically provides `list` and `detail` actions.
-    equivalent to ReadOnlyModelViewSet, but inherit from mixins instead.
+    This view provides the list action
     """
-    # lookup_value_regex = '[-A-Za-z0-9.]*' #custom, because we are using dots in our product ids
-    queryset = Product.objects.all().prefetch_related('nature')
-    print(queryset.query)
-    serializer_class = ProductSerializer
-    pagination_class = None
-    # ToDo: Faster Serialization
+
+    def get(self, request, *args, **kwargs):
+        queryset = Product.objects.all()
+        serializer = FastProductSerializer(queryset, many=True)
+        return Response(serializer.data)

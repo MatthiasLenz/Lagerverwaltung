@@ -30,13 +30,15 @@
   </thead>
   <tbody>
     <tr ng-repeat="item in artikel.items" ng-class="{title: item.title}">
-      <td><a ng-href="{{item.url}}">{{item.id}}</a></td>
+        <td><a target="_self" ng-href="{{ item.url }}">{{ item.id }}</a></td>
       <td>{{item.name1}}</td>
 	  <td><span ng-class="{hide:item.title}">{{item.unit1}}</span></td> 
 	  <td><span ng-class="{hide:item.title}">{{item.stockcur}}</span></td>
 	  <td><span ng-class="{hide:item.title}">{{item.netpurchaseprice}}</span></td>
 	  <td><span ng-class="{hide:item.title}">{{item.defaultsupplier}}</span></td>
-	  <td><span ng-class="{hide:item.title}"><a href="{{item.resourcenatureid}}">{{item.nature}}</a></span></td>
+        <td><span ng-class="{hide:item.title}"><a target="_self"
+                                                  ng-href="{{ item.resourcenatureid }}">{{ item.nature }}</a></span>
+        </td>
     </tr>
   </tbody>
   </table>
