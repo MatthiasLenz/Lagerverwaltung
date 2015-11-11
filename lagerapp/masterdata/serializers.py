@@ -31,10 +31,12 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         print(repr(self))"""
 
     nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
+    # supplier = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    supplier = serializers.SlugRelatedField(many=True, read_only=True, slug_field='supplierid')
     class Meta:
         model = Product
         fields = ('url','id', 'name1','detailedname1','title','marked','unit1','grosspurchaseprice','netpurchaseprice', 'stockcur', 'stockavail','salesmargin','salesprice','taxcodeinvoice',
-                  'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid', 'nature')
+                  'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid', 'nature', 'supplier')
 
 
 class FastProductSerializer(serializers.ModelSerializer):
