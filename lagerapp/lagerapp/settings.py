@@ -78,7 +78,7 @@ INSTALLED_APPS = (
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10, 
 }
-    
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -88,6 +88,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'lagerapp.middleware.profile_middleware.ProfileMiddleware',
 )
 
 ROOT_URLCONF = 'lagerapp.urls'

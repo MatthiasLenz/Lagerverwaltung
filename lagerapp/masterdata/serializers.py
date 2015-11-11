@@ -29,11 +29,9 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         #Only used for debugging. Extend init to print repr of Serializer instance.
         super(ProductSerializer, self).__init__(*args, **kwargs)
         print(repr(self))"""
-    nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
+
+    # nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
     class Meta:
         model = Product
         fields = ('url','id', 'name1','detailedname1','title','marked','unit1','grosspurchaseprice','netpurchaseprice', 'stockcur', 'stockavail','salesmargin','salesprice','taxcodeinvoice',
-            'taxcodecreditnote','shopprice','defaultsupplier','resourcenatureid','nature')
-        
-
-                
+                  'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')

@@ -104,4 +104,5 @@ class CompleteProductViewSet(mixins.RetrieveModelMixin,
     queryset = Product.objects.all().prefetch_related('nature')
     print(queryset.query)
     serializer_class = ProductSerializer
+    pagination_class = None
     # ToDo: Faster Serialization
