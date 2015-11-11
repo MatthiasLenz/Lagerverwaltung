@@ -8,14 +8,9 @@ controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'Product', function 
     vm.query = '';
     vm.resourcenatureid = null;
     vm.productAll = Product.query();
-    vm.productAll.$promise.then(function (result) {
+    /*vm.productAll.$promise.then(function (result) {
         vm.productAll = result;
-    });
-    var product = $resource(
-        '/api/product/:id',
-        {per_page: 20, q: ""},
-        {query: {method: 'GET', isArray: false}}
-    );
+     });*/
     vm.resourcenatureids = [{"id": "", "name": "- Bitte auswählen -", "title": ""}];
 
     var nature = Nature.query();
@@ -36,7 +31,7 @@ controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'Product', function 
         /*var query = vm.query+" in:title repo:angular/angular.js";*/
         var query = vm.query;
         vm.page = resetPage ? 1 : vm.page;
-        product.query({
+        Product.query({
             ordering: vm.ordering,
             page: vm.page,
             page_size: vm.perPage,

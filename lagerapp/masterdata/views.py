@@ -44,9 +44,9 @@ class StockViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = StockSerializer
 
 
-class ProductSupplierViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductSupplierViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
-    This viewset automatically provides `list` and `detail` actions.
+    This viewset provides the `detail` action.
     """
     queryset = ProductSupplier.objects.all()
     serializer_class = ProductSupplierSerializer
