@@ -110,6 +110,13 @@ class Product(models.Model):
         db_table = 'Product'
         app_label = 'hit'
 
+
+class ProductSupplier(models.Model):
+    rowid = models.IntegerField(db_column='RowID', primary_key=True)
+    prodid = models.ForeignKey(Product, db_column='ProdID', blank=True, null=True)
+    supplierid = models.CharField(db_column='SupplierID', max_length=15, blank=True)
+    purchaseprice = models.FloatField(db_column='PurchasePrice', blank=True, null=True)
+
 class StockData(models.Model):
     id = models.IntegerField(db_column='RowID')
     rowid = models.IntegerField(db_column='RowID', primary_key=True) # Field name made lowercase.
