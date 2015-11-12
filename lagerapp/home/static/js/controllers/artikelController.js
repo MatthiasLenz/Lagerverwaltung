@@ -1,96 +1,126 @@
 angular.module('baseApp').
-controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'productService', function ($scope, $resource, Nature, productService) {
-    var vm = this;
+controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
+    // 1. Self-reference
+    var controller = this;
+
+    // 2. requirements
+    var natureService = $injector.get('natureService');
+    var productService = $injector.get('productService');
+
+    // 3. Do scope stuff
+    // 3a. Set up watchers on the scope.
+    $scope.$watchCollection('[artikel.page,artikel.ordering]', function (newVal, oldVal) {
+        updateList(false);
+    });
+    $scope.$watchCollection('[artikel.query,artikel.resourcenatureid,artikel.perPage]', function () {
+        //search and filter operations change the resulting size
+        updateList(true);
+    });
+
+    // 3b. Expose methods or data on the scope
     $scope.productModel = productService.model;
-    vm.product = productService;
+    window.scope = controller;
+    window.scope2 = $scope;
+
+    // 3c. Listen to events on the scope
+
+    // 4. Expose methods and properties on the controller instance
     for (var key in productService.model) {
-        if (vm[key] == null) {
-            vm[key] = productService.model[key];
+        if (!(key in controller)) {
+            controller[key] = productService.model[key];
         }
     }
-    //Since ControllerAs is 'artikel' -> $scope.artikel is the same as this
-    window.scope = vm;
-    window.scope2 = $scope;
-    /*vm.productAll = Product.query();
-     vm.productAll.$promise.then(function (result) {
-        vm.productAll = result;
-     });*/
-    vm.resourcenatureids = [{"id": "", "name": "- Bitte auswählen -", "title": ""}];
+    this.resourcenatureids = [{"id": "", "name": "- Bitte auswählen -", "title": ""}];
+    this.sortDirection = 'sort-caret desc';
+    this.updateList = updateList;
+    this.nextPage = nextPage;
+    this.previousPage = previousPage;
+    this.setPage = setPage;
+    this.setOrder = setOrder;
+    this.getOrder = getOrder;
 
-    var nature = Nature.query();
-    nature.$promise.then(function (result) {
+    // 5. Clean up
+    $scope.$on('$destroy', function () {
+        // Do whatever cleanup might be necessary
+        controller = null; // MEMLEAK FIX
+        $scope = null; // MEMLEAK FIX
+    });
+
+    // 6. All the actual implementations go here. 
+    natureService.query().$promise.then(function (result) {
         var titleDescr = "";
-        nature.forEach(function (item, index, array) {
+        result.forEach(function (item) {
             if (item.title) {
                 titleDescr = item.name;
             }
             else {
-                vm.resourcenatureids.push({"id": item.id, "name": item.name, "title": titleDescr});
+                controller.resourcenatureids.push({"id": item.id, "name": item.name, "title": titleDescr});
             }
         });
     });
-    //vm.test1 = Nature.get({'id': '90230000'});
 
-    vm.updateList = function (resetPage) {
-        /*var query = vm.query+" in:title repo:angular/angular.js";*/
-        var query = vm.query;
-        vm.page = resetPage ? 1 : vm.page;
+    function updateList(resetPage) {
+        /*var query = controller.query+" in:title repo:angular/angular.js";*/
+        var query = controller.query;
+        controller.page = resetPage ? 1 : controller.page;
         productService.query({
-            ordering: vm.ordering,
-            page: vm.page,
-            page_size: vm.perPage,
+            ordering: controller.ordering,
+            page: controller.page,
+            page_size: controller.perPage,
             search: query,
-            resourcenatureid: vm.resourcenatureid
+            resourcenatureid: controller.resourcenatureid
         }, function (data) {
-            vm.items = data.results;
-            vm.lastPage = Math.ceil(data.count / vm.perPage);
+            controller.items = data.results;
+            controller.lastPage = Math.ceil(data.count / controller.perPage);
         });
-    };
-    $scope.$watchCollection('[artikel.page,artikel.ordering]', function (newVal, oldVal) {
+    }
 
-        vm.updateList(false);
-    });
-    $scope.$watchCollection('[artikel.query,artikel.resourcenatureid,artikel.perPage]', function () {
-        //search and filter operations change the resulting size
-        vm.updateList(true);
-    });
+    function nextPage() {
+        if (controller.lastPage !== controller.page) {
+            controller.page++;
+        }
+    }
 
-    vm.nextPage = function () {
-        if (vm.lastPage !== vm.page) {
-            vm.page++;
+    function previousPage() {
+        if (controller.page !== 1) {
+            controller.page--;
         }
-    };
-    vm.previousPage = function () {
-        if (vm.page !== 1) {
-            vm.page--;
+    }
+
+    function setPage(num) {
+        if (num <= controller.lastPage && num > 0) {
+            controller.page = num;
         }
-    };
-    vm.setPage = function (num) {
-        if (num <= vm.lastPage && num > 0) {
-            vm.page = num;
-        }
-    };
-    vm.setOrder = function (field) {
-        if (vm.ordering == field) {
-            vm.ordering = '-' + vm.ordering;
-            vm.sortorder = 'desc';
+    }
+
+    function setOrder(field) {
+        if (controller.ordering == field) {
+            controller.ordering = '-' + controller.ordering;
+            controller.sortorder = 'desc';
         }
         else {
-            vm.ordering = field;
-            vm.sortorder = 'asc';
+            controller.ordering = field;
+            controller.sortorder = 'asc';
         }
-    };
-    vm.getOrder = function () {
-        if (vm.ordering.charAt(0) == '-') {
-            return vm.ordering.substr(1, vm.ordering.length);
-        }
-        else return vm.ordering;
-    };
-    vm.sortDirection = function (field) {
-        if (vm.ordering.charAt(0) == '-') {
-            return 'sort-caret desc';
-        } else return 'sort-caret asc';
-    };
+        sortDirection();
+    }
 
+    function getOrder() {
+        if (controller.ordering.charAt(0) == '-') {
+            return controller.ordering.substr(1, controller.ordering.length);
+        }
+        else return controller.ordering;
+    }
+
+    function sortDirection() {
+        if (controller.ordering.charAt(0) == '-') {
+            controller.sortDirection = 'sort-caret desc';
+        } else controller.sortDirection = 'sort-caret asc';
+    }
 
 }]);
+
+/*controller.productAll = Product.query();
+ controller.productAll.$promise.then(function (result) {
+ controller.productAll = result;
+ });*/

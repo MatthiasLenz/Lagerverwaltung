@@ -9,20 +9,20 @@
 <table class="table">
   <thead>
     <th ng-click="artikel.setOrder('id')" ng-class="{sort: getOrder() == 'id', sortable:true}">
-      ID <b ng-class="artikel.sortDirection('id')"></b>
+        ID <b ng-class="artikel.sortDirection"></b>
     </th>
     <th ng-click="artikel.setOrder('name1')" ng-class="{sort: artikel.getOrder() == 'name1', sortable:true}">
-      Bezeichnung <b ng-class="artikel.sortDirection('name1')"></b>
+        Bezeichnung <b ng-class="artikel.sortDirection"></b>
     </th>
 	<th>Einheit</th>
 	<th ng-click="artikel.setOrder('stockcur')" ng-class="{sort: artikel.getOrder() == 'stockcur', sortable:true}">
-      Stock verfügbar <b ng-class="artikel.sortDirection('stockcur')"></b>
+        Stock verfügbar <b ng-class="artikel.sortDirection"></b>
     </th>
 	<th ng-click="artikel.setOrder('netpurchaseprice')" ng-class="{sort: artikel.getOrder() == 'netpurchaseprice', sortable:true}">
-      Netto Preis <b ng-class="artikel.sortDirection('netpurchaseprice')"></b>
+        Netto Preis <b ng-class="artikel.sortDirection"></b>
     </th>
 	<th ng-click="artikel.setOrder('defaultsupplier')" ng-class="{sort: artikel.getOrder() == 'defaultsupplier', sortable:true}">
-      Standard Lieferant <b ng-class="artikel.sortDirection('defaultsupplier')"></b>
+        Standard Lieferant <b ng-class="artikel.sortDirection"></b>
     </th>
 	<th>
       Artikelgruppe <select style="width:100px;" ng-model="artikel.resourcenatureid" ng-options="nature.id as nature.name group by nature.title for nature in artikel.resourcenatureids"></select>
