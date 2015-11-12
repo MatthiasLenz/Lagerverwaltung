@@ -30,7 +30,7 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
             controller[key] = productService.model[key];
         }
     }
-    this.resourcenatureids = [{"id": "", "name": "- Bitte auswählen -", "title": ""}];
+    this.resourcenatureids = natureService.nature_list;
     this.sortDirection = 'sort-caret desc';
     this.updateList = updateList;
     this.nextPage = nextPage;
@@ -46,19 +46,7 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
         $scope = null; // MEMLEAK FIX
     });
 
-    // 6. All the actual implementations go here. 
-    natureService.query().$promise.then(function (result) {
-        var titleDescr = "";
-        result.forEach(function (item) {
-            if (item.title) {
-                titleDescr = item.name;
-            }
-            else {
-                controller.resourcenatureids.push({"id": item.id, "name": item.name, "title": titleDescr});
-            }
-        });
-    });
-
+    // 6. All the actual implementations go here.
     function updateList(resetPage) {
         /*var query = controller.query+" in:title repo:angular/angular.js";*/
         var query = controller.query;

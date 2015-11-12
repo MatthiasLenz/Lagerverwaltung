@@ -1,6 +1,6 @@
 angular.module('baseApp.Services').
 factory("productService", function ($resource, $cacheFactory) {
-    var resourceCache = $cacheFactory();
+    var resourceCache = $cacheFactory('Product');
     var resource = $resource(
             '/api/product/:id',
         {},
