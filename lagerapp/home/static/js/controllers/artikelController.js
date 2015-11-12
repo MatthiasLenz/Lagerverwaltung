@@ -1,14 +1,14 @@
 angular.module('baseApp').
-controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'Product', function ($scope, $resource, Nature, Product) {
+controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'productService', function ($scope, $resource, Nature, productService) {
     var vm = this;
+    vm.resource = productService.resource;
+    for (var key in productService.model) {
+        vm[key] = productService.model[key];
+    }
+    vm.test1 = productService.model;
     window.scope = vm;
-    vm.ordering = "id";
-    vm.page = 1;
-    vm.perPage = 20;
-    vm.query = '';
-    vm.resourcenatureid = null;
-    vm.productAll = Product.query();
-    /*vm.productAll.$promise.then(function (result) {
+    /*vm.productAll = Product.query();
+     vm.productAll.$promise.then(function (result) {
         vm.productAll = result;
      });*/
     vm.resourcenatureids = [{"id": "", "name": "- Bitte auswählen -", "title": ""}];
@@ -31,7 +31,7 @@ controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'Product', function 
         /*var query = vm.query+" in:title repo:angular/angular.js";*/
         var query = vm.query;
         vm.page = resetPage ? 1 : vm.page;
-        Product.query({
+        vm.resource.query({
             ordering: vm.ordering,
             page: vm.page,
             page_size: vm.perPage,
@@ -42,7 +42,8 @@ controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'Product', function 
             vm.lastPage = Math.ceil(data.count / vm.perPage);
         });
     };
-    $scope.$watchCollection('[artikel.page,artikel.ordering]', function () {
+    $scope.$watchCollection('[artikel.page,artikel.ordering]', function (newVal, oldVal) {
+
         vm.updateList(false);
     });
     $scope.$watchCollection('[artikel.query,artikel.resourcenatureid,artikel.perPage]', function () {

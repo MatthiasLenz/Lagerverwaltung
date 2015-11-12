@@ -111,6 +111,9 @@ class CompleteProductView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-        queryset = Product.objects.all()
+        queryset = Product.objects.only('id', 'name1', 'detailedname1', 'title', 'marked', 'unit1',
+                                        'grosspurchaseprice', 'netpurchaseprice',
+                                        'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
+                                        'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')
         serializer = FastProductSerializer(queryset, many=True)
         return Response(serializer.data)

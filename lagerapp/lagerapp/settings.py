@@ -57,6 +57,10 @@ LOGGING = {
             'level': 'DEBUG',
             'handlers': ['console'],
         },
+        'django.db.backends.sqlite3': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        },
     },
 }
 ALLOWED_HOSTS = []
