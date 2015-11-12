@@ -1,12 +1,16 @@
 angular.module('baseApp').
 controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'productService', function ($scope, $resource, Nature, productService) {
     var vm = this;
-    vm.resource = productService.resource;
+    $scope.productModel = productService.model;
+    vm.product = productService;
     for (var key in productService.model) {
-        vm[key] = productService.model[key];
+        if (vm[key] == null) {
+            vm[key] = productService.model[key];
+        }
     }
-    vm.test1 = productService.model;
+    //Since ControllerAs is 'artikel' -> $scope.artikel is the same as this
     window.scope = vm;
+    window.scope2 = $scope;
     /*vm.productAll = Product.query();
      vm.productAll.$promise.then(function (result) {
         vm.productAll = result;
@@ -31,7 +35,7 @@ controller('ArtikelCtrl', ['$scope', '$resource', 'Nature', 'productService', fu
         /*var query = vm.query+" in:title repo:angular/angular.js";*/
         var query = vm.query;
         vm.page = resetPage ? 1 : vm.page;
-        vm.resource.query({
+        productService.query({
             ordering: vm.ordering,
             page: vm.page,
             page_size: vm.perPage,
