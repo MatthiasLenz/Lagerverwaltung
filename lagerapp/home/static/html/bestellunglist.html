@@ -1,0 +1,16 @@
+<table class="table">
+    <thead>
+    <th>ID Bestellung</th>
+    <th>Verantwortlich</th>
+    <th>ID Lieferant</th>
+    <th>Datum</th>
+    </thead>
+    <tbody>
+    <tr ng-repeat="bestellung in bestellungen.list" ng-class="{title: bestellung.title}">
+        <td>{{ bestellung.id }}</td>
+        <td>{{ bestellung.responsible }}</td>
+        <td>{{ bestellung.supplierid }}</td>
+        <td>{{ bestellung.docdate }}</td>
+    </tr>
+    </tbody>
+</table>

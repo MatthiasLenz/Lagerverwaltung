@@ -56,8 +56,9 @@ class PurchaseDocViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    queryset = PurchaseDoc.objects.filter(status=0).filter(module=5)
+    queryset = PurchaseDoc.objects.filter(status=0).filter(module=5).filter(doctype=2)
     serializer_class = PurchaseDocSerializer
+    pagination_class = None
 
 class NatureViewSet(mixins.RetrieveModelMixin,
                     mixins.ListModelMixin,

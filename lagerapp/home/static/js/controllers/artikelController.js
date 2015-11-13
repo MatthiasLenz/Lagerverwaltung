@@ -14,7 +14,7 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
     });
     $scope.$watch('[artikel.query,artikel.resourcenatureid,artikel.perPage]', function () {
         //search and filter operations change the resulting size
-        resetPage;
+        resetPage();
         updateList();
     });
 
