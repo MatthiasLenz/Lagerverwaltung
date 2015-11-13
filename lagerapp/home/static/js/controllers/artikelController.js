@@ -9,12 +9,13 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
 
     // 3. Do scope stuff
     // 3a. Set up watchers on the scope.
-    $scope.$watchCollection('[artikel.page,artikel.ordering]', function (newVal, oldVal) {
+    $scope.$watch('[artikel.page,artikel.ordering]', function () {
         updateList(false);
     });
-    $scope.$watchCollection('[artikel.query,artikel.resourcenatureid,artikel.perPage]', function () {
+    $scope.$watch('[artikel.query,artikel.resourcenatureid,artikel.perPage]', function () {
         //search and filter operations change the resulting size
-        updateList(true);
+        resetPage;
+        updateList();
     });
 
     // 3b. Expose methods or data on the scope
@@ -47,10 +48,9 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
     });
 
     // 6. All the actual implementations go here.
-    function updateList(resetPage) {
+    function updateList() {
         /*var query = controller.query+" in:title repo:angular/angular.js";*/
         var query = controller.query;
-        controller.page = resetPage ? 1 : controller.page;
         productService.query({
             ordering: controller.ordering,
             page: controller.page,
@@ -63,6 +63,9 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
         });
     }
 
+    function resetPage() {
+        controller.page = 1;
+    }
     function nextPage() {
         if (controller.lastPage !== controller.page) {
             controller.page++;
