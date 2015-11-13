@@ -1,4 +1,4 @@
-angular.module('baseApp', ['ui.router', 'ngResource', 'baseApp.Services', 'docsTimeDirective']).
+angular.module('baseApp', ['ngResource', 'baseApp.Services', 'docsTimeDirective']).
 
 config(["$locationProvider", function ($locationProvider) {
     //disable this, if the app is being used by html5 incompatible browsers.
@@ -7,49 +7,45 @@ config(["$locationProvider", function ($locationProvider) {
         requireBase: false
     });
 }]).
+    directive('tabMenu', function () {
+        return {
+            restrict: 'E',
+            transclude: true,
+            scope: {},
+            controller: ['$scope', function ($scope) {
+                var panes = $scope.panes = [];
 
-config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-    //
-    // For any unmatched url, redirect to /state1
-    //$urlRouterProvider.otherwise("/artikel");
-    //
-    // Now set up the states
-    $stateProvider
-    /*
-        .state('artikel', {
-            url: '/artikel',
-            templateUrl: 'static/html/articlelist.html',
-            controller: 'ArtikelCtrl',
-            controllerAs: 'artikel',
-            persist: true
-     })*/
-        .state('artikel', {
-            url: '/artikel',
-            template: ''
-        })
-        .state('bestellmodul', {
-            url: '/bestellmodul',
-            templateUrl: 'static/html/bestellmodul.html',
-            controller: 'BestellungCtrl',
-            controllerAs: 'bst'
-        })
-        .state('lagereingang', {
-            url: '/lagereingang',
-            templateUrl: 'static/html/lagereingang.html',
-        })
-        .state('lagerausgang', {
-            url: '/lagerausgang',
-            templateUrl: 'static/html/lagerausgang.html',
-        })
-        .state('lagerverwaltung', {
-            url: '/lagerverwaltung',
-            templateUrl: 'static/html/lagerverwaltung.html',
-        })
-        .state('verrechnungen', {
-            url: '/verrechnungen',
-            templateUrl: 'static/html/verrechnungen.html',
+                $scope.select = function (pane) {
+                    angular.forEach(panes, function (pane) {
+                        pane.selected = false;
         });
-}]);
+                    pane.selected = true;
+                };
+
+                this.addPane = function (pane) {
+                    if (panes.length === 0) {
+                        $scope.select(pane);
+                    }
+                    panes.push(pane);
+                };
+            }],
+            templateUrl: 'static/html/tab-menu.html'
+        };
+    })
+    .directive('tabPane', function () {
+        return {
+            require: '^tabMenu',
+            restrict: 'E',
+            transclude: true,
+            scope: {
+                title: '@'
+            },
+            link: function (scope, element, attrs, tabsCtrl) {
+                tabsCtrl.addPane(scope);
+            },
+            templateUrl: 'static/html/tab-pane.html'
+        };
+    });
 
 /*    How to transform a query to a paginated resource, so that it returns the results directly
  artikelApp.factory("Product",
