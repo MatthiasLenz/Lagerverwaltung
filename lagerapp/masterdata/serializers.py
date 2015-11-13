@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from masterdata.models import Stock, StockData, Product, Nature, ProductSupplier
+
+from masterdata.models import Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc
 
 
 # from django.contrib.auth.models import User
@@ -86,3 +87,9 @@ class FastProductSerializer(serializers.ModelSerializer):
         fields = ('id', 'name1', 'detailedname1', 'title', 'marked', 'unit1', 'grosspurchaseprice', 'netpurchaseprice',
                   'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
                   'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')
+
+
+class PurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = PurchaseDoc
+        fields = ('url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate')

@@ -13,7 +13,7 @@ class Stock(models.Model):
     class Meta:
         managed = False
         db_table = 'Stock'
-        app_label = 'hit'
+        app_label = 'hit_01_masterdata'
         
 class Nature(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True) # Field name made lowercase.
@@ -24,7 +24,7 @@ class Nature(models.Model):
     class Meta:
         managed = False
         db_table = 'Nature'
-        app_label = 'hit'
+        app_label = 'hit_01_masterdata'
         
 class Product(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True) # Field name made lowercase.
@@ -108,7 +108,7 @@ class Product(models.Model):
     class Meta:
         managed = False
         db_table = 'Product'
-        app_label = 'hit'
+        app_label = 'hit_01_masterdata'
 
 class ProductSupplier(models.Model):
     rowid = models.IntegerField(db_column='RowID', primary_key=True)
@@ -119,7 +119,22 @@ class ProductSupplier(models.Model):
     class Meta:
         managed = False
         db_table = 'ProductSupplier'
-        app_label = 'hit'
+        app_label = 'hit_01_masterdata_01_masterdata'
+
+
+class PurchaseDoc(models.Model):
+    id = models.CharField(db_column='ID', max_length=15, primary_key=True)  # Field name made lowercase.
+    responsible = models.CharField(db_column='Responsible', max_length=15, blank=True, null=True)
+    doctype = models.SmallIntegerField(db_column='DocType', blank=True, null=True)
+    module = models.SmallIntegerField(db_column='Module', blank=True, null=True)
+    supplierid = models.CharField(db_column='SupplierID', max_length=15, blank=True, null=True)
+    status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
+    docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'PurchaseDoc'
+        app_label = 'hit_01_purchase'
 
 class StockData(models.Model):
     id = models.IntegerField(db_column='RowID')
@@ -147,5 +162,4 @@ class StockData(models.Model):
     class Meta:
         managed = False
         db_table = 'StockData'
-        app_label = 'hit'
-        
+        app_label = 'hit_01_masterdata'

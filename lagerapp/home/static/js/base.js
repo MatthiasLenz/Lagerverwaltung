@@ -18,7 +18,7 @@ config(["$locationProvider", function ($locationProvider) {
                 $scope.select = function (pane) {
                     angular.forEach(panes, function (pane) {
                         pane.selected = false;
-        });
+                    });
                     pane.selected = true;
                 };
 
@@ -29,22 +29,31 @@ config(["$locationProvider", function ($locationProvider) {
                     panes.push(pane);
                 };
             }],
-            templateUrl: 'static/html/tab-menu.html'
+            templateUrl: 'static/html/tab-menu.html',
         };
     })
     .directive('tabPane', function () {
         return {
-            require: '^tabMenu',
+            require: '^tabMenu', // look for controller 'tabMenu' in parent
             restrict: 'E',
             transclude: true,
             scope: {
                 title: '@'
             },
-            link: function (scope, element, attrs, tabsCtrl) {
-                tabsCtrl.addPane(scope);
+            link: function (scope, element, attrs, controller) {  //4th argument is the controller from require
+                controller.addPane(scope);
             },
             templateUrl: 'static/html/tab-pane.html'
         };
+    })
+    .directive('headContent', function () {
+        return {
+            templateUrl: 'static/html/head.html',
+            controller: [function () {
+                this.title = 'Artikel Stammdaten';
+            }],
+            controllerAs: 'head'
+        }
     });
 
 /*    How to transform a query to a paginated resource, so that it returns the results directly

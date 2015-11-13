@@ -14,7 +14,6 @@
   <script src="{% static "js/base.js" %}"></script>
   <script src="{% static "js/controllers/artikelController.js" %}"></script>
   <script src="{% static "js/controllers/bestellungController.js" %}"></script>
-  <script src="{% static "js/controllers/baseController.js" %}"></script>
   <script src="{% static "js/services/natureService.js" %}"></script>
 <script src="{% static "js/services/productService.js" %}"></script>
 <script src="{% static "js/directives/docsTimeDirective.js" %}"></script>
@@ -25,7 +24,7 @@
 <body>
 <span my-current-time="'d. MMM yyyy h:mm:ss a'"></span>
 
-<div id="header"><h1>Lagerverwaltung</h1></div>
+<head-content></head-content>
 
 <tab-menu>
     <tab-pane title="Artikelauswahl">

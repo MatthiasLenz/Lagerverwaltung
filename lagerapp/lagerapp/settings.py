@@ -126,8 +126,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
-    'hit': private_settings['hit']
 }
+for key, value in private_settings['databases'].iteritems():
+    DATABASES[key] = value
 
 class HitRouter(object):
     """
@@ -138,8 +139,10 @@ class HitRouter(object):
         """
         Attempts to read stock models go to hit_db.
         """
-        if model._meta.app_label == 'hit':
-            return 'hit'
+        if model._meta.app_label == 'hit_01_masterdata':
+            return 'hit_01_masterdata'
+        if model._meta.app_label == 'hit_01_purchase':
+            return 'hit_01_purchase'
         return None
         
     def allow_migrate(self, db, app_label, model=None, **hints):
