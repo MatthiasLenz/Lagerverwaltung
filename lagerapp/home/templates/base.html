@@ -3,7 +3,8 @@
 <html ng-app="baseApp">
 <head>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
-  <script src="http://jashkenas.github.io/underscore/underscore-min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular-route.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
@@ -18,10 +19,13 @@
   <script src="{% static "js/controllers/baseController.js" %}"></script>
   <script src="{% static "js/services/natureService.js" %}"></script>
 <script src="{% static "js/services/productService.js" %}"></script>
+<script src="{% static "js/directives/docsTimeDirective.js" %}"></script>
+<script src="{% static "js/directives/artikelDirective.js" %}"></script>
   <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
 </head>
 <body>
+<span my-current-time="'d. MMM yyyy h:mm:ss a'"></span>
     <div ng-controller="BaseCtrl as base">
         <div id="header">
         <h2>{{base.title}}</h2>
@@ -34,6 +38,7 @@
         </ul>
       <br/>
     </div>
+<artikel-directive info="solid"></artikel-directive>
     <div ui-view></div>
 </body>
 </html>

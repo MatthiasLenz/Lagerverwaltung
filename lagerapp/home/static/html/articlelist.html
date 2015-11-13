@@ -1,8 +1,8 @@
 <div>
-
   <!--<form ng-submit="updateList()">-->
   <form  role="form">
-	 Suche: <input style="width:30%;" class="form-control" placeholder="ID, Bezeichnung oder Artikelgruppe" ng-model="artikel.query">
+      Suche: <input style="width:30%;" class="form-control" placeholder="ID, Bezeichnung oder Artikelgruppe"
+                    ng-model="artikel.query" ng-model-options="{debounce: 500}">
  </form>
   <br/>
 
@@ -61,5 +61,5 @@
 	 <input  type="text" name="page" ng-model="artikel.page" style="width: 30px;"><label>/{{artikel.lastPage}}</label>
     </li>
   </ul>
-
+    Directive inner scope: {{ solid }}
 </div>

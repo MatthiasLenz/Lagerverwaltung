@@ -1,4 +1,4 @@
-angular.module('baseApp', ['ui.router', 'ngResource', 'baseApp.Services']).
+angular.module('baseApp', ['ui.router', 'ngResource', 'baseApp.Services', 'docsTimeDirective']).
 
 config(["$locationProvider", function ($locationProvider) {
     //disable this, if the app is being used by html5 incompatible browsers.
@@ -11,16 +11,21 @@ config(["$locationProvider", function ($locationProvider) {
 config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
     //
     // For any unmatched url, redirect to /state1
-    $urlRouterProvider.otherwise("/artikel");
+    //$urlRouterProvider.otherwise("/artikel");
     //
     // Now set up the states
     $stateProvider
+    /*
         .state('artikel', {
             url: '/artikel',
             templateUrl: 'static/html/articlelist.html',
             controller: 'ArtikelCtrl',
             controllerAs: 'artikel',
             persist: true
+     })*/
+        .state('artikel', {
+            url: '/artikel',
+            template: ''
         })
         .state('bestellmodul', {
             url: '/bestellmodul',
