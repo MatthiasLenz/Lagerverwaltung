@@ -10,6 +10,7 @@
         <br/>
         <table class="table">
             <thead>
+            <th></th>
             <th ng-click="artikel.setOrder('id')" ng-class="{sort: getOrder() == 'id', sortable:true}">
                 ID <b ng-class="artikel.sortDirection"></b>
             </th>
@@ -37,6 +38,8 @@
             <tbody>
             <tr ng-repeat="item in artikel.items" ng-class="{title: item.title}">
                 <td><a target="_self" ng-href="{{ item.url }}">{{ item.id }}</a></td>
+                <td><span ng-class="{hide:item.title}"><button ng-click="artikel.select(item)">auswählen</button></span>
+                </td>
                 <td>{{ item.name1 }}</td>
                 <td><span ng-class="{hide:item.title}">{{ item.unit1 }}</span></td>
                 <td><span ng-class="{hide:item.title}">{{ item.stockcur }}</span></td>
@@ -70,6 +73,6 @@
         </ul>
         Directive inner scope: {{ solid }}
     </div>
-    <div ng-switch-when="screen2_state"> Schritt 2</div>
+    <div ng-switch-when="screen2_state"> Schritt 2: {{ artikel.selected.id }}{{ artikel.selected.name1 }}</div>
     <div ng-switch-when="screen3_state"> Schritt 3</div>
 </div>

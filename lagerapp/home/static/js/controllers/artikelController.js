@@ -40,6 +40,8 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
     this.setPage = setPage;
     this.setOrder = setOrder;
     this.getOrder = getOrder;
+    this.select = select;
+    this.selected = null;
     this.state = 'screen1_state';
     // 5. Clean up
     $scope.$on('$destroy', function () {
@@ -64,6 +66,10 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
         });
     }
 
+    function select(product) {
+        controller.selected = product;
+        controller.state = 'screen2_state';
+    }
     function resetPage() {
         controller.page = 1;
     }
