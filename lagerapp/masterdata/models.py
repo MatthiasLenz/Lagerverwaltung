@@ -115,7 +115,10 @@ class ProductSupplier(models.Model):
     prodid = models.ForeignKey(Product, db_column='ProdID', blank=True, null=True, related_name='supplier')
     supplierid = models.CharField(db_column='SupplierID', max_length=15, blank=True)
     purchaseprice = models.FloatField(db_column='PurchasePrice', blank=True, null=True)
-
+    comment = models.CharField(db_column='Brand', max_length=35, blank=True,
+                               null=True)  # renamed, because it is being used as a comment field
+    unit = models.CharField(db_column='Unit', max_length=5, blank=True, null=True)
+    id = models.CharField(db_column='ID', max_length=25, blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'ProductSupplier'

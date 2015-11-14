@@ -52,7 +52,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 class ProductSupplierSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ProductSupplier
-        fields = ('url', 'prodid', 'supplierid', 'purchaseprice')
+        fields = ('url', 'prodid', 'supplierid', 'purchaseprice', 'comment', 'unit', 'id')
 
 
 from collections import OrderedDict

@@ -3,5 +3,6 @@
 Artikel: {{ bestellen.selected.id }}{{ bestellen.selected.name1 }}
 <br/><br/>
 <div ng-repeat="supplier in step2.suppliers">
+    {{ supplier.supplierid }} Preis: {{ supplier.purchaseprice }} €
     <pre>{{ supplier | json }}</pre>
 </div>
