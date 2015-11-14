@@ -1,8 +1,14 @@
 <h2>Schritt 2: Lieferant auswählen</h2>
 
-Artikel: {{ bestellen.selected.id }}{{ bestellen.selected.name1 }}
+Artikel: {{ bestellen.selected.id }} {{ bestellen.selected.name1 }}
 <br/><br/>
 <div ng-repeat="supplier in step2.suppliers">
-    {{ supplier.supplierid }} Preis: {{ supplier.purchaseprice }} €
-    <pre>{{ supplier | json }}</pre>
+    <div class="panel" ng-class="{'panel-primary': true}">
+        {{ supplier.supplierid }}
+
+        <div class="panel-body">
+            <p>Preis: {{ supplier.purchaseprice }} €</p>
+            <span ng-show="supplier.comment && supplier.comment!=''">Kommentar: {{ supplier.comment }}</span>
+        </div>
+    </div>
 </div>
