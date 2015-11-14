@@ -6,14 +6,7 @@ directive('bestellenBase', function () {
             info: '=testattr'
         },
         templateUrl: 'static/bestellen/directives/base.html',
-        controller: [function () {
-            var ctrl = this;
-            this.state = 'best1';
-            this.select = function (product) {
-                ctrl.selected = product;
-                ctrl.state = 'best2';
-            }
-        }],
+        controller: 'BestellungCtrl',
         controllerAs: 'bestellen'
     };
 });

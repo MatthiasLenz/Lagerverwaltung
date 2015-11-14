@@ -1,3 +1,4 @@
+angular.module('baseApp.bestellen', []);
 angular.module('baseApp', ['ngResource', 'baseApp.Services', 'docsTimeDirective', 'baseApp.bestellen']).
 
 config(["$locationProvider", function ($locationProvider) {

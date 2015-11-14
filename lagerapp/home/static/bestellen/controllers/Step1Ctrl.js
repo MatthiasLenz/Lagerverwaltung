@@ -1,4 +1,4 @@
-angular.module('baseApp.bestellen', []).
+angular.module('baseApp.bestellen').
 controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     // 1. Self-reference
     var controller = this;

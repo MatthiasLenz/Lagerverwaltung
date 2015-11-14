@@ -119,7 +119,7 @@ class ProductSupplier(models.Model):
     class Meta:
         managed = False
         db_table = 'ProductSupplier'
-        app_label = 'hit_01_masterdata_01_masterdata'
+        app_label = 'hit_01_masterdata'
 
 
 class PurchaseDoc(models.Model):
