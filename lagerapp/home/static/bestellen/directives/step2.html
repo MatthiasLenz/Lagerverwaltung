@@ -1,7 +1,7 @@
-Schritt 2: Lieferant auswählen
-<br/>
-Artikel: {{ bestellen.selected.id }}{{ bestellen.selected.name1 }} {{ bestellen.selected.supplier }}
-<br/>
-<div ng-repeat="supplier in bestellen.selected.supplier">
-    {{ supplier }}
+<h2>Schritt 2: Lieferant auswählen</h2>
+
+Artikel: {{ bestellen.selected.id }}{{ bestellen.selected.name1 }}
+<br/><br/>
+<div ng-repeat="supplier in step2.suppliers">
+    <pre>{{ supplier | json }}</pre>
 </div>
