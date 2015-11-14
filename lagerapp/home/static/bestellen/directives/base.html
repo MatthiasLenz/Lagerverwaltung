@@ -1,0 +1,7 @@
+<select ng-model="bestellen.state"
+        ng-options="option for option in ['best1','best2', 'best3']"></select>
+<div ng-switch="bestellen.state">
+    <div ng-switch-when="best1" step1></div>
+    <div ng-switch-when="best2" step2></div>
+    <div ng-switch-when="best3"> Schritt 3</div>
+</div>

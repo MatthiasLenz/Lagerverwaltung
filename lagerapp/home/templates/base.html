@@ -11,16 +11,21 @@
     <title>Lagermodul</title>
 {% endverbatim %}
 {% load staticfiles %}
-<script src="{% static "js/base.js" %}"></script>
-<script src="{% static "js/controllers/baseController.js" %}"></script>
-<script src="{% static "js/controllers/artikelController.js" %}"></script>
-<script src="{% static "js/controllers/bestellungController.js" %}"></script>
-<script src="{% static "js/services/natureService.js" %}"></script>
-<script src="{% static "js/services/productService.js" %}"></script>
-<script src="{% static "js/services/bestellungenService.js" %}"></script>
-<script src="{% static "js/directives/docsTimeDirective.js" %}"></script>
-<script src="{% static "js/directives/artikelDirective.js" %}"></script>
-<script src="{% static "js/directives/bestellungDirective.js" %}"></script>
+<script src="{% static "base.js" %}"></script>
+<script src="{% static "common/controllers/BaseCtrl.js" %}"></script>
+<script src="{% static "common/directives/docsTimeDirective.js" %}"></script>
+<script src="{% static "common/directives/head.js" %}"></script>
+<script src="{% static "common/services/natureService.js" %}"></script>
+<script src="{% static "common/services/productService.js" %}"></script>
+<script src="{% static "common/services/bestellungenService.js" %}"></script>
+
+<script src="{% static "bestellen/controllers/Step1Ctrl.js" %}"></script>
+<script src="{% static "bestellen/directives/base.js" %}"></script>
+<script src="{% static "bestellen/directives/step1.js" %}"></script>
+<script src="{% static "bestellen/directives/step2.js" %}"></script>
+
+<script src="{% static "bestellungen/directives/bestellungen.js" %}"></script>
+
 <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
 </head>
@@ -36,7 +41,7 @@
         </li>
     </ul>
     <div ng-switch="cc.state">
-        <div ng-switch-when="productlist_state" artikel-directive></div>
+        <div ng-switch-when="productlist_state" bestellen-base></div>
         <div ng-switch-when="purchasedoc_state" bestellung-directive></div>
     </div>
 </div>

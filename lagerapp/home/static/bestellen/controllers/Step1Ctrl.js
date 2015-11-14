@@ -1,5 +1,5 @@
-angular.module('baseApp').
-controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
+angular.module('baseApp.bestellen', []).
+controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     // 1. Self-reference
     var controller = this;
 
@@ -9,10 +9,10 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
 
     // 3. Do scope stuff
     // 3a. Set up watchers on the scope.
-    $scope.$watch('[artikel.page,artikel.ordering]', function () {
+    $scope.$watch('[step1.page,step1.ordering]', function () {
         updateList(false);
     });
-    $scope.$watch('[artikel.query,artikel.resourcenatureid,artikel.perPage]', function () {
+    $scope.$watch('[step1.query,step1.resourcenatureid,step1.perPage]', function () {
         //search and filter operations change the resulting size
         resetPage();
         updateList();
@@ -42,7 +42,6 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
     this.getOrder = getOrder;
     this.select = select;
     this.selected = null;
-    this.state = 'screen1_state';
     // 5. Clean up
     $scope.$on('$destroy', function () {
         // Do whatever cleanup might be necessary

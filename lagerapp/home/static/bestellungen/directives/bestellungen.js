@@ -1,7 +1,7 @@
 angular.module('baseApp').
-directive('bestellungDirective', function () {
+directive('bestellungen', function () {
     return {
-        templateUrl: 'static/html/bestellunglist.html',
+        templateUrl: 'static/html/bestellungen.html',
         controller: ['$scope', 'bestellungenService', function ($scope, bestellungenService) {
             var controller = this;
             controller.list = bestellungenService.bestellungen_list;

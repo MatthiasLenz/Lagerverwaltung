@@ -1,0 +1,70 @@
+<!--<form ng-submit="updateList()">-->
+<form role="form">
+    Suche: <input style="width:30%;" class="form-control" placeholder="ID, Bezeichnung oder Artikelgruppe"
+                  ng-model="step1.query" ng-model-options="{debounce: 500}">
+</form>
+<br/>
+<table class="table">
+    <thead>
+    <th ng-click="step1.setOrder('id')" ng-class="{sort: getOrder() == 'id', sortable:true}">
+        ID <b ng-class="step1.sortDirection"></b>
+    </th>
+    <th></th>
+    <th ng-click="step1.setOrder('name1')" ng-class="{sort: step1.getOrder() == 'name1', sortable:true}">
+        Bezeichnung <b ng-class="step1.sortDirection"></b>
+    </th>
+    <th>Einheit</th>
+    <th ng-click="step1.setOrder('stockcur')"
+        ng-class="{sort: step1.getOrder() == 'stockcur', sortable:true}">
+        Stock verfügbar <b ng-class="step1.sortDirection"></b>
+    </th>
+    <th ng-click="step1.setOrder('netpurchaseprice')"
+        ng-class="{sort: step1.getOrder() == 'netpurchaseprice', sortable:true}">
+        Netto Preis <b ng-class="step1.sortDirection"></b>
+    </th>
+    <th ng-click="step1.setOrder('defaultsupplier')"
+        ng-class="{sort: step1.getOrder() == 'defaultsupplier', sortable:true}">
+        Standard Lieferant <b ng-class="step1.sortDirection"></b>
+    </th>
+    <th>
+        Artikelgruppe <select style="width:100px;" ng-model="step1.resourcenatureid"
+                              ng-options="nature.id as nature.name group by nature.title for nature in step1.resourcenatureids"></select>
+    </th>
+    </thead>
+    <tbody>
+    <tr ng-repeat="item in step1.items" ng-class="{title: item.title}">
+        <td><a target="_self" ng-href="{{ item.url }}">{{ item.id }}</a></td>
+        <td><span ng-class="{hide:item.title}"><button ng-click="bestellen.select(item)">auswählen</button></span>
+        </td>
+        <td>{{ item.name1 }}</td>
+        <td><span ng-class="{hide:item.title}">{{ item.unit1 }}</span></td>
+        <td><span ng-class="{hide:item.title}">{{ item.stockcur }}</span></td>
+        <td><span ng-class="{hide:item.title}">{{ item.netpurchaseprice }}</span></td>
+        <td><span ng-class="{hide:item.title}">{{ item.defaultsupplier }}</span></td>
+        <td><span ng-class="{hide:item.title}"><a target="_self"
+                                                  ng-href="{{ item.resourcenatureid }}">{{ item.nature }}</a></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<ul class="pager">
+    <li>
+        <select style="width:100px;" ng-model="step1.perPage"
+                ng-options="number for number in [10,20,50,100,200]">
+        </select>
+    </li>
+
+
+    <li ng-click="step1.previousPage()" ng-class="{disabled:step1.page == 1}">
+        <a>Previous</a>
+    </li>
+    <li ng-click="step1.nextPage()" ng-class="{disabled:step1.page==step1.lastPage}">
+        <a>Next</a>
+    </li>
+    <li>
+        <input type="text" name="page" ng-model="step1.page"
+               style="width: 30px;"><label>/{{ step1.lastPage }}</label>
+    </li>
+</ul>
+Directive inner scope: {{ solid }}
