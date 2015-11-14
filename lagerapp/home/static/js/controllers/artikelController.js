@@ -40,7 +40,7 @@ controller('ArtikelCtrl', ['$scope', '$injector', function ($scope, $injector) {
     this.setPage = setPage;
     this.setOrder = setOrder;
     this.getOrder = getOrder;
-
+    this.state = 'screen1_state';
     // 5. Clean up
     $scope.$on('$destroy', function () {
         // Do whatever cleanup might be necessary

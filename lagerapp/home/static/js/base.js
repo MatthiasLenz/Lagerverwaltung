@@ -7,46 +7,7 @@ config(["$locationProvider", function ($locationProvider) {
         requireBase: false
     });
 }]).
-    directive('tabMenu', function () {
-        return {
-            restrict: 'E',
-            transclude: true,
-            scope: {},
-            controller: ['$scope', function ($scope) {
-                var panes = $scope.panes = [];
-
-                $scope.select = function (pane) {
-                    angular.forEach(panes, function (pane) {
-                        pane.selected = false;
-                    });
-                    pane.selected = true;
-                };
-
-                this.addPane = function (pane) {
-                    if (panes.length === 0) {
-                        $scope.select(pane);
-                    }
-                    panes.push(pane);
-                };
-            }],
-            templateUrl: 'static/html/tab-menu.html',
-        };
-    })
-    .directive('tabPane', function () {
-        return {
-            require: '^tabMenu', // look for controller 'tabMenu' in parent
-            restrict: 'E',
-            transclude: true,
-            scope: {
-                title: '@'
-            },
-            link: function (scope, element, attrs, controller) {  //4th argument is the controller from require
-                controller.addPane(scope);
-            },
-            templateUrl: 'static/html/tab-pane.html'
-        };
-    })
-    .directive('headContent', function () {
+directive('headContent', function () {
         return {
             templateUrl: 'static/html/head.html',
             controller: [function () {
@@ -54,7 +15,7 @@ config(["$locationProvider", function ($locationProvider) {
             }],
             controllerAs: 'head'
         }
-    });
+});
 
 /*    How to transform a query to a paginated resource, so that it returns the results directly
  artikelApp.factory("Product",

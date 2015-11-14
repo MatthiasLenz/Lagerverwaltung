@@ -1,6 +1,7 @@
 angular.module('baseApp').
 directive('artikelDirective', function () {
     return {
+        restrict: 'A',
         scope: {
             info: '=testattr'
         },

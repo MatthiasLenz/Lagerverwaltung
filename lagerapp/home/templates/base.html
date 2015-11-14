@@ -12,6 +12,7 @@
 {% endverbatim %}
 {% load staticfiles %}
 <script src="{% static "js/base.js" %}"></script>
+<script src="{% static "js/controllers/baseController.js" %}"></script>
 <script src="{% static "js/controllers/artikelController.js" %}"></script>
 <script src="{% static "js/controllers/bestellungController.js" %}"></script>
 <script src="{% static "js/services/natureService.js" %}"></script>
@@ -28,14 +29,17 @@
 
 <head-content></head-content>
 
-<tab-menu>
-    <tab-pane title="Artikelauswahl">
-        <artikel-directive info="solid"></artikel-directive>
-    </tab-pane>
-    <tab-pane title="offene Bestellungen">
-        <bestellung-directive></bestellung-directive>
-    </tab-pane>
-</tab-menu>
+<div ng-controller="BaseCtrl as cc">
+    <ul class="nav nav-tabs">
+        <li ng-repeat="state in ['productlist_state','purchasedoc_state']" ng-class="{active: cc.isActive(state)}">
+            <a href="" ng-click="cc.setState(state)">{{ state }}</a>
+        </li>
+    </ul>
+    <div ng-switch="cc.state">
+        <div ng-switch-when="productlist_state" artikel-directive></div>
+        <div ng-switch-when="purchasedoc_state" bestellung-directive></div>
+    </div>
+</div>
 
 </body>
 </html>

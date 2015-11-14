@@ -1,65 +1,75 @@
-<div>
-  <!--<form ng-submit="updateList()">-->
-  <form  role="form">
-      Suche: <input style="width:30%;" class="form-control" placeholder="ID, Bezeichnung oder Artikelgruppe"
-                    ng-model="artikel.query" ng-model-options="{debounce: 500}">
- </form>
-  <br/>
+<select ng-model="artikel.state"
+        ng-options="option for option in ['screen1_state','screen2_state', 'screen3_state']"></select>
+<div ng-switch="artikel.state">
+    <div ng-switch-when="screen1_state">
+        <!--<form ng-submit="updateList()">-->
+        <form role="form">
+            Suche: <input style="width:30%;" class="form-control" placeholder="ID, Bezeichnung oder Artikelgruppe"
+                          ng-model="artikel.query" ng-model-options="{debounce: 500}">
+        </form>
+        <br/>
+        <table class="table">
+            <thead>
+            <th ng-click="artikel.setOrder('id')" ng-class="{sort: getOrder() == 'id', sortable:true}">
+                ID <b ng-class="artikel.sortDirection"></b>
+            </th>
+            <th ng-click="artikel.setOrder('name1')" ng-class="{sort: artikel.getOrder() == 'name1', sortable:true}">
+                Bezeichnung <b ng-class="artikel.sortDirection"></b>
+            </th>
+            <th>Einheit</th>
+            <th ng-click="artikel.setOrder('stockcur')"
+                ng-class="{sort: artikel.getOrder() == 'stockcur', sortable:true}">
+                Stock verfügbar <b ng-class="artikel.sortDirection"></b>
+            </th>
+            <th ng-click="artikel.setOrder('netpurchaseprice')"
+                ng-class="{sort: artikel.getOrder() == 'netpurchaseprice', sortable:true}">
+                Netto Preis <b ng-class="artikel.sortDirection"></b>
+            </th>
+            <th ng-click="artikel.setOrder('defaultsupplier')"
+                ng-class="{sort: artikel.getOrder() == 'defaultsupplier', sortable:true}">
+                Standard Lieferant <b ng-class="artikel.sortDirection"></b>
+            </th>
+            <th>
+                Artikelgruppe <select style="width:100px;" ng-model="artikel.resourcenatureid"
+                                      ng-options="nature.id as nature.name group by nature.title for nature in artikel.resourcenatureids"></select>
+            </th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in artikel.items" ng-class="{title: item.title}">
+                <td><a target="_self" ng-href="{{ item.url }}">{{ item.id }}</a></td>
+                <td>{{ item.name1 }}</td>
+                <td><span ng-class="{hide:item.title}">{{ item.unit1 }}</span></td>
+                <td><span ng-class="{hide:item.title}">{{ item.stockcur }}</span></td>
+                <td><span ng-class="{hide:item.title}">{{ item.netpurchaseprice }}</span></td>
+                <td><span ng-class="{hide:item.title}">{{ item.defaultsupplier }}</span></td>
+                <td><span ng-class="{hide:item.title}"><a target="_self"
+                                                          ng-href="{{ item.resourcenatureid }}">{{ item.nature }}</a></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
 
-<table class="table">
-  <thead>
-    <th ng-click="artikel.setOrder('id')" ng-class="{sort: getOrder() == 'id', sortable:true}">
-        ID <b ng-class="artikel.sortDirection"></b>
-    </th>
-    <th ng-click="artikel.setOrder('name1')" ng-class="{sort: artikel.getOrder() == 'name1', sortable:true}">
-        Bezeichnung <b ng-class="artikel.sortDirection"></b>
-    </th>
-	<th>Einheit</th>
-	<th ng-click="artikel.setOrder('stockcur')" ng-class="{sort: artikel.getOrder() == 'stockcur', sortable:true}">
-        Stock verfügbar <b ng-class="artikel.sortDirection"></b>
-    </th>
-	<th ng-click="artikel.setOrder('netpurchaseprice')" ng-class="{sort: artikel.getOrder() == 'netpurchaseprice', sortable:true}">
-        Netto Preis <b ng-class="artikel.sortDirection"></b>
-    </th>
-	<th ng-click="artikel.setOrder('defaultsupplier')" ng-class="{sort: artikel.getOrder() == 'defaultsupplier', sortable:true}">
-        Standard Lieferant <b ng-class="artikel.sortDirection"></b>
-    </th>
-	<th>
-      Artikelgruppe <select style="width:100px;" ng-model="artikel.resourcenatureid" ng-options="nature.id as nature.name group by nature.title for nature in artikel.resourcenatureids"></select>
-    </th>
-  </thead>
-  <tbody>
-    <tr ng-repeat="item in artikel.items" ng-class="{title: item.title}">
-        <td><a target="_self" ng-href="{{ item.url }}">{{ item.id }}</a></td>
-      <td>{{item.name1}}</td>
-	  <td><span ng-class="{hide:item.title}">{{item.unit1}}</span></td> 
-	  <td><span ng-class="{hide:item.title}">{{item.stockcur}}</span></td>
-	  <td><span ng-class="{hide:item.title}">{{item.netpurchaseprice}}</span></td>
-	  <td><span ng-class="{hide:item.title}">{{item.defaultsupplier}}</span></td>
-        <td><span ng-class="{hide:item.title}"><a target="_self"
-                                                  ng-href="{{ item.resourcenatureid }}">{{ item.nature }}</a></span>
-        </td>
-    </tr>
-  </tbody>
-  </table>
+        <ul class="pager">
+            <li>
+                <select style="width:100px;" ng-model="artikel.perPage"
+                        ng-options="number for number in [10,20,50,100,200]">
+                </select>
+            </li>
 
-  <ul class="pager">
-    <li>
-	<select style="width:100px;" ng-model="artikel.perPage" 
-		ng-options="number for number in [10,20,50,100,200]">
-	</select>
-    </li>
 
-   
-    <li ng-click="artikel.previousPage()" ng-class="{disabled:artikel.page == 1}">
-      <a>Previous</a>
-    </li>
-    <li ng-click="artikel.nextPage()" ng-class="{disabled:artikel.page==artikel.lastPage}">
-      <a>Next</a>
-    </li>
-    <li>
-	 <input  type="text" name="page" ng-model="artikel.page" style="width: 30px;"><label>/{{artikel.lastPage}}</label>
-    </li>
-  </ul>
-    Directive inner scope: {{ solid }}
+            <li ng-click="artikel.previousPage()" ng-class="{disabled:artikel.page == 1}">
+                <a>Previous</a>
+            </li>
+            <li ng-click="artikel.nextPage()" ng-class="{disabled:artikel.page==artikel.lastPage}">
+                <a>Next</a>
+            </li>
+            <li>
+                <input type="text" name="page" ng-model="artikel.page"
+                       style="width: 30px;"><label>/{{ artikel.lastPage }}</label>
+            </li>
+        </ul>
+        Directive inner scope: {{ solid }}
+    </div>
+    <div ng-switch-when="screen2_state"> Schritt 2</div>
+    <div ng-switch-when="screen3_state"> Schritt 3</div>
 </div>
