@@ -34,7 +34,7 @@
     <tbody>
     <tr ng-repeat="item in step1.items" ng-class="{title: item.title}">
         <td><a target="_self" ng-href="{{ item.url }}">{{ item.id }}</a></td>
-        <td><span ng-class="{hide:item.title}"><button ng-click="bestellen.select(item)">auswählen</button></span>
+        <td><span ng-class="{hide:item.title}"><button ng-click="bestellen.selectprod(item)">auswählen</button></span>
         </td>
         <td>{{ item.name1 }}</td>
         <td><span ng-class="{hide:item.title}">{{ item.unit1 }}</span></td>

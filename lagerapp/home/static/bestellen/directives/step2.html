@@ -1,14 +1,20 @@
 <h2>Schritt 2: Lieferant auswählen</h2>
 
-Artikel: {{ bestellen.selected.id }} {{ bestellen.selected.name1 }}
+Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}
 <br/><br/>
-<div ng-repeat="supplier in step2.suppliers">
-    <div class="panel" ng-class="{'panel-primary': true}">
-        {{ supplier.supplierid }}
-
+<div class="panel-group" ng-repeat="supplier in step2.suppliers | orderBy:'purchaseprice'">
+    <div class="panel" ng-class="{'panel-primary': supplier.default, 'panel-info' : !supplier.default }">
+        <div class="panel-heading">{{ supplier.name }}<span ng-show="supplier.default"> (Standardlieferant)</span></div>
         <div class="panel-body">
-            <p>Preis: {{ supplier.purchaseprice }} €</p>
+            <p><b>Preis: {{ supplier.purchaseprice | currency:""}} €</b></p>
+
+            <p>{{ supplier.address }}</p>
+
+            <p>{{ supplier.zipcode }} {{ supplier.city }}</p>
+
+            <p>{{ supplier.phone }}</p>
             <span ng-show="supplier.comment && supplier.comment!=''">Kommentar: {{ supplier.comment }}</span>
+            <button ng-click="bestellen.selectsupp(supplier)">auswählen</button>
         </div>
     </div>
 </div>

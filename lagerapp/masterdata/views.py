@@ -1,8 +1,7 @@
 #encoding=UTF-8
-from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc
+from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc, ProductPacking
 from masterdata.serializers import SupplierSerializer, StockSerializer, StockDataSerializer, ProductSerializer, \
-    NatureSerializer, \
-    FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer
+    NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, ProductPackingSerializer
 from rest_framework import viewsets, mixins
 from rest_framework import pagination
 from rest_framework import filters
@@ -53,6 +52,15 @@ class StockViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
+
+
+class ProductPackingViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    lookup_value_regex = '[-A-Za-z0-9.]*'
+    queryset = ProductPacking.objects.all()
+    serializer_class = ProductPackingSerializer
 
 
 class ProductSupplierViewSet(viewsets.ReadOnlyModelViewSet):

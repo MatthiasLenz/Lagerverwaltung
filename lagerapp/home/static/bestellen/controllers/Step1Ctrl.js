@@ -40,8 +40,6 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     this.setPage = setPage;
     this.setOrder = setOrder;
     this.getOrder = getOrder;
-    this.select = select;
-    this.selected = null;
     // 5. Clean up
     $scope.$on('$destroy', function () {
         // Do whatever cleanup might be necessary
@@ -65,10 +63,6 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
         });
     }
 
-    function select(product) {
-        controller.selected = product;
-        controller.state = 'screen2_state';
-    }
     function resetPage() {
         controller.page = 1;
     }

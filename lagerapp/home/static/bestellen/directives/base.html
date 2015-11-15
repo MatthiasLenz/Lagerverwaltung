@@ -3,5 +3,8 @@
 <div ng-switch="bestellen.state">
     <div ng-switch-when="best1" step1></div>
     <div ng-switch-when="best2" step2></div>
-    <div ng-switch-when="best3"> Schritt 3</div>
+    <div ng-switch-when="best3" step3>
+        <pre>{{ bestellen.selectedsupp|json }}</pre>
+        <pre>{{ bestellen.selectedprod|json }}</pre>
+    </div>
 </div>

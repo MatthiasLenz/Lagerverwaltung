@@ -3,8 +3,12 @@ controller('BestellungCtrl', [function () {
     var ctrl = this;
     this.state = 'best1';
     window.bestellen = this;
-    this.select = function (product) {
-        ctrl.selected = product;
+    this.selectprod = function (product) {
+        ctrl.selectedprod = product;
         ctrl.state = 'best2';
-    }
+    };
+    this.selectsupp = function (supplier) {
+        ctrl.selectedsupp = supplier;
+        ctrl.state = 'best3';
+    };
 }]);

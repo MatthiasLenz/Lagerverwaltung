@@ -9,6 +9,7 @@ router.register(r'stock', views.StockViewSet)
 router.register(r'stockdata', views.StockDataViewSet)
 router.register(r'nature', views.NatureViewSet)
 router.register(r'product', views.ProductViewSet, base_name='product')
+router.register(r'productpacking', views.ProductPackingViewSet, base_name='productpacking')
 router.register(r'productsupplier', views.ProductSupplierViewSet, base_name='productsupplier')
 router.register(r'purchasedoc', views.PurchaseDocViewSet)
 # The API URLs are now determined automatically by the router.

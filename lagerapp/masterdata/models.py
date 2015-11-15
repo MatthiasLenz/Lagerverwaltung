@@ -132,6 +132,19 @@ class Product(models.Model):
         db_table = 'Product'
         app_label = 'hit_01_masterdata'
 
+
+class ProductPacking(models.Model):
+    rowid = models.IntegerField(db_column='RowID', primary_key=True)
+    prodid = models.ForeignKey(Product, db_column='ProdID', blank=True, null=True, related_name='packing')
+    name = models.CharField(db_column='Name', max_length=40, blank=True, null=True)
+    quantity = models.FloatField(db_column='Quantity', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'ProductPacking'
+        app_label = 'hit_01_masterdata'
+
+
 class ProductSupplier(models.Model):
     rowid = models.IntegerField(db_column='RowID', primary_key=True)
     prodid = models.ForeignKey(Product, db_column='ProdID', blank=True, null=True, related_name='supplier')

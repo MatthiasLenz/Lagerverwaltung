@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc
+from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, PurchaseDoc
 
 # from django.contrib.auth.models import User
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
@@ -49,6 +49,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
     supplier = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productsupplier-detail")
+    packing = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productpacking-detail")
     # defaultsupplier = serializers.SlugRelatedField(read_only=True, allow_null=True, slug_field='namea')
     defaultsupplier = serializers.HyperlinkedRelatedField(read_only=True, allow_null=True, view_name="supplier-detail")
     class Meta:
@@ -56,8 +57,13 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'url', 'id', 'name1', 'detailedname1', 'title', 'marked', 'unit1', 'grosspurchaseprice', 'netpurchaseprice',
             'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
-            'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid', 'nature', 'supplier')
+            'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid', 'nature', 'supplier', 'packing')
 
+
+class ProductPackingSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ProductPacking
+        fields = ('url', 'rowid', 'prodid', 'name', 'quantity')
 
 class ProductSupplierSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
