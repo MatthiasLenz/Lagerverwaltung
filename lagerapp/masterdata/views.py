@@ -1,6 +1,7 @@
 #encoding=UTF-8
-from masterdata.models import Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc
-from masterdata.serializers import StockSerializer, StockDataSerializer, ProductSerializer, NatureSerializer, \
+from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc
+from masterdata.serializers import SupplierSerializer, StockSerializer, StockDataSerializer, ProductSerializer, \
+    NatureSerializer, \
     FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer
 from rest_framework import viewsets, mixins
 from rest_framework import pagination
@@ -35,7 +36,17 @@ class CustomSearchFilter(filters.SearchFilter):
             queryset = queryset.filter(reduce(filters.operator.or_, queries))
 
         return queryset
-        
+
+
+class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    lookup_value_regex = '[-A-Za-z0-9.]*'
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+
+
 class StockViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
@@ -98,8 +109,7 @@ class ProductViewSet(mixins.RetrieveModelMixin,
     """
     lookup_value_regex = '[-A-Za-z0-9.]*' #custom, because we are using dots in our product ids 
 
-    queryset = Product.objects.all().prefetch_related('nature')
-    print(queryset.query)
+    queryset = Product.objects.prefetch_related('nature').prefetch_related('defaultsupplier')
     serializer_class = ProductSerializer
 
     pagination_class = LargeResultsSetPagination

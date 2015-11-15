@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
+router.register(r'supplier', views.SupplierViewSet, base_name='supplier')
 router.register(r'stock', views.StockViewSet)
 router.register(r'stockdata', views.StockDataViewSet)
 router.register(r'nature', views.NatureViewSet)

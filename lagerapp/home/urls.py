@@ -5,5 +5,4 @@ from home.views import BasePageView
 #catch all url pattern
 urlpatterns = [
     url(r'^$', BasePageView.as_view(), name='base'),
-    url(r'^.*/$', BasePageView.as_view(), name='base'),
 ]

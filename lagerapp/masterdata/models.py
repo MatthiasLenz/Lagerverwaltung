@@ -3,6 +3,28 @@ from django.db import models
 """Wichtig, wenn man in serializer related fields benutzen möchte, dann muss man dafür hier im model ein field anlegen. In der rest framework beschreibung wird das nicht gemacht,
    vielleicht macht es einen Unterschied, wenn man nicht managed = false einstellt.
 """
+
+
+class Supplier(models.Model):
+    id = models.CharField(db_column='ID', max_length=15, primary_key=True)
+    namea = models.CharField(db_column='NameA', max_length=30, blank=True)
+    nameb = models.CharField(db_column='NameB', max_length=30, blank=True)
+    address = models.CharField(db_column='Address', max_length=255, blank=True)
+    zipcode = models.CharField(db_column='ZipCode', max_length=8, blank=True)
+    city = models.CharField(db_column='City', max_length=30, blank=True)
+    country = models.CharField(db_column='NameB', max_length=3, blank=True)
+    phone = models.CharField(db_column='MainPhone', max_length=25, blank=True)
+    fax = models.CharField(db_column='MainFax', max_length=25, blank=True)
+    vatnum = models.CharField(db_column='VATNumber', max_length=20, blank=True)
+    active = models.NullBooleanField(db_column='Active')
+    numberorders = models.SmallIntegerField(db_column='NumberOrders', blank=True, null=True)
+    bookinid = models.CharField(db_column='FZ_BOOKINID', max_length=15, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Supplier'
+        app_label = 'hit_01_bookkeeping'
+
 class Stock(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True) # Field name made lowercase.
     name = models.CharField(db_column='Name', max_length=40, blank=True) # Field name made lowercase.
@@ -83,7 +105,6 @@ class Product(models.Model):
     shopprice = models.FloatField(db_column='ShopPrice', blank=True, null=True) # Field name made lowercase.
     additionalcharges = models.FloatField(db_column='AdditionalCharges', blank=True, null=True) # Field name made lowercase.
     expirationdate = models.DateTimeField(db_column='ExpirationDate', blank=True, null=True) # Field name made lowercase.
-    defaultsupplier = models.CharField(db_column='DefaultSupplier', max_length=15, blank=True) # Field name made lowercase.
     salespriceforquot = models.NullBooleanField(db_column='SalesPriceForQuot') # Field name made lowercase.
     #resourcenatureid = models.CharField(db_column='ResourceNatureID', max_length=15, blank=True) # Field name made lowercase.
     resourcenatureid =  models.ForeignKey(Nature, db_column='ResourceNatureID', blank=True, null=True, related_name='products') # Field name made lowercase.
@@ -105,6 +126,7 @@ class Product(models.Model):
     manufacturer = models.CharField(db_column='Manufacturer', max_length=25, blank=True) # Field name made lowercase.
     #wenn man im serializer ein feld hinzufügt, dann muss das auch hier im Model vorhanden sein, man kann ein Feld aus der Datenbank dazu ein zweites mal verwenden.
     nature =  models.ForeignKey(Nature, db_column='ResourceNatureID', blank=True, null=True) # Field name made lowercase.
+    defaultsupplier = models.ForeignKey(Supplier, db_column='DefaultSupplier', blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'Product'
@@ -113,7 +135,7 @@ class Product(models.Model):
 class ProductSupplier(models.Model):
     rowid = models.IntegerField(db_column='RowID', primary_key=True)
     prodid = models.ForeignKey(Product, db_column='ProdID', blank=True, null=True, related_name='supplier')
-    supplierid = models.CharField(db_column='SupplierID', max_length=15, blank=True)
+    supplierid = models.ForeignKey(Supplier, db_column='SupplierID', blank=True, null=True)
     purchaseprice = models.FloatField(db_column='PurchasePrice', blank=True, null=True)
     comment = models.CharField(db_column='Brand', max_length=35, blank=True,
                                null=True)  # renamed, because it is being used as a comment field
@@ -130,7 +152,7 @@ class PurchaseDoc(models.Model):
     responsible = models.CharField(db_column='Responsible', max_length=15, blank=True, null=True)
     doctype = models.SmallIntegerField(db_column='DocType', blank=True, null=True)
     module = models.SmallIntegerField(db_column='Module', blank=True, null=True)
-    supplierid = models.CharField(db_column='SupplierID', max_length=15, blank=True, null=True)
+    supplierid = models.ForeignKey(Supplier, db_column='SupplierID', blank=True, null=True)
     status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
 

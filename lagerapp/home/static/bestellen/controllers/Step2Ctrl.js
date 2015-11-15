@@ -15,7 +15,9 @@ controller('Step2Ctrl', ['$http', '$scope', function ($http, $scope) {
     controller.product.supplier.forEach(
         function (entry) {
             $http.get(entry).then(function (response) {
-                controller.suppliers.push(response.data);
+                $http.get(response.data).then(function (response) {
+                    controller.suppliers.push({"name": response.namea});
+                });
             });
         }
     );

@@ -1,15 +1,24 @@
 from rest_framework import serializers
-
-from masterdata.models import Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc
-
+from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc
 
 # from django.contrib.auth.models import User
+class SupplierSerializer(serializers.HyperlinkedModelSerializer):
+    def __init__(self, *args, **kwargs):
+        # Only used for debugging. Extend init to print repr of Serializer instance.
+        super(SupplierSerializer, self).__init__(*args, **kwargs)
+        print(repr(self))
+
+    class Meta:
+        model = Supplier
+        fields = (
+        'url', 'id', 'namea', 'nameb', 'address', 'zipcode', 'city', 'country', 'phone', 'fax', 'vatnum', 'active',
+        'numberorders', 'bookinid')
 
 
 class StockSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Stock
-        fields = ('id', 'name', 'stockkeeper', 'type', 'defaultlocationid', 'tstamp')
+        fields = ('url', 'id', 'name', 'stockkeeper', 'type', 'defaultlocationid', 'tstamp')
 
 
 class StockDataSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,14 +42,15 @@ class NatureSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
-    """def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         #Only used for debugging. Extend init to print repr of Serializer instance.
         super(ProductSerializer, self).__init__(*args, **kwargs)
-        print(repr(self))"""
+        print(repr(self))
 
     nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
     supplier = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productsupplier-detail")
-
+    # defaultsupplier = serializers.SlugRelatedField(read_only=True, allow_null=True, slug_field='namea')
+    defaultsupplier = serializers.HyperlinkedRelatedField(read_only=True, allow_null=True, view_name="supplier-detail")
     class Meta:
         model = Product
         fields = (

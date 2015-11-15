@@ -139,6 +139,8 @@ class HitRouter(object):
         """
         Attempts to read stock models go to hit_db.
         """
+        if model._meta.app_label == 'hit_01_bookkeeping':
+            return 'hit_01_bookkeeping'
         if model._meta.app_label == 'hit_01_masterdata':
             return 'hit_01_masterdata'
         if model._meta.app_label == 'hit_01_purchase':
