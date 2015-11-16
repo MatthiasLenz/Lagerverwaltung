@@ -25,6 +25,7 @@
                 ({{ step3.supplier.opendoc.docdate |date:'d. MMM yyyy' }})
             </div>
             <div class="panel-body">
+                <p>Betrag: {{ step3.supplier.opendoc.data | total:'amount' | currency:""}} €</p>
                 <table class="table" ng-show="step3.showDetail">
                     <thead>
                     <th>Name</th>
@@ -34,7 +35,7 @@
                     <th>Kosten</th>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="item in step3.docdata">
+                    <tr ng-repeat="item in step3.supplier.opendoc.data">
                         <td> {{ item.name }}</td>
                         <td> {{ item.quantity }}</td>
                         <td> {{ item.unit }}</td>
@@ -43,7 +44,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <p><a ng-click="step3.toggleDetail()">Details ansehen &raquo;</a></p>
+                <p><a ng-click="step3.toggleDetail()">{{ step3.showText }}</a></p>
             </div>
         </div>
 

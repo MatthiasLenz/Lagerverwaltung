@@ -5,15 +5,11 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
     controller.changeIn = changeIn;
     controller.toggleDetail = toggleDetail;
     controller.showDetail = false;
+    controller.showText = "Details ansehen »";
     controller.product = $scope.bestellen.selectedprod;
     controller.supplier = $scope.bestellen.selectedsupp;
     controller.packings = {"base": {"name": controller.product.unit1, "quantity": 1, "orderAmount": 0}};
-    controller.docdata = [];
-    controller.supplier.opendoc.data.forEach(function (entry) {
-        $http.get(entry).then(function (response) {
-            controller.docdata.push(response.data);
-        });
-    });
+
     controller.product.packing.forEach(
         function (entry) {
             var packdata = {};
@@ -39,7 +35,14 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
     }
 
     function toggleDetail() {
-        controller.showDetail = !controller.showDetail;
+        if (controller.showDetail) {
+            controller.showText = "Details ansehen »";
+            controller.showDetail = false;
+        }
+        else {
+            controller.showText = "« ausblenden";
+            controller.showDetail = true;
+        }
     }
 
 }]);

@@ -105,15 +105,21 @@ class FastProductSerializer(serializers.ModelSerializer):
                   'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
                   'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')
 
+class PurchaseDocDataSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = PurchaseDocData
+        fields = ('url', 'rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
+
+class MinPurchaseDocDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseDocData
+        fields = ('prodid', 'name', 'unit', 'quantity', 'price', 'amount')
 
 class PurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
-    data = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="purchasedocdata-detail")
+    data = MinPurchaseDocDataSerializer(many=True, read_only=True)
     class Meta:
         model = PurchaseDoc
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data')
 
 
-class PurchaseDocDataSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = PurchaseDocData
-        fields = ('url', 'rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
+
