@@ -14,7 +14,7 @@ Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}
 
             <p>{{ supplier.phone }}</p>
 
-            <p ng-show="supplier.opendoc"><span class="label label-success">offene Bestellung</span></p>
+            <p ng-hide="supplier.opendoc==undefined"><span class="label label-success">offene Bestellung</span></p>
             <span ng-show="supplier.comment && supplier.comment!=''">Kommentar: {{ supplier.comment }}</span>
             <button ng-click="bestellen.selectsupp(supplier)">auswählen</button>
         </div>

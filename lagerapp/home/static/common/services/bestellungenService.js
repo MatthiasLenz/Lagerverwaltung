@@ -1,7 +1,8 @@
 angular.module('baseApp.Services').
-factory("bestellungenService", function ($resource) {
+factory("bestellungenService", function ($resource, $cacheFactory) {
+    var purchasedocCache = $cacheFactory('PurchaseDoc');
     var resource = $resource(
-        "/api/purchasedoc/:id", {id: "@id"}, {}
+        "/api/purchasedoc/:id", {id: "@id"}, {query: {method: 'GET', cache: purchasedocCache, isArray: true}}
     );
     var purchasedocs = [];
     resource.query().$promise.then(function (result) {

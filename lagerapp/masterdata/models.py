@@ -175,6 +175,23 @@ class PurchaseDoc(models.Model):
         db_table = 'PurchaseDoc'
         app_label = 'hit_01_purchase'
 
+
+class PurchaseDocData(models.Model):
+    rowid = models.IntegerField(db_column='RowID', primary_key=True)
+    purchasedocid = models.ForeignKey(PurchaseDoc, db_column='PurchaseDocID', blank=True, null=True,
+                                      related_name='data')
+    prodid = models.ForeignKey(Product, db_column='ProdID', blank=True, null=True)
+    name = models.CharField(db_column='Name', max_length=255, blank=True, null=True)
+    unit = models.CharField(db_column='Unit', max_length=5, blank=True, null=True)
+    quantity = models.FloatField(db_column='Quantity', blank=True, null=True)
+    price = models.FloatField(db_column='Price', blank=True, null=True)
+    amount = models.FloatField(db_column='Amount', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'PurchaseDocData'
+        app_label = 'hit_01_purchase'
+
 class StockData(models.Model):
     id = models.IntegerField(db_column='RowID')
     rowid = models.IntegerField(db_column='RowID', primary_key=True) # Field name made lowercase.

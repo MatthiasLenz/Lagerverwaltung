@@ -1,12 +1,13 @@
 from rest_framework import serializers
-from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, PurchaseDoc
+from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, PurchaseDoc, \
+    PurchaseDocData
 
 # from django.contrib.auth.models import User
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
-    def __init__(self, *args, **kwargs):
-        # Only used for debugging. Extend init to print repr of Serializer instance.
-        super(SupplierSerializer, self).__init__(*args, **kwargs)
-        print(repr(self))
+    # def __init__(self, *args, **kwargs):
+    #    # Only used for debugging. Extend init to print repr of Serializer instance.
+    #    super(SupplierSerializer, self).__init__(*args, **kwargs)
+    #    print(repr(self))
 
     class Meta:
         model = Supplier
@@ -42,10 +43,10 @@ class NatureSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
-    def __init__(self, *args, **kwargs):
-        #Only used for debugging. Extend init to print repr of Serializer instance.
-        super(ProductSerializer, self).__init__(*args, **kwargs)
-        print(repr(self))
+    # def __init__(self, *args, **kwargs):
+    #    #Only used for debugging. Extend init to print repr of Serializer instance.
+    #    super(ProductSerializer, self).__init__(*args, **kwargs)
+    #    print(repr(self))
 
     nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
     supplier = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productsupplier-detail")
@@ -106,6 +107,13 @@ class FastProductSerializer(serializers.ModelSerializer):
 
 
 class PurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
+    data = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="purchasedocdata-detail")
     class Meta:
         model = PurchaseDoc
-        fields = ('url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate')
+        fields = ('url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data')
+
+
+class PurchaseDocDataSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = PurchaseDocData
+        fields = ('url', 'rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')

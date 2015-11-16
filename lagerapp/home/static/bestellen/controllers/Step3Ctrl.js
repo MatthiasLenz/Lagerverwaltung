@@ -4,6 +4,7 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
     window.step3 = $scope;
     controller.changeIn = changeIn;
     controller.product = $scope.bestellen.selectedprod;
+    controller.supplier = $scope.bestellen.selectedsupp;
     controller.packings = {"base": {"name": controller.product.unit1, "quantity": 1, "orderAmount": 0}};
     controller.purchasedocs = bestellungenService.purchasedocs;
 
