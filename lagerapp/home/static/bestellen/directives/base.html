@@ -1,5 +1,11 @@
-<select ng-model="bestellen.state"
-        ng-options="option for option in ['best1','best2', 'best3']"></select>
+<div class="wizard">
+    <a href ng-class="{current:bestellen.state=='best1'}" ng-click="bestellen.selectState('best1')"><span class="badge">1</span>Artikel
+        auswählen</a>
+    <a href ng-class="{current:bestellen.state=='best2'}" ng-click="bestellen.selectState('best2')"><span class="badge">2</span>Lieferant
+        auswählen</a>
+    <a href ng-class="{current:bestellen.state=='best3'}" ng-click="bestellen.selectState('best3')"><span
+            class="badge badge-inverse">3</span>Bestellung abschließen</a>
+</div>
 <div ng-switch="bestellen.state">
     <div ng-switch-when="best1" step1></div>
     <div ng-switch-when="best2" step2></div>

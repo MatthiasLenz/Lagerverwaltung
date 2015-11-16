@@ -11,4 +11,11 @@ controller('BestellungCtrl', [function () {
         ctrl.selectedsupp = supplier;
         ctrl.state = 'best3';
     };
+    this.selectState = function (state) {
+        if (state == 'best1' ||
+            (state == 'best2' && ctrl.selectedprod) ||
+            (state == 'best3' && ctrl.selectedsupp)) {
+            this.state = state;
+        }
+    }
 }]);

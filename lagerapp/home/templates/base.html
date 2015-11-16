@@ -45,6 +45,7 @@
         <li ng-class="{active: cc.isActive('purchasedoc_state')}">
             <a href="" ng-click="cc.setState('purchasedoc_state')">offene Bestellungen</a></li>
     </ul>
+    <br/>
     <div ng-switch="cc.state">
         <div ng-switch-when="productlist_state" bestellen-base></div>
         <div ng-switch-when="purchasedoc_state" bestellungen></div>
