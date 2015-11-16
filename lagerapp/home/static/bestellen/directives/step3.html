@@ -1,20 +1,60 @@
 <br/>
-<p>Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}</p>
-<p>Lieferant: {{ bestellen.selectedsupp.name }} </p>
-<br/><br/>
+<div class="row">
+    <div class="col-lg-3">
+        <h2>Bestellmenge:</h2>
 
-<div ng-repeat="(id, packing) in step3.packings">
-    <div class="input-group" style="width:250px;">
-        <input type="number" step="0.01" ng-model="step3.packings[id].orderAmount" ng-change="step3.changeIn(id)"
-               class="form-control"
-               aria-describedby="{{ packing.id }}">
-        <span class="input-group-addon" id="{{ packing.id }}">{{ packing.name }}</span>
+        <div ng-repeat="(id, packing) in step3.packings">
+            <div class="input-group" style="width:250px;">
+                <input type="number" step="0.01" ng-model="step3.packings[id].orderAmount"
+                       ng-change="step3.changeIn(id)"
+                       class="form-control"
+                       aria-describedby="{{ packing.id }}">
+                <span class="input-group-addon" id="{{ packing.id }}">{{ packing.name }}</span>
+            </div>
+            <span ng-hide="$first">1 {{ packing.name }} &#8793; {{ packing.quantity }} {{ step3.product.unit1 }} <br/></span>
+            <br/>
+        </div>
     </div>
-    <span ng-hide="$first">1 {{ packing.name }} &#8793; {{ packing.quantity }} {{ step3.product.unit1 }} <br/></span>
-    <br/>
+    <div class="col-lg-4">
+        <h2>Bitte auswählen:</h2>
+        <input type="radio" ng-model="newDoc" value="true"> Neue Bestellung <br/>
+        <input type="radio" ng-model="newDoc" value="false"> Zu bestehender Bestellung hinzufügen <br/><br/>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">{{ step3.supplier.name }}
+                ({{ step3.supplier.opendoc.docdate |date:'d. MMM yyyy' }})
+            </div>
+            <div class="panel-body">
+                <table class="table" ng-show="step3.showDetail">
+                    <thead>
+                    <th>Name</th>
+                    <th>Anzahl</th>
+                    <th>Einheit</th>
+                    <th>Preis</th>
+                    <th>Kosten</th>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in step3.docdata">
+                        <td> {{ item.name }}</td>
+                        <td> {{ item.quantity }}</td>
+                        <td> {{ item.unit }}</td>
+                        <td> {{ item.price }}</td>
+                        <td> {{ item.amount }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p><a ng-click="step3.toggleDetail()">Details ansehen &raquo;</a></p>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-lg-5">
+        <h2>Übersicht (ToDo)</h2>
+
+        <p>Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}</p>
+
+        <p>Lieferant: {{ bestellen.selectedsupp.name }} </p>
+    </div>
 </div>
-<!--
-<pre>{{ bestellen.selectedsupp|json }}</pre>
-<pre>{{ bestellen.selectedprod|json }}</pre>
-<pre>{{ step3.packings|json }}</pre>-->
-<pre>{{ bestellen.selectedsupp.opendoc|json }}</pre>
+
+

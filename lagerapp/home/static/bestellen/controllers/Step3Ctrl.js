@@ -3,11 +3,17 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
     var controller = this;
     window.step3 = $scope;
     controller.changeIn = changeIn;
+    controller.toggleDetail = toggleDetail;
+    controller.showDetail = false;
     controller.product = $scope.bestellen.selectedprod;
     controller.supplier = $scope.bestellen.selectedsupp;
     controller.packings = {"base": {"name": controller.product.unit1, "quantity": 1, "orderAmount": 0}};
-    controller.purchasedocs = bestellungenService.purchasedocs;
-
+    controller.docdata = [];
+    controller.supplier.opendoc.data.forEach(function (entry) {
+        $http.get(entry).then(function (response) {
+            controller.docdata.push(response.data);
+        });
+    });
     controller.product.packing.forEach(
         function (entry) {
             var packdata = {};
@@ -30,6 +36,10 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
                 / controller.packings[key2].quantity).toFixed(2));
             }
         }
+    }
+
+    function toggleDetail() {
+        controller.showDetail = !controller.showDetail;
     }
 
 }]);
