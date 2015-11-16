@@ -63,7 +63,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 class ProductPackingSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ProductPacking
-        fields = ('url', 'rowid', 'prodid', 'name', 'quantity')
+        fields = ('url', 'rowid', 'packingid', 'prodid', 'name', 'quantity')
 
 class ProductSupplierSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

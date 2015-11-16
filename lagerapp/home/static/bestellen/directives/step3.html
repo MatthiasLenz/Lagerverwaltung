@@ -1,0 +1,19 @@
+<h2>Schritt 3: Bestellmenge auswählen</h2>
+
+Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}
+<br/><br/>
+
+<div ng-repeat="(id, packing) in step3.packings">
+    <div class="input-group" style="width:250px;">
+        <input type="number" step="0.01" ng-model="step3.packings[id].orderAmount" ng-change="step3.changeIn(id)"
+               class="form-control"
+               aria-describedby="{{ packing.id }}">
+        <span class="input-group-addon" id="{{ packing.id }}">{{ packing.name }}</span>
+    </div>
+    <span ng-hide="$first">1 {{ packing.name }} &#8793; {{ packing.quantity }} {{ step3.product.unit1 }} <br/></span>
+    <br/>
+</div>
+<!--
+<pre>{{ bestellen.selectedsupp|json }}</pre>
+<pre>{{ bestellen.selectedprod|json }}</pre>
+<pre>{{ step3.packings|json }}</pre>-->
