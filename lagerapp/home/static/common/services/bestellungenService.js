@@ -3,15 +3,15 @@ factory("bestellungenService", function ($resource) {
     var resource = $resource(
         "/api/purchasedoc/:id", {id: "@id"}, {}
     );
-    var bestellungen_list = [];
+    var purchasedocs = [];
     resource.query().$promise.then(function (result) {
         result.forEach(function (item) {
-            bestellungen_list.push(item);
+            purchasedocs.push(item);
         });
     });
 
     return {
-        bestellungen_list: bestellungen_list,
+        purchasedocs: purchasedocs,
         resource: resource
     };
 });

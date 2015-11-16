@@ -1,10 +1,12 @@
 angular.module('baseApp.bestellen').
-controller('Step3Ctrl', ['$http', '$scope', '$filter', function ($http, $scope, $filter) {
+controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', function ($http, $scope, bestellungenService) {
     var controller = this;
     window.step3 = $scope;
     controller.changeIn = changeIn;
     controller.product = $scope.bestellen.selectedprod;
     controller.packings = {"base": {"name": controller.product.unit1, "quantity": 1, "orderAmount": 0}};
+    controller.purchasedocs = bestellungenService.purchasedocs;
+
     controller.product.packing.forEach(
         function (entry) {
             var packdata = {};

@@ -1,5 +1,5 @@
 angular.module('baseApp.bestellen').
-controller('Step2Ctrl', ['$http', '$scope', function ($http, $scope) {
+controller('Step2Ctrl', ['$http', '$scope', 'bestellungenService', function ($http, $scope, bestellungenService) {
     // 1. Self-reference
     var controller = this;
     // 2. requirements
@@ -12,6 +12,7 @@ controller('Step2Ctrl', ['$http', '$scope', function ($http, $scope) {
     controller.suppliers = [];
     // 5. Clean up
     // 6. All the actual implementations go here
+    controller.purchasedocs = bestellungenService.purchasedocs;
     controller.product.supplier.forEach(
         function (entry) {
             var suppdata = {};
@@ -21,6 +22,12 @@ controller('Step2Ctrl', ['$http', '$scope', function ($http, $scope) {
                 suppdata["supplierid"] = response.data.supplierid;
                 suppdata["comment"] = response.data.comment;
                 suppdata["purchaseprice"] = response.data.purchaseprice;
+                suppdata["opendoc"] = false;
+                controller.purchasedocs.forEach(function (item) {
+                    if (item.supplierid == response.data.supplierid) {
+                        suppdata["opendoc"] = true;
+                    }
+                });
                 $http.get(response.data.supplierid).then(function (response) {
                     //Get supplier data
                     suppdata["name"] = response.data.namea + " " + response.data.nameb;
