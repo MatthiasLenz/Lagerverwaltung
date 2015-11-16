@@ -2,7 +2,8 @@
 
 Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}
 <br/><br/>
-<div class="panel-group" ng-repeat="supplier in step2.suppliers | orderBy:'purchaseprice'">
+<div class="panel-group" ng-repeat="supplier in step2.suppliers | orderBy:'purchaseprice'"
+     ng-if="supplier.purchaseprice!=0">
     <div class="panel" ng-class="{'panel-primary': supplier.default, 'panel-info' : !supplier.default }">
         <div class="panel-heading">{{ supplier.name }}<span ng-show="supplier.default"> (Standardlieferant)</span></div>
         <div class="panel-body">
