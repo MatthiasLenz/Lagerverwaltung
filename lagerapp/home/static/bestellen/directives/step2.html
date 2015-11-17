@@ -1,6 +1,7 @@
 <br/>
 Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}
 <br/><br/>
+<p ng-hide="step2.suppliers[0]">Für diesen Artikel sind keine Lieferanten eingetragen!</p>
 <div class="panel-group" ng-repeat="supplier in step2.suppliers | orderBy:'purchaseprice'"
      ng-if="supplier.purchaseprice!=0">
     <div class="panel" ng-class="{'panel-primary': supplier.default, 'panel-info' : !supplier.default }">
