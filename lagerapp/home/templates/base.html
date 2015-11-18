@@ -41,7 +41,7 @@
 {% verbatim %}
     </head>
     <body>
-    <span my-current-time="'d. MMM yyyy h:mm:ss a'"></span>
+    <span my-current-time="'d. MMM yyyy h:mm:ss'"></span>
 
     <head-content></head-content>
 
@@ -49,7 +49,8 @@
         <ul class="nav nav-tabs">
             <li ng-class="{active: cc.isActive('productlist_state')}">
                 <a href="" ng-click="cc.setState('productlist_state')">Bestellen</a></li>
-            <li ng-class="{active: cc.isActive('purchasedoc_state'), open:cc.dropdown}" class="dropdown"
+            <li ng-class="{active: cc.isActive('purchasedoc0_state')||cc.isActive('purchasedoc1_state'), open:cc.dropdown}"
+                class="dropdown"
                 ng-mouseenter="cc.dropdown=true" ng-mouseleave="cc.dropdown=false">
                 <a class="dropdown-toggle" data-toggle="dropdown"> Bestellungen <span class="caret"></span></a>
                 <ul ng-show="cc.dropdown" class="dropdown-menu">
