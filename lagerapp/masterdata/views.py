@@ -77,9 +77,11 @@ class PurchaseDocViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    queryset = PurchaseDoc.objects.filter(status=0).filter(module=5).filter(doctype=2).prefetch_related('data')
+    queryset = PurchaseDoc.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
     serializer_class = PurchaseDocSerializer
     pagination_class = None
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('status',)
 
 
 class PurchaseDocDataViewSet(viewsets.ReadOnlyModelViewSet):
