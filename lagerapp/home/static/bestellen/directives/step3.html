@@ -15,17 +15,24 @@
             <br/>
         </div>
     </div>
-    <div class="col-lg-4">
-        <h2>Bitte auswählen:</h2>
+    <h2>Übersicht Bestellung</h2>
+
+    <div class="col-lg-5">
+        <!--<h2>Bitte auswählen:</h2>
         <input type="radio" ng-model="newDoc" value="true"> Neue Bestellung <br/>
-        <input type="radio" ng-model="newDoc" value="false"> Zu bestehender Bestellung hinzufügen <br/><br/>
+        <input type="radio" ng-model="newDoc" value="false"> Zu bestehender Bestellung hinzufügen <br/><br/>-->
 
         <div class="panel panel-primary">
             <div class="panel-heading">{{ step3.supplier.name }}
-                ({{ step3.supplier.opendoc.docdate |date:'d. MMM yyyy' }})
+                ({{ step3.supplier.opendoc.docdate |date:'d. MMM yyyy' }}
+                <span ng-show="!step3.supplier.opendoc">Neue Bestellung</span>)
             </div>
             <div class="panel-body">
-                <p>Betrag: {{ step3.supplier.opendoc.data | total:'amount' | currency:""}} €</p>
+                <p ng-hide="!step3.supplier.opendoc">Betrag: {{ (step3.supplier.opendoc.data | total:'amount') +
+                        (step3.packings['base'].orderAmount * step3.supplier.purchaseprice) | currency:""}} €</p>
+
+                <p ng-show="!step3.supplier.opendoc">Betrag:
+                    {{ step3.packings['base'].orderAmount * step3.supplier.purchaseprice |currency:""}} €</p>
                 <table class="table" ng-show="step3.showDetail">
                     <thead>
                     <th>Name</th>
@@ -42,6 +49,14 @@
                         <td> {{ item.price }}</td>
                         <td> {{ item.amount }}</td>
                     </tr>
+                    <tr>
+                        <td>{{ step3.product.name1 }}</td>
+                        <td>{{ step3.packings['base'].orderAmount }}</td>
+                        <td>{{ step3.product.unit1 }}</td>
+                        <td>{{ step3.supplier.purchaseprice }}</td>
+                        <td>{{ step3.packings['base'].orderAmount * step3.supplier.purchaseprice |currency:""}} €</td>
+
+                    </tr>
                     </tbody>
                 </table>
                 <p><a ng-click="step3.toggleDetail()">{{ step3.showText }}</a></p>
@@ -49,12 +64,8 @@
         </div>
 
     </div>
-    <div class="col-lg-5">
-        <h2>Übersicht (ToDo)</h2>
+    <div class="col-lg-4">
 
-        <p>Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}</p>
-
-        <p>Lieferant: {{ bestellen.selectedsupp.name }} </p>
     </div>
 </div>
 

@@ -16,7 +16,7 @@ controller('Step2Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
             var suppdata = {};
             $http.get(entry).then(function (response) {
                 //Get productsupplier data
-                suppdata["default"] = controller.product.defaultsupplier == response.data.supplierid;
+                suppdata["default"] = controller.product.defaultsupplier.url == response.data.supplierid;
                 suppdata["supplierid"] = response.data.supplierid;
                 suppdata["comment"] = response.data.comment;
                 suppdata["purchaseprice"] = response.data.purchaseprice;

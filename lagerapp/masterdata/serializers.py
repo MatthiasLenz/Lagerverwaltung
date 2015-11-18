@@ -52,7 +52,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     supplier = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productsupplier-detail")
     packing = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productpacking-detail")
     # defaultsupplier = serializers.SlugRelatedField(read_only=True, allow_null=True, slug_field='namea')
-    defaultsupplier = serializers.HyperlinkedRelatedField(read_only=True, allow_null=True, view_name="supplier-detail")
+    defaultsupplier = SupplierSerializer(read_only=True, allow_null=True)
     class Meta:
         model = Product
         fields = (
