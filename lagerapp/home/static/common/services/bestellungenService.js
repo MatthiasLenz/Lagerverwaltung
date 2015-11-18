@@ -5,7 +5,7 @@ factory("bestellungenService", function ($resource, $cacheFactory) {
         "/api/purchasedoc/:id", {id: "@id"}, {query: {method: 'GET', cache: purchasedocCache, isArray: true}}
     );
     var purchasedocs = [];
-    resource.query().$promise.then(function (result) {
+    resource.query({'status': 0}).$promise.then(function (result) {
         result.forEach(function (item) {
             purchasedocs.push(item);
         });
