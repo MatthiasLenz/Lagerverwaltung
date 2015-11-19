@@ -20,7 +20,7 @@
 {% load rest_framework %}
 {% load i18n %}
 <script src="{% static "base.js" %}"></script>
-<script src="{% static "bootstrap-without-jquery.js" %}"></script>
+<script src="{% static "ui-bootstrap.js" %}"></script>
 <script src="{% static "common/controllers/BaseCtrl.js" %}"></script>
 <script src="{% static "common/directives/docsTimeDirective.js" %}"></script>
 <script src="{% static "common/directives/head.js" %}"></script>
@@ -55,6 +55,16 @@
     {% endblock %}
 </ul>
 {% verbatim %}
+    <span uib-dropdown on-toggle="toggled(open)">
+      <a href id="simple-dropdown" uib-dropdown-toggle>
+          Click me for a dropdown, yo!
+      </a>
+      <ul class="uib-dropdown-menu" aria-labelledby="simple-dropdown">
+          <li><a href>1</a></li>
+          <li><a href>1</a></li>
+          <li><a href>1</a></li>
+      </ul>
+    </span>
     <span my-current-time="'d. MMM yyyy h:mm:ss'"></span>
 
     <head-content></head-content>
