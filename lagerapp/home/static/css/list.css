@@ -1,3 +1,6 @@
+#top {
+    margin-right: 80px;
+}
 a {
     cursor: pointer;
 }
@@ -13,6 +16,7 @@ a {
 }
 body{
   margin:10px;
+    margin-right: 20px;
 }
 .sort-caret {
   display: inline-block;

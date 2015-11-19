@@ -18,6 +18,7 @@
 {% endverbatim %}
 {% load staticfiles %}
 {% load rest_framework %}
+{% load custom_tags %}
 {% load i18n %}
 <script src="{% static "base.js" %}"></script>
 <script src="{% static "ui-bootstrap.js" %}"></script>
@@ -45,26 +46,15 @@
     </head>
     <body>
 {% endverbatim %}
-<ul class="nav navbar-nav pull-right">
-    {% block userlinks %}
+<div class="nav navbar-nav pull-right" id="top">
         {% if user.is_authenticated %}
             {% optional_logout request user %}
         {% else %}
             {% optional_login request %}
         {% endif %}
-    {% endblock %}
-</ul>
+
+</div>
 {% verbatim %}
-    <span uib-dropdown on-toggle="toggled(open)">
-      <a href id="simple-dropdown" uib-dropdown-toggle>
-          Click me for a dropdown, yo!
-      </a>
-      <ul class="uib-dropdown-menu" aria-labelledby="simple-dropdown">
-          <li><a href>1</a></li>
-          <li><a href>1</a></li>
-          <li><a href>1</a></li>
-      </ul>
-    </span>
     <span my-current-time="'d. MMM yyyy h:mm:ss'"></span>
 
     <head-content></head-content>
