@@ -1,8 +1,14 @@
 from rest_framework import serializers
 from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, PurchaseDoc, \
     PurchaseDocData
+from django.contrib.auth.models import User
 
-# from django.contrib.auth.models import User
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username')
+
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):
     #    # Only used for debugging. Extend init to print repr of Serializer instance.

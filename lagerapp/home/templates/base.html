@@ -17,7 +17,10 @@
     <title>Lagermodul</title>
 {% endverbatim %}
 {% load staticfiles %}
+{% load rest_framework %}
+{% load i18n %}
 <script src="{% static "base.js" %}"></script>
+<script src="{% static "bootstrap-without-jquery.js" %}"></script>
 <script src="{% static "common/controllers/BaseCtrl.js" %}"></script>
 <script src="{% static "common/directives/docsTimeDirective.js" %}"></script>
 <script src="{% static "common/directives/head.js" %}"></script>
@@ -41,6 +44,17 @@
 {% verbatim %}
     </head>
     <body>
+{% endverbatim %}
+<ul class="nav navbar-nav pull-right">
+    {% block userlinks %}
+        {% if user.is_authenticated %}
+            {% optional_logout request user %}
+        {% else %}
+            {% optional_login request %}
+        {% endif %}
+    {% endblock %}
+</ul>
+{% verbatim %}
     <span my-current-time="'d. MMM yyyy h:mm:ss'"></span>
 
     <head-content></head-content>

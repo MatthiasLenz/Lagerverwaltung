@@ -1,13 +1,26 @@
 #encoding=UTF-8
 from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc, ProductPacking, \
     PurchaseDocData
-from masterdata.serializers import SupplierSerializer, StockSerializer, StockDataSerializer, ProductSerializer, \
+from masterdata.serializers import UserSerializer, SupplierSerializer, StockSerializer, StockDataSerializer, \
+    ProductSerializer, \
     NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, \
     PurchaseDocDataSerializer, ProductPackingSerializer
-from rest_framework import viewsets, mixins
-from rest_framework import pagination
-from rest_framework import filters
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework import viewsets, mixins, pagination, filters, generics
 from rest_framework.response import Response
+from django.contrib.auth.models import User
+
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
 
 class LargeResultsSetPagination(pagination.PageNumberPagination):
     page_size = 20
@@ -99,6 +112,9 @@ class NatureViewSet(mixins.RetrieveModelMixin,
     """
     This viewset automatically provides `list` and `detail` actions.
     """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
     lookup_value_regex = '[-A-Za-z0-9.]*' # hatte hier statt * ein +, wodurch ein aufruf von nature-detail mit leerem resourcenatureid nicht möglich war
 
     #We only want Nature entries which have related products. Obtain a list of IDs with a raw query and filter against this list.

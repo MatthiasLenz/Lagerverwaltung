@@ -1,5 +1,5 @@
 angular.module('baseApp.bestellen', []);
-angular.module('baseApp', ['ngResource', 'baseApp.Services', 'docsTimeDirective', 'baseApp.bestellen']).
+angular.module('baseApp', ['ui.bootstrap', 'ngResource', 'baseApp.Services', 'docsTimeDirective', 'baseApp.bestellen']).
 
 config(["$locationProvider", function ($locationProvider) {
     //disable this, if the app is being used by html5 incompatible browsers.
