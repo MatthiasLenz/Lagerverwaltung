@@ -149,16 +149,20 @@ class HitRouter(object):
             return 'hit_01_masterdata'
         if model._meta.app_label == 'hit_01_purchase':
             return 'hit_01_purchase'
+        # go to default
         return None
-        
-    def allow_migrate(self, db, app_label, model=None, **hints):
-            """
-            Make sure the masterdata app only appears in the 'hit_db'
-            database.
-            """
-            if app_label == 'hit':
-                return db == 'hit'
-            return None
+
+    def db_for_write(self, model, **hints):
+        """
+        Attempts to write always go to default
+        """
+        return None
+
+    def allow_relation(self, obj1, obj2, **hints):
+        """
+        Allow relations or deny relations.
+        """
+        return True
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 

@@ -5,9 +5,10 @@ from django.contrib.auth.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    userdata = serializers.RelatedField(many=True, read_only=True)
     class Meta:
         model = User
-        fields = ('id', 'username')
+        fields = ('id', 'username', 'userdata')
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):

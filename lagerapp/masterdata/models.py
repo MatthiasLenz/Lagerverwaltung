@@ -133,6 +133,13 @@ class Product(models.Model):
         app_label = 'hit_01_masterdata'
 
 
+from django.contrib.auth.models import User
+
+
+class UserData(models.Model):
+    user = models.OneToOneField(User, related_name='userdata')
+    prodid = models.CharField(db_column='ProdID', max_length=15, null=True)
+
 class ProductPacking(models.Model):
     rowid = models.IntegerField(db_column='RowID', primary_key=True)
     packingid = models.CharField(db_column='PackingID', max_length=10, blank=True, null=True)
