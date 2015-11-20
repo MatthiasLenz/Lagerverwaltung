@@ -1,22 +1,45 @@
 angular.module('baseApp.bestellen').
-controller('Step2Ctrl', ['$http', '$scope', 'bestellungenService', function ($http, $scope, bestellungenService) {
+controller('Step2Ctrl', ['$http', '$scope', '$q', 'bestellungenService', function ($http, $scope, $q, bestellungenService) {
 
     var controller = this;
     controller.product = $scope.bestellen.selectedprod;
     controller.suppliers = [];
     controller.purchasedocs = [];
+    controller.loading = true;
+    controller.no_suppliers = false;
 
-    bestellungenService.resource.query().$promise.then(function (result) {
+    function getPurchases() {
+        return bestellungenService.resource.query().$promise;
+    }
 
+    function getSupplier(supplierid) {
+        return $http.get(supplierid);
+    }
+
+    function getProductSupplier(entry) {
+        return $http.get(entry);
+    }
+
+    var purchaseData = getPurchases();
+
+    purchaseData.then(function (result) {
         result.forEach(function (item) {
             controller.purchasedocs.push(item);
         });
-
-        controller.product.supplier.forEach(function (entry) {
+        var supplierPromises = [];
+        var productSupplierPromises = [];
+        controller.product.supplier.forEach(function (url) {
             var suppdata = {};
-            $http.get(entry).then(function (response) {
+            var productSupplierData = getProductSupplier(url);
+            productSupplierPromises.push(productSupplierData);
+            productSupplierData.then(function (response) {
                 //Get productsupplier data
-                suppdata["default"] = controller.product.defaultsupplier.url == response.data.supplierid;
+                if (controller.product.defaultsupplier != null) {
+                    suppdata["default"] = controller.product.defaultsupplier.url == response.data.supplierid;
+                }
+                else {
+                    suppdata["default"] = false;
+                }
                 suppdata["supplierid"] = response.data.supplierid;
                 suppdata["comment"] = response.data.comment;
                 suppdata["purchaseprice"] = response.data.purchaseprice;
@@ -25,7 +48,9 @@ controller('Step2Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
                         suppdata["opendoc"] = item;
                     }
                 });
-                $http.get(response.data.supplierid).then(function (response) {
+                var supplierData = getSupplier(response.data.supplierid);
+                supplierPromises.push(supplierData);
+                supplierData.then(function (response) {
                     //Get supplier data
                     suppdata["name"] = response.data.namea + " " + response.data.nameb;
                     suppdata["address"] = response.data.address;
@@ -33,10 +58,26 @@ controller('Step2Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
                     suppdata["city"] = response.data.city;
                     suppdata["phone"] = response.data.phone;
                     controller.suppliers.push(suppdata);
+                }, function (error) {
                 });
             });
         });
+        //after loop through suppliers and creating productsupplier promises
+        $q.all(productSupplierPromises).then(function () { //after all supplier promises are resolved
+            //after all productsupplier promises are resolved and supplier promises are created
+            $q.all(supplierPromises).then(function (success) {
+                //after supplier promises are resolved
+                controller.loading = false;
+                if (controller.suppliers.length == 0) {
+                    controller.no_suppliers = true;
+                }
+            }, function (error) {
+                controller.loading = false;
+                if (controller.suppliers.length == 0) {
+                    controller.no_suppliers = true;
+                }
+            });
+        });
     });
-
 
 }]);
