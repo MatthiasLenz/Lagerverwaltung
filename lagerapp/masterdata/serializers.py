@@ -1,14 +1,21 @@
 from rest_framework import serializers
-from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, PurchaseDoc, \
+from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, \
+    PurchaseDoc, \
     PurchaseDocData
 from django.contrib.auth.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    userdata = serializers.RelatedField(many=True, read_only=True)
+    userdata = serializers.SlugRelatedField(many=True, read_only=True, slug_field='prodid')
     class Meta:
         model = User
         fields = ('id', 'username', 'userdata')
+
+
+class UserDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserData
+        fields = ('user', 'prodid')
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):

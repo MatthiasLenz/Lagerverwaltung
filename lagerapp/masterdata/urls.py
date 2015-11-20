@@ -19,5 +19,7 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api/productall/', views.CompleteProductView.as_view(), name='productALL'),
     url(r'^api/users/$', views.UserList.as_view()),
-    url(r'^api/users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view())
+    url(r'^api/users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
+    url(r'^api/userdata/$', views.UserDataList.as_view()),
+    url(r'^api/userdata/(?P<pk>[0-9]+)/$', views.UserDataDetail.as_view())
 ]

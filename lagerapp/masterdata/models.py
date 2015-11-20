@@ -137,7 +137,7 @@ from django.contrib.auth.models import User
 
 
 class UserData(models.Model):
-    user = models.OneToOneField(User, related_name='userdata')
+    user = models.ForeignKey(User, db_column='userid', related_name='userdata')
     prodid = models.CharField(db_column='ProdID', max_length=15, null=True)
 
 class ProductPacking(models.Model):

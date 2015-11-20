@@ -1,7 +1,9 @@
 #encoding=UTF-8
-from masterdata.models import Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc, ProductPacking, \
+from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc, \
+    ProductPacking, \
     PurchaseDocData
-from masterdata.serializers import UserSerializer, SupplierSerializer, StockSerializer, StockDataSerializer, \
+from masterdata.serializers import UserSerializer, UserDataSerializer, SupplierSerializer, StockSerializer, \
+    StockDataSerializer, \
     ProductSerializer, \
     NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, \
     PurchaseDocDataSerializer, ProductPackingSerializer
@@ -21,6 +23,15 @@ class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
+class UserDataList(generics.ListAPIView, generics.UpdateAPIView, generics.CreateAPIView):
+    queryset = UserData.objects.all()
+    serializer_class = UserDataSerializer
+
+
+class UserDataDetail(generics.RetrieveAPIView, generics.UpdateAPIView, ):
+    queryset = UserData.objects.all()
+    serializer_class = UserDataSerializer
 
 class LargeResultsSetPagination(pagination.PageNumberPagination):
     page_size = 20
