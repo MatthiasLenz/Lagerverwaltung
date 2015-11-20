@@ -1,7 +1,7 @@
 <br/>
 Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}
 <br/><br/>
-<p ng-show="step2.loading">Bitte warten.</p>
+<p ng-show="step2.loading">Bitte warten{{ step2.dots }}</p>
 <p ng-show="step2.no_suppliers">Für diesen Artikel sind keine Lieferanten eingetragen.</p>
 <div class="panel-group" ng-repeat="supplier in step2.suppliers | orderBy:'purchaseprice'"
      ng-if="supplier.purchaseprice!=0">

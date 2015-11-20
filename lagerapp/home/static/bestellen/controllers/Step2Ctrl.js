@@ -1,5 +1,5 @@
 angular.module('baseApp.bestellen').
-controller('Step2Ctrl', ['$http', '$scope', '$q', 'bestellungenService', function ($http, $scope, $q, bestellungenService) {
+controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenService', function ($http, $scope, $q, $interval, bestellungenService) {
 
     var controller = this;
     controller.product = $scope.bestellen.selectedprod;
@@ -7,11 +7,20 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', 'bestellungenService', functio
     controller.purchasedocs = [];
     controller.loading = true;
     controller.no_suppliers = false;
-
+    $scope.$on('$destroy', function () {
+        // Make sure that the interval is destroyed too
+        $interval.cancel(dotIntervall);
+    });
     function getPurchases() {
         return bestellungenService.resource.query().$promise;
     }
 
+    var i = 0;
+    var dots = ['', '.', '..', '...'];
+    var dotIntervall = $interval(function () {
+        i = (i + 1) % dots.length;
+        controller.dots = dots[i];
+    }, 400);
     function getSupplier(supplierid) {
         return $http.get(supplierid);
     }
@@ -68,11 +77,13 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', 'bestellungenService', functio
             $q.all(supplierPromises).then(function (success) {
                 //after supplier promises are resolved
                 controller.loading = false;
+                $interval.cancel(dotIntervall);
                 if (controller.suppliers.length == 0) {
                     controller.no_suppliers = true;
                 }
             }, function (error) {
                 controller.loading = false;
+                $interval.cancel(dotIntervall);
                 if (controller.suppliers.length == 0) {
                     controller.no_suppliers = true;
                 }
