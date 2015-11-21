@@ -13,9 +13,17 @@ factory("productService", function ($resource, $cacheFactory) {
             "perPage": 20,
             "query": "",
             "resourcenatureid": null
-        }
+    };
+
+    function query_prod(params) {
+        return resource.query(params).$promise
+    }
+
+    function query_product(params) {
+        return resource.query(params)
+    }
     return {
-        query: resource.query,
+        query: query_prod,
         model: model
     }
 });

@@ -16,11 +16,11 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
     }
 
     var i = 0;
-    var dots = ['', '.', '..', '...'];
+    var dots = ['', '.', '..', '...', '....'];
     var dotIntervall = $interval(function () {
         i = (i + 1) % dots.length;
         controller.dots = dots[i];
-    }, 400);
+    }, 600);
     function getSupplier(supplierid) {
         return $http.get(supplierid);
     }
@@ -86,6 +86,8 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
                 $interval.cancel(dotIntervall);
                 if (controller.suppliers.length == 0) {
                     controller.no_suppliers = true;
+                    //ToDo: falls productsupplier vorhanden sind, für die die referenz zu supplier fehlt
+                    //sollte dieser übergeben werden, die fehlenden felder einfach nullen
                 }
             });
         });

@@ -1,18 +1,24 @@
 <br/>
-<form role="form">
-    Suche: <input style="width:30%;" class="form-control" placeholder="ID, Bezeichnung oder Artikelgruppe"
+<form role="form" class="form-inline">
+    <div class="form-group">
+        <label>Suche: </label>
+        <input class="form-control" style="width:250px;" placeholder="ID, Bezeichnung oder Artikelgruppe"
                   ng-model="step1.query" ng-model-options="{debounce: 500}">
+    </div>
+    <div class="form-group">
+        <label> Artikelgruppe </label>
+        <select class="form-control" style="width:100px;" ng-model="step1.resourcenatureid"
+                ng-options="nature.id as nature.name group by nature.title for nature in step1.resourcenatureids"></select>
+    </div>
 </form>
 <br/>
 <table class="table">
     <thead>
-    <th ng-click="step1.setOrder('id')" ng-class="{sort: getOrder() == 'id', sortable:true}">
-        ID <b ng-class="step1.sortDirection"></b>
-    </th>
-    <th></th>
     <th ng-click="step1.setOrder('name1')" ng-class="{sort: step1.getOrder() == 'name1', sortable:true}">
         Bezeichnung <b ng-class="step1.sortDirection"></b>
     </th>
+    <th></th>
+    <th>ID</th>
     <th>Einheit</th>
     <th ng-click="step1.setOrder('stockcur')"
         ng-class="{sort: step1.getOrder() == 'stockcur', sortable:true}">
@@ -26,24 +32,19 @@
         ng-class="{sort: step1.getOrder() == 'defaultsupplier', sortable:true}">
         Standard Lieferant <b ng-class="step1.sortDirection"></b>
     </th>
-    <th>
-        Artikelgruppe <select style="width:100px;" ng-model="step1.resourcenatureid"
-                              ng-options="nature.id as nature.name group by nature.title for nature in step1.resourcenatureids"></select>
-    </th>
+
     </thead>
     <tbody>
-    <tr ng-repeat="item in step1.items" ng-class="{title: item.title}">
-        <td><a target="_self" ng-href="{{ item.url }}">{{ item.id }}</a></td>
+    <tr ng-repeat="item in step1.items | filter:{title:false} track by item.id"
+        ng-class="{'text-muted': item.supplier.length==0}">
+        <td>{{ item.nature ? item.nature + ' /' : '' }} {{ item.name1 }}{{ item.supplier | json }}</td>
         <td><span ng-class="{hide:item.title}"><button ng-click="bestellen.selectprod(item)">auswählen</button></span>
         </td>
-        <td>{{ item.name1 }}</td>
-        <td><span ng-class="{hide:item.title}">{{ item.unit1 }}</span></td>
+        <td>{{ item.id }}</td>
+        <td>{{ item.unit1 }}</td>
         <td><span ng-class="{hide:item.title}">{{ item.stockcur }}</span></td>
         <td><span ng-class="{hide:item.title}">{{ item.netpurchaseprice }}</span></td>
         <td><span ng-class="{hide:item.title}">{{ item.defaultsupplier.namea }}</span></td>
-        <td><span ng-class="{hide:item.title}"><a target="_self"
-                                                  ng-href="{{ item.resourcenatureid }}">{{ item.nature }}</a></span>
-        </td>
     </tr>
     </tbody>
 </table>

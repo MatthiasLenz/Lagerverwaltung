@@ -40,6 +40,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     this.setPage = setPage;
     this.setOrder = setOrder;
     this.getOrder = getOrder;
+    this.items = [];
     // 5. Clean up
     $scope.$on('$destroy', function () {
         // Do whatever cleanup might be necessary
@@ -57,7 +58,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
             page_size: controller.perPage,
             search: query,
             resourcenatureid: controller.resourcenatureid
-        }, function (data) {
+        }).then(function (data) {
             controller.items = data.results;
             controller.lastPage = Math.ceil(data.count / controller.perPage);
         });
