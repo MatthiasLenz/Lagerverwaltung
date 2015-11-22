@@ -21,9 +21,6 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
         i = (i + 1) % dots.length;
         controller.dots = dots[i];
     }, 600);
-    function getSupplier(supplierid) {
-        return $http.get(supplierid);
-    }
 
     function getProductSupplier(entry) {
         return $http.get(entry);
@@ -57,39 +54,27 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
                         suppdata["opendoc"] = item;
                     }
                 });
-                var supplierData = getSupplier(response.data.supplierid);
-                supplierPromises.push(supplierData);
-                supplierData.then(function (response) {
+                if (response.data.supplierid != null) {//workaround for bad entries in legacy database
+                    var supplierData = response.data.supplierid;
                     //Get supplier data
-                    suppdata["name"] = response.data.namea + " " + response.data.nameb;
-                    suppdata["address"] = response.data.address;
-                    suppdata["zipcode"] = response.data.zipcode;
-                    suppdata["city"] = response.data.city;
-                    suppdata["phone"] = response.data.phone;
+                    suppdata["name"] = supplierData.namea + " " + supplierData.nameb;
+                    suppdata["address"] = supplierData.address;
+                    suppdata["zipcode"] = supplierData.zipcode;
+                    suppdata["city"] = supplierData.city;
+                    suppdata["phone"] = supplierData.phone;
                     controller.suppliers.push(suppdata);
-                }, function (error) {
-                });
+                }
             });
         });
         //after loop through suppliers and creating productsupplier promises
         $q.all(productSupplierPromises).then(function () { //after all supplier promises are resolved
-            //after all productsupplier promises are resolved and supplier promises are created
-            $q.all(supplierPromises).then(function (success) {
-                //after supplier promises are resolved
-                controller.loading = false;
-                $interval.cancel(dotIntervall);
-                if (controller.suppliers.length == 0) {
-                    controller.no_suppliers = true;
-                }
-            }, function (error) {
-                controller.loading = false;
-                $interval.cancel(dotIntervall);
-                if (controller.suppliers.length == 0) {
-                    controller.no_suppliers = true;
-                    //ToDo: falls productsupplier vorhanden sind, für die die referenz zu supplier fehlt
-                    //sollte dieser übergeben werden, die fehlenden felder einfach nullen
-                }
-            });
+            //after all productsupplier promises are resolved
+            controller.loading = false;
+            $interval.cancel(dotIntervall);
+            if (controller.suppliers.length == 0) {
+                controller.no_suppliers = true;
+                //sollte dieser übergeben werden, die fehlenden felder einfach nullen
+            }
         });
     });
 
