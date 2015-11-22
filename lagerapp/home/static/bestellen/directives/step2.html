@@ -22,3 +22,22 @@ Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}
         </div>
     </div>
 </div>
+<div class="panel-group text-muted" ng-repeat="supplier in step2.suppliers | orderBy:'purchaseprice'"
+     ng-if="supplier.purchaseprice==0">
+    <div class="panel panel-warning">
+        <div class="panel-heading">{{ supplier.name }}<span ng-show="supplier.default"> (Standardlieferant)</span></div>
+        <div class="panel-body">
+            <p><b>Preis: {{ supplier.purchaseprice | currency:""}} €</b></p>
+
+            <p>{{ supplier.address }}</p>
+
+            <p>{{ supplier.zipcode }} {{ supplier.city }}</p>
+
+            <p>{{ supplier.phone }}</p>
+
+            <p ng-hide="supplier.opendoc==undefined"><span class="label label-success">offene Bestellung</span></p>
+            <span ng-show="supplier.comment && supplier.comment!=''">Kommentar: {{ supplier.comment }}</span>
+            <button ng-click="bestellen.selectsupp(supplier)">auswählen</button>
+        </div>
+    </div>
+</div>

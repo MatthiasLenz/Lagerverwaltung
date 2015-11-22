@@ -41,7 +41,7 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
             productSupplierData.then(function (response) {
                 //Get productsupplier data
                 if (controller.product.defaultsupplier != null) {
-                    suppdata["default"] = controller.product.defaultsupplier.url == response.data.supplierid;
+                    suppdata["default"] = controller.product.defaultsupplier.url == response.data.supplierid.url;
                 }
                 else {
                     suppdata["default"] = false;
