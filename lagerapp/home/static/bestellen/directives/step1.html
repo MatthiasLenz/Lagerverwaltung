@@ -37,7 +37,7 @@
     <tbody>
     <tr ng-repeat="item in step1.items | filter:{title:false} track by item.id"
         ng-class="{'text-muted': item.supplier.length==0}">
-        <td>{{ item.nature ? item.nature + ' /' : '' }} {{ item.name1 }}{{ item.supplier | json }}</td>
+        <td>{{ item.nature ? item.nature + ' /' : '' }} <b>{{ item.name1 }}</b></td>
         <td><span ng-class="{hide:item.title}"><button ng-click="bestellen.selectprod(item)">auswählen</button></span>
         </td>
         <td>{{ item.id }}</td>

@@ -108,7 +108,7 @@ class PurchaseDocViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('status',)
 
 
-class PurchaseDocDataViewSet(viewsets.ReadOnlyModelViewSet):
+class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
