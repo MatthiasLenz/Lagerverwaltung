@@ -131,6 +131,7 @@ class MinPurchaseDocDataSerializer(serializers.ModelSerializer):
         fields = ('prodid', 'name', 'unit', 'quantity', 'price', 'amount')
 
 class PurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
+    supplierid = SupplierSerializer(read_only=True, allow_null=True)
     data = MinPurchaseDocDataSerializer(many=True, read_only=True)
     class Meta:
         model = PurchaseDoc
