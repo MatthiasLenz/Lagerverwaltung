@@ -5,11 +5,6 @@ controller('BaseCtrl', ['$scope', function ($scope) {
     window.base = controller;
     // 2. requirements
     // 3. Do scope stuff
-    window.onclick = function () {
-        if (controller.dropdown) {
-            controller.dropdown = false;
-        }
-    };
     // 3a. Set up watchers on the scope.
     // 3b. Expose methods or data on the scope
     controller.state = 'productlist_state';
@@ -21,10 +16,6 @@ controller('BaseCtrl', ['$scope', function ($scope) {
     };
     controller.dropdown = false;
 
-    controller.togglemenu = function () {
-        controller.dropdown = !controller.dropdown;
-        event.stopPropagation();
-    };
     // 3c. Listen to events on the scope
     // 4. Expose methods and properties on the controller instance
     // 5. Clean up

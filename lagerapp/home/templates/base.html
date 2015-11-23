@@ -47,11 +47,11 @@
     <body>
 {% endverbatim %}
 <div class="nav navbar-nav pull-right" id="top">
-        {% if user.is_authenticated %}
-            {% optional_logout request user %}
-        {% else %}
-            {% optional_login request %}
-        {% endif %}
+    {% if user.is_authenticated %}
+        {% optional_logout request user %}
+    {% else %}
+        {% optional_login request %}
+    {% endif %}
 
 </div>
 {% verbatim %}
@@ -63,18 +63,19 @@
         <ul class="nav nav-tabs">
             <li ng-class="{active: cc.isActive('productlist_state')}">
                 <a href="" ng-click="cc.setState('productlist_state')">Bestellen</a></li>
-            <li ng-class="{active: cc.isActive('purchasedoc0_state')||cc.isActive('purchasedoc1_state'), open:cc.dropdown}"
-                class="dropdown"
-                ng-mouseenter="cc.dropdown=true" ng-mouseleave="cc.dropdown=false">
-                <a class="dropdown-toggle" data-toggle="dropdown"> Bestellungen <span class="caret"></span></a>
-                <ul ng-show="cc.dropdown" class="dropdown-menu">
+            <li class="btn-group" uib-dropdown is-open="cc.dropdown"
+                ng-class="{active: cc.isActive('purchasedoc0_state')||cc.isActive('purchasedoc1_state')}">
+                <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                   ng-disabled="disabled">
+                    Bestellungen <span class="caret"></span>
+                </a>
+                <ul class="uib-dropdown-menu" aria-labelledby="single-button">
                     <li><a ng-click="cc.setState('purchasedoc0_state')">Offene Bestellungen</a></li>
                     <li><a ng-click="cc.setState('purchasedoc1_state')">Verschickte Bestellungen</a></li>
                 </ul>
             </li>
         </ul>
         <br/>
-
         <div ng-switch="cc.state">
             <div ng-switch-when="productlist_state" bestellen-base></div>
             <div ng-switch-when="purchasedoc0_state" bestellungen></div>
