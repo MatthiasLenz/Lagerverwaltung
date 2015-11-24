@@ -195,7 +195,7 @@ class PurchaseDocData(models.Model):
     amount = models.FloatField(db_column='Amount', blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'PurchaseDocData'
         app_label = 'hit_01_purchase'
 
