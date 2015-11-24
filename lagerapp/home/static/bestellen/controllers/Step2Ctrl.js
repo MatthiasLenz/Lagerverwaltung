@@ -50,7 +50,7 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
                 suppdata["comment"] = response.data.comment;
                 suppdata["purchaseprice"] = response.data.purchaseprice;
                 controller.purchasedocs.forEach(function (item) {
-                    if (item.supplierid == response.data.supplierid) {
+                    if (item.supplierid.id == response.data.supplierid.id) {
                         suppdata["opendoc"] = item;
                     }
                 });
