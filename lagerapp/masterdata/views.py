@@ -5,7 +5,7 @@ from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nat
 from masterdata.serializers import UserSerializer, UserDataSerializer, SupplierSerializer, StockSerializer, \
     StockDataSerializer, \
     ProductSerializer, \
-    NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, \
+    NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, MinPurchaseDocSerializer,\
     PurchaseDocDataSerializer, ProductPackingSerializer
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -96,8 +96,15 @@ class ProductSupplierViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ProductSupplier.objects.all()
     serializer_class = ProductSupplierSerializer
 
+class MinPurchaseDocViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = PurchaseDoc.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
+    serializer_class = MinPurchaseDocSerializer
+    pagination_class = None
 
-class PurchaseDocViewSet(viewsets.ReadOnlyModelViewSet):
+class PurchaseDocViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """

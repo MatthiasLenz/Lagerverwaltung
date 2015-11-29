@@ -132,10 +132,14 @@ class MinPurchaseDocDataSerializer(serializers.ModelSerializer):
 
 class PurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
     supplierid = SupplierSerializer(read_only=True, allow_null=True)
-    data = MinPurchaseDocDataSerializer(many=True, read_only=True)
+    data = MinPurchaseDocDataSerializer(many=True, allow_null=True, required=False)
+
     class Meta:
         model = PurchaseDoc
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data')
 
 
-
+class MinPurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = PurchaseDoc
+        fields = ('url', 'id', 'responsible', 'doctype', 'module', 'status', 'docdate')

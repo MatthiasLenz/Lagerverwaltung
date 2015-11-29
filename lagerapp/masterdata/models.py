@@ -20,6 +20,8 @@ class Supplier(models.Model):
     numberorders = models.SmallIntegerField(db_column='NumberOrders', blank=True, null=True)
     bookinid = models.CharField(db_column='FZ_BOOKINID', max_length=15, blank=True)
 
+    def __str__(self):
+        return self.id
     class Meta:
         managed = False
         db_table = 'Supplier'
@@ -32,6 +34,9 @@ class Stock(models.Model):
     type = models.SmallIntegerField(db_column='Type', blank=True, null=True) # Field name made lowercase.
     defaultlocationid = models.CharField(db_column='defaultLocationID', max_length=15, blank=True) # Field name made lowercase.
     tstamp = models.TextField(db_column='TStamp') # Field name made lowercase. This field type is a guess.
+
+    def __str__(self):
+        return self.id
     class Meta:
         managed = False
         db_table = 'Stock'
@@ -43,6 +48,9 @@ class Nature(models.Model):
     titlegrade = models.SmallIntegerField(db_column='TitleGrade', blank=True, null=True) # Field name made lowercase.
     name = models.CharField(db_column='Name', max_length=35, blank=True) # Field name made lowercase.
     remark = models.CharField(db_column='Remark', max_length=50, blank=True) # Field name made lowercase.
+
+    def __str__(self):
+        return self.id
     class Meta:
         managed = False
         db_table = 'Nature'
@@ -127,6 +135,9 @@ class Product(models.Model):
     #wenn man im serializer ein feld hinzufügt, dann muss das auch hier im Model vorhanden sein, man kann ein Feld aus der Datenbank dazu ein zweites mal verwenden.
     nature =  models.ForeignKey(Nature, db_column='ResourceNatureID', blank=True, null=True) # Field name made lowercase.
     defaultsupplier = models.ForeignKey(Supplier, db_column='DefaultSupplier', blank=True, null=True)
+
+    def __str__(self):
+        return self.id
     class Meta:
         managed = False
         db_table = 'Product'
@@ -147,6 +158,8 @@ class ProductPacking(models.Model):
     name = models.CharField(db_column='Name', max_length=40, blank=True, null=True)
     quantity = models.FloatField(db_column='Quantity', blank=True, null=True)
 
+    def __str__(self):
+        return str(self.rowid)
     class Meta:
         managed = False
         db_table = 'ProductPacking'
@@ -162,6 +175,9 @@ class ProductSupplier(models.Model):
                                null=True)  # renamed, because it is being used as a comment field
     unit = models.CharField(db_column='Unit', max_length=5, blank=True, null=True)
     id = models.CharField(db_column='ID', max_length=25, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.rowid)
     class Meta:
         managed = False
         db_table = 'ProductSupplier'
@@ -177,6 +193,8 @@ class PurchaseDoc(models.Model):
     status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
 
+    def __str__(self):
+        return self.id
     class Meta:
         managed = False
         db_table = 'PurchaseDoc'
@@ -194,6 +212,8 @@ class PurchaseDocData(models.Model):
     price = models.FloatField(db_column='Price', blank=True, null=True)
     amount = models.FloatField(db_column='Amount', blank=True, null=True)
 
+    def __str__(self):
+        return str(self.rowid)
     class Meta:
         managed = False
         db_table = 'PurchaseDocData'
@@ -222,6 +242,8 @@ class StockData(models.Model):
     consumption12 = models.FloatField(db_column='Consumption12', blank=True, null=True) # Field name made lowercase.
     location = models.CharField(db_column='Location', max_length=15, blank=True) # Field name made lowercase.
     #tstamp = models.TextField(db_column='TStamp') # Field name made lowercase. This field type is a guess.
+    def __str__(self):
+        return str(self.id)
     class Meta:
         managed = False
         db_table = 'StockData'
