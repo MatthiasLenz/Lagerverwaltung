@@ -1,5 +1,6 @@
 angular.module('baseApp.bestellen').
-controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenService', function ($http, $scope, $q, $interval, bestellungenService) {
+controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenService', '$log',
+    function ($http, $scope, $q, $interval, bestellungenService, $log) {
 
     var controller = this;
     controller.product = $scope.bestellen.selectedprod;
@@ -47,6 +48,7 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
                     suppdata["default"] = false;
                 }
                 suppdata["supplierid"] = response.data.supplierid;
+
                 suppdata["comment"] = response.data.comment;
                 suppdata["purchaseprice"] = response.data.purchaseprice;
                 controller.purchasedocs.forEach(function (item) {

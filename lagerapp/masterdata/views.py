@@ -7,7 +7,7 @@ from masterdata.serializers import UserSerializer, UserDataSerializer, SupplierS
     ProductSerializer, \
     NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, MinPurchaseDocSerializer,\
     PurchaseDocDataSerializer, ProductPackingSerializer
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework import viewsets, mixins, pagination, filters, generics
 from rest_framework.response import Response
@@ -166,11 +166,25 @@ class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
+    authentication_classes = (BasicAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = PurchaseDocData.objects.all()
     serializer_class = PurchaseDocDataSerializer
     pagination_class = LargeResultsSetPagination
 
 
+# Todo
+"""
+class TokenView(APIView):
+    #when we request this at the beginning, the user will be prompted for username and password, a token will be returned
+    authentication_classes = (BasicAuthentication,) #this prompts for userinput
+    permission_classes = (IsAuthenticated,)
+    def get(self, request, format=None):
+        content = {
+            'token': unicode(request.auth),
+        }
+        return Response(content)
+"""
 class NatureViewSet(mixins.RetrieveModelMixin,
                     mixins.ListModelMixin,
                     viewsets.GenericViewSet):

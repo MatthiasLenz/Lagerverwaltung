@@ -1,4 +1,3 @@
-{% extends "rest_framework/base.html" %}
 {% load staticfiles %}
 {% load rest_framework %}
 
@@ -14,16 +13,15 @@
                 </div><!-- /row fluid -->
 
                 <div class="row-fluid">
-                    <div>
-                        <form action="{% url 'rest_framework:login' %}" role="form" method="post">
+                    <div ng-controller="BaseCtrl as cc">
+                        <form novalidate action="{% url 'rest_framework:login' %}" role="form" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ next }}"/>
-
                             <div id="div_id_username"
                                  class="clearfix control-group {% if form.username.errors %}error{% endif %}">
                                 <div class="form-group">
                                     <label for="id_username">Benutzername:</label>
-                                    <input type="text" name="username" maxlength="100"
+                                    <input ng-model="cc.username" type="text" name="username" maxlength="100"
                                            autocapitalize="off"
                                            autocorrect="off" class="form-control textinput textInput"
                                            id="id_username" required
@@ -40,7 +38,8 @@
                                  class="clearfix control-group {% if form.password.errors %}error{% endif %}">
                                 <div class="form-group">
                                     <label for="id_password">Passwort:</label>
-                                    <input type="password" name="password" maxlength="100" autocapitalize="off"
+                                    <input ng-model="cc.password" type="password" name="password" maxlength="100"
+                                           autocapitalize="off"
                                            autocorrect="off" class="form-control textinput textInput" id="id_password"
                                            required>
                                     {% if form.password.errors %}
@@ -59,7 +58,7 @@
 
                             <div class="form-actions-no-box">
                                 <input type="submit" name="submit" value="Log in" class="btn btn-primary form-control"
-                                       id="submit-id-submit">
+                                       id="submit-id-submit" ng-click="cc.get_token()">
                             </div>
                         </form>
                     </div>
@@ -67,5 +66,8 @@
             </div><!--/.well-->
         </div><!-- /.row-fluid -->
     </div><!-- /.container-fluid -->
+    {% verbatim %}
+        {{ cc.username }}
+    {% endverbatim %}
     </body>
 {% endblock %}

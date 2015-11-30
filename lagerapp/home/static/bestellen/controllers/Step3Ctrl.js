@@ -4,6 +4,7 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
     window.step3 = $scope;
     controller.changeIn = changeIn;
     controller.toggleDetail = toggleDetail;
+    controller.save = save;
     controller.showDetail = false;
     controller.showText = "Details ansehen »";
     controller.product = $scope.bestellen.selectedprod;
@@ -43,6 +44,28 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', function ($ht
             controller.showText = "« ausblenden";
             controller.showDetail = true;
         }
+    }
+
+    function save() {
+        //if existing purchasedoc: create purchasedocdata with purchasedocid
+        if (controller.supplier.opendoc) {
+            var purchasedocid = controller.supplier.opendoc.id;
+            $http({
+                method: 'POST',
+                url: '/api/purchasedocdata/',
+                data: {
+                    "purchasedocid": null,
+                    "prodid": null,
+                    "name": "",
+                    "unit": "",
+                    "quantity": null,
+                    "price": null,
+                    "amount": null
+                },
+                headers: {"Authorization": "Token 673a328f860542d86ef8541234a93ed2eb83abdd"}
+            });
+        }
+        //else: create new purchasedoc, create purchasedocdata with purchasedocid
     }
 
 }]);
