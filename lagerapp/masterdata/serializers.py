@@ -123,12 +123,13 @@ class FastProductSerializer(serializers.ModelSerializer):
 class PurchaseDocDataSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PurchaseDocData
-        fields = ('url', 'rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
+        fields = ('url', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
 
 class MinPurchaseDocDataSerializer(serializers.ModelSerializer):
+    # used for nested
     class Meta:
         model = PurchaseDocData
-        fields = ('prodid', 'name', 'unit', 'quantity', 'price', 'amount')
+        fields = ('rowid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
 
 class PurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
     supplierid = SupplierSerializer(read_only=True, allow_null=True)

@@ -153,9 +153,8 @@ class HitRouter(object):
         return None
 
     def db_for_write(self, model, **hints):
-        """
-        Attempts to write always go to default
-        """
+        if model._meta.app_label == 'hit_01_purchase':
+            return 'hit_01_purchase'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):

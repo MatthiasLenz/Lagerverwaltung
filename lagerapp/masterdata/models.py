@@ -20,7 +20,7 @@ class Supplier(models.Model):
     numberorders = models.SmallIntegerField(db_column='NumberOrders', blank=True, null=True)
     bookinid = models.CharField(db_column='FZ_BOOKINID', max_length=15, blank=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.id
     class Meta:
         managed = False
@@ -35,7 +35,7 @@ class Stock(models.Model):
     defaultlocationid = models.CharField(db_column='defaultLocationID', max_length=15, blank=True) # Field name made lowercase.
     tstamp = models.TextField(db_column='TStamp') # Field name made lowercase. This field type is a guess.
 
-    def __str__(self):
+    def __unicode__(self):
         return self.id
     class Meta:
         managed = False
@@ -49,7 +49,7 @@ class Nature(models.Model):
     name = models.CharField(db_column='Name', max_length=35, blank=True) # Field name made lowercase.
     remark = models.CharField(db_column='Remark', max_length=50, blank=True) # Field name made lowercase.
 
-    def __str__(self):
+    def __unicode__(self):
         return self.id
     class Meta:
         managed = False
@@ -136,7 +136,7 @@ class Product(models.Model):
     nature =  models.ForeignKey(Nature, db_column='ResourceNatureID', blank=True, null=True) # Field name made lowercase.
     defaultsupplier = models.ForeignKey(Supplier, db_column='DefaultSupplier', blank=True, null=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.id
     class Meta:
         managed = False
@@ -158,7 +158,7 @@ class ProductPacking(models.Model):
     name = models.CharField(db_column='Name', max_length=40, blank=True, null=True)
     quantity = models.FloatField(db_column='Quantity', blank=True, null=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return str(self.rowid)
     class Meta:
         managed = False
@@ -176,7 +176,7 @@ class ProductSupplier(models.Model):
     unit = models.CharField(db_column='Unit', max_length=5, blank=True, null=True)
     id = models.CharField(db_column='ID', max_length=25, blank=True, null=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return str(self.rowid)
     class Meta:
         managed = False
@@ -184,6 +184,7 @@ class ProductSupplier(models.Model):
         app_label = 'hit_01_masterdata'
 
 
+from django.db import router
 class PurchaseDoc(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)  # Field name made lowercase.
     responsible = models.CharField(db_column='Responsible', max_length=15, blank=True, null=True)
@@ -193,7 +194,7 @@ class PurchaseDoc(models.Model):
     status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.id
     class Meta:
         managed = False
@@ -212,7 +213,14 @@ class PurchaseDocData(models.Model):
     price = models.FloatField(db_column='Price', blank=True, null=True)
     amount = models.FloatField(db_column='Amount', blank=True, null=True)
 
-    def __str__(self):
+    def save(self, *args, **kwargs):
+        """http://stackoverflow.com/questions/4616787/django-making-a-custom-pk-auto-increment"""
+        if not self.rowid:
+            self.rowid = self.__class__.objects.all().order_by('-rowid')[0].rowid + 1
+            print(self.rowid)
+        super(self.__class__, self).save(*args, **kwargs)
+
+    def __unicode__(self):
         return str(self.rowid)
     class Meta:
         managed = False
@@ -242,7 +250,7 @@ class StockData(models.Model):
     consumption12 = models.FloatField(db_column='Consumption12', blank=True, null=True) # Field name made lowercase.
     location = models.CharField(db_column='Location', max_length=15, blank=True) # Field name made lowercase.
     #tstamp = models.TextField(db_column='TStamp') # Field name made lowercase. This field type is a guess.
-    def __str__(self):
+    def __unicode__(self):
         return str(self.id)
     class Meta:
         managed = False
