@@ -22,11 +22,8 @@ urlpatterns = [
     url(r'^api/users/$', views.UserList.as_view()),
     url(r'^api/users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
     url(r'^api/userdata/$', views.UserDataList.as_view()),
-    url(r'^api/userdata/(?P<pk>[0-9]+)/$', views.UserDataDetail.as_view())
+    url(r'^api/userdata/(?P<pk>[0-9]+)/$', views.UserDataDetail.as_view()),
+    url(r'^api/token/$', views.TokenView.as_view()),
 ]
 
-from rest_framework.authtoken import views
 
-urlpatterns += [
-    url(r'^api/api-token-auth/', views.obtain_auth_token)
-]

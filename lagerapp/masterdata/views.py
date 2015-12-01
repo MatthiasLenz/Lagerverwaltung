@@ -7,9 +7,9 @@ from masterdata.serializers import UserSerializer, UserDataSerializer, SupplierS
     ProductSerializer, \
     NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, MinPurchaseDocSerializer,\
     PurchaseDocDataSerializer, ProductPackingSerializer
-from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework import viewsets, mixins, pagination, filters, generics
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication, SessionAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework import viewsets, mixins, pagination, filters, generics, views
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 
@@ -173,26 +173,31 @@ class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
 
-# Todo
-"""
-class TokenView(APIView):
-    #when we request this at the beginning, the user will be prompted for username and password, a token will be returned
-    authentication_classes = (BasicAuthentication,) #this prompts for userinput
+from rest_framework.authtoken.models import Token
+
+
+class TokenView(views.APIView):
+    """ when we request this at the beginning, the user will be prompted for username and password (BasicAuthentication),
+        his token will be returned """
+    authentication_classes = (BasicAuthentication,)
     permission_classes = (IsAuthenticated,)
     def get(self, request, format=None):
+        user = request.user
+        token, created = Token.objects.get_or_create(user=user)
         content = {
-            'token': unicode(request.auth),
+            'created': unicode(created),
+            'token': unicode(token),
+            'user': unicode(user),
         }
         return Response(content)
-"""
+
+
 class NatureViewSet(mixins.RetrieveModelMixin,
                     mixins.ListModelMixin,
                     viewsets.GenericViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     lookup_value_regex = '[-A-Za-z0-9.]*' # hatte hier statt * ein +, wodurch ein aufruf von nature-detail mit leerem resourcenatureid nicht möglich war
 
