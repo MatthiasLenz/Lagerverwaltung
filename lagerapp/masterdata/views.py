@@ -101,6 +101,8 @@ from rest_framework import status
 
 
 class MinPurchaseDocViewSet(viewsets.GenericViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     queryset = PurchaseDoc.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
     serializer_class = MinPurchaseDocSerializer
@@ -166,7 +168,7 @@ class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    authentication_classes = (BasicAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = PurchaseDocData.objects.all()
     serializer_class = PurchaseDocDataSerializer

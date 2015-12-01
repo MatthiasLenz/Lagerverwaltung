@@ -196,6 +196,11 @@ class ProductSupplier(models.Model):
 
 from django.db import router
 class PurchaseDoc(models.Model):
+    def save(self, *args, **kwargs):
+        """http://stackoverflow.com/questions/4616787/django-making-a-custom-pk-auto-increment"""
+        if not self.id:
+            self.id = str(int(self.__class__.objects.all().order_by('-id')[0].id) + 1)
+        super(self.__class__, self).save(*args, **kwargs)
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)  # Field name made lowercase.
     responsible = models.CharField(db_column='Responsible', max_length=15, blank=True, null=True)
     doctype = models.SmallIntegerField(db_column='DocType', blank=True, null=True)
