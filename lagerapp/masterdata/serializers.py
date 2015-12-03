@@ -134,12 +134,22 @@ class MinPurchaseDocDataSerializer(serializers.ModelSerializer):
 
 class PurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
     supplierid = SupplierSerializer(read_only=True, allow_null=True)
-    data = MinPurchaseDocDataSerializer(many=True, allow_null=True, required=False)
-
+    data = PurchaseDocDataSerializer(many=True, allow_null=True, required=False)
+    id = serializers.CharField(required=False, max_length=15, allow_blank=True)
     class Meta:
         model = PurchaseDoc
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data')
 
+    def create(self, validated_data):
+        data = validated_data.pop('data')  # 'data' needs to be removed first
+        purchasedoc = PurchaseDoc.objects.create(**validated_data)
+        # Wichtig: Im foreign key feld muss immer das Object selbst referenziert werden, nicht die ID des Objekts,
+        # also 'prodid': <Product: N999> und nicht 'prodid': 'N999'
+        # Die Feldbezeichnung purchasedocid ist in diesem Fall verwirrend: In purchasedoc umbenennen?
+        for entry in data:
+            data_data = dict(entry)
+            PurchaseDocData.objects.create(purchasedocid=purchasedoc, **data_data)
+        return purchasedoc
 
 class MinPurchaseDocSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)

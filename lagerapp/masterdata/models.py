@@ -232,7 +232,6 @@ class PurchaseDocData(models.Model):
         """http://stackoverflow.com/questions/4616787/django-making-a-custom-pk-auto-increment"""
         if not self.rowid:
             self.rowid = self.__class__.objects.all().order_by('-rowid')[0].rowid + 1
-            print(self.rowid)
         super(self.__class__, self).save(*args, **kwargs)
 
     def __unicode__(self):
