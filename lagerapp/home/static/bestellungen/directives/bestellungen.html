@@ -9,7 +9,7 @@
     <div ng-class="{title: bestellung.title}" class="row">
         <div class="col-lg-2">{{ bestellung.id }}</div>
         <div class="col-lg-2">{{ bestellung.responsible }}</div>
-        <div class="col-lg-2">{{ bestellung.supplierid.namea }}</div>
+        <div class="col-lg-2">{{ bestellung.supplier.namea }}</div>
         <div class="col-lg-2">{{ bestellung.docdate }}</div>
         <div class="col-lg-2"><a ng-click="bestellungen.toggleDetail(bestellung.id)">K</a></div>
     </div>
@@ -31,7 +31,7 @@
 </div>
 <div ng-repeat="bestellung in bestellungen.list | orderBy: 'docdate'">
     <div class="panel panel-primary">
-        <div class="panel-heading">Lieferant: {{ bestellung.supplierid.namea }} Bestellung: {{ bestellung.id }}
+        <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}
             ({{ bestellung.docdate |date:'d. MMM yyyy' }})
         </div>
         <div class="panel-body">
