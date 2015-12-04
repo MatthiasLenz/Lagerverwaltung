@@ -2,7 +2,6 @@ angular.module('baseApp.bestellen').
 controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService', '$filter',
     function ($http, $scope, bestellungenService, tokenService, $filter) {
     var controller = this;
-    window.step3 = $scope;
     controller.changeIn = changeIn;
     controller.toggleDetail = toggleDetail;
     controller.save = save;
@@ -71,11 +70,8 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
         }
         else {
             tokenService.getToken().then(function (ts) {
-                $http({
-                    //new purchasedoc
-                    method: 'POST',
-                    url: '/api/purchasedoc/',
-                    data: {
+                bestellungenService.setToken(ts.token);
+                bestellungenService.resource.create({
                         "responsible": ts.user,
                         "doctype": 2,
                         "module": 5,
@@ -90,9 +86,8 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                             "price": controller.supplier.purchaseprice,
                             "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
                         }]
-                    },
-                    headers: {"Authorization": "Token " + ts.token}
-                })
+                });
+                bestellungenService.clearCache();
             });
         }
 

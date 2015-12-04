@@ -21,8 +21,6 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     // 3b. Expose methods or data on the scope
     $scope.productModel = productService.model;
     $scope.solid = "Solid S.A.";
-    window.scope = controller;
-    window.scope2 = $scope;
 
     // 3c. Listen to events on the scope
 

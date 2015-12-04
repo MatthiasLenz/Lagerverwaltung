@@ -2,7 +2,6 @@ angular.module('baseApp').
 controller('BaseCtrl', ['$scope', function ($scope) {
     // 1. Self-reference
     var controller = this;
-    window.base = controller;
     // 2. requirements
     // 3. Do scope stuff
     // 3a. Set up watchers on the scope.
@@ -15,7 +14,7 @@ controller('BaseCtrl', ['$scope', function ($scope) {
         return controller.state == state;
     };
     controller.dropdown = false;
-
+    window.base = controller;
     // 3c. Listen to events on the scope
     // 4. Expose methods and properties on the controller instance
     // 5. Clean up

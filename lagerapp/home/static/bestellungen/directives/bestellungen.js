@@ -6,6 +6,7 @@ directive('bestellungen', function () {
             var controller = this;
             controller.list = [];
             controller.showDetail = {};
+
             bestellungenService.resource.query({'status': 0}).$promise.then(function (result) {
                 result.forEach(function (item) {
                     supplier = supplierService.resource.query({'id': item.supplierid});
@@ -14,7 +15,6 @@ directive('bestellungen', function () {
                     controller.showDetail[item.id] = false;
                 });
             });
-
 
             controller.toggleDetail = function (id) {
                 controller.showDetail[id] = !(controller.showDetail[id]);
