@@ -11,8 +11,8 @@ router.register(r'nature', views.NatureViewSet)
 router.register(r'product', views.ProductViewSet, base_name='product')
 router.register(r'productpacking', views.ProductPackingViewSet, base_name='productpacking')
 router.register(r'productsupplier', views.ProductSupplierViewSet, base_name='productsupplier')
+router.register(r'minpurchasedoc', views.MinPurchaseDocViewSet, base_name='minpurchasedoc')
 router.register(r'purchasedoc', views.PurchaseDocViewSet)
-router.register(r'minpurchasedoc', views.MinPurchaseDocViewSet)
 router.register(r'purchasedocdata', views.PurchaseDocDataViewSet)
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.

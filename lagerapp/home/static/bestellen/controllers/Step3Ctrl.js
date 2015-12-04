@@ -51,7 +51,7 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
         //if existing purchasedoc: create purchasedocdata with purchasedocid
         if (controller.supplier.opendoc) {
             var purchasedocid = controller.supplier.opendoc.id;
-            tokenService.getToken().then(function (token) {
+            tokenService.getToken().then(function (ts) {
                 $http({
                     method: 'POST',
                     url: '/api/purchasedocdata/',
@@ -64,34 +64,38 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                         "price": controller.supplier.purchaseprice,
                         "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
                     },
-                    headers: {"Authorization": "Token " + token}
+                    headers: {"Authorization": "Token " + ts.token}
                 });
             })
 
         }
         else {
-            tokenService.getToken().then(function (response) {
+            tokenService.getToken().then(function (ts) {
                 $http({
                     //new purchasedoc
                     method: 'POST',
-                    url: '/api/minpurchasedoc/',
+                    url: '/api/purchasedoc/',
                     data: {
-                        "responsible": "test",
+                        "responsible": ts.user,
                         "doctype": 2,
                         "module": 5,
                         "status": 0,
-                        "docdate": $filter('date')(new Date(), 'yyyy-MM-dd')
+                        "supplierid": controller.supplier.supplierid.id, //das muss refactored werden
+                        "docdate": $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sssZ'),
+                        "data": [{
+                            "prodid": controller.product.id,
+                            "name": controller.product.name1,
+                            "unit": controller.product.unit1,
+                            "quantity": controller.packings['base'].orderAmount,
+                            "price": controller.supplier.purchaseprice,
+                            "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
+                        }]
                     },
-                    headers: {"Authorization": "Token " + token}
-                }).then(function (response) {
-                    //add data to purchasedoc
-                    //Problem: purchasedoc id is unknown
-                    //option 1: reload purchasedata (from step 2)
-                    //option 2: with nesting, create the puchasedoc with included purchasedocdata
-                });
+                    headers: {"Authorization": "Token " + ts.token}
+                })
             });
         }
-        //else: create new purchasedoc, create purchasedocdata with purchasedocid
+
     }
 
 }]);

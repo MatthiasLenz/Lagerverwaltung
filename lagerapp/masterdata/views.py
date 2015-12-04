@@ -157,6 +157,8 @@ class PurchaseDocViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = PurchaseDoc.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
     serializer_class = PurchaseDocSerializer
     pagination_class = None

@@ -132,8 +132,9 @@ class MinPurchaseDocDataSerializer(serializers.ModelSerializer):
         model = PurchaseDocData
         fields = ('rowid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
 
-class PurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
-    supplierid = SupplierSerializer(read_only=True, allow_null=True)
+
+class PurchaseDocSerializer(serializers.ModelSerializer):
+    # supplier = SupplierSerializer(read_only=True, allow_null=True)
     data = PurchaseDocDataSerializer(many=True, allow_null=True, required=False)
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)
     class Meta:
@@ -141,6 +142,7 @@ class PurchaseDocSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data')
 
     def create(self, validated_data):
+        print(repr(validated_data))
         data = validated_data.pop('data')  # 'data' needs to be removed first
         purchasedoc = PurchaseDoc.objects.create(**validated_data)
         # Wichtig: Im foreign key feld muss immer das Object selbst referenziert werden, nicht die ID des Objekts,
