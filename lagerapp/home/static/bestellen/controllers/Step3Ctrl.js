@@ -66,7 +66,6 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                     headers: {"Authorization": "Token " + ts.token}
                 });
             })
-
         }
         else {
             tokenService.getToken().then(function (ts) {
@@ -87,10 +86,8 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                             "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
                         }]
                 });
-                bestellungenService.clearCache();
             });
         }
-
+        bestellungenService.clearCache();
     }
-
 }]);
