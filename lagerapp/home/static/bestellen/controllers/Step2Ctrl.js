@@ -26,7 +26,6 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
     function getProductSupplier(entry) {
         return $http.get(entry);
     }
-
     var purchaseData = getPurchases();
 
     purchaseData.then(function (result) {
@@ -52,7 +51,7 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
                 suppdata["comment"] = response.data.comment;
                 suppdata["purchaseprice"] = response.data.purchaseprice;
                 controller.purchasedocs.forEach(function (item) {
-                    if (item.supplierid.id == response.data.supplierid.id) {
+                    if (item.supplierid == response.data.supplierid.id) {
                         suppdata["opendoc"] = item;
                     }
                 });
