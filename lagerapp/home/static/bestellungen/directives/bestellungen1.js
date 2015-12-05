@@ -7,6 +7,7 @@ directive('bestellungen1', function () {
             controller.list = [];
             updateList();
             controller.showDetail = {};
+            controller.select = null;
             function updateList() {
                 controller.list = [];
                 bestellungenService.purchasedoc.list({'status': 1}).then(function (result) {
