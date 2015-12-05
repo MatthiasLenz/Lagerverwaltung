@@ -122,15 +122,10 @@ class FastProductSerializer(serializers.ModelSerializer):
 
 
 class PurchaseDocDataSerializer(serializers.ModelSerializer):
+    rowid = serializers.IntegerField(allow_null=True)
     class Meta:
         model = PurchaseDocData
         fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
-
-class MinPurchaseDocDataSerializer(serializers.ModelSerializer):
-    # used for nested
-    class Meta:
-        model = PurchaseDocData
-        fields = ('rowid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
 
 
 class PurchaseDocSerializer(serializers.ModelSerializer):

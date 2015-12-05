@@ -33,6 +33,14 @@
     <div class="panel panel-primary">
         <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}
             ({{ bestellung.docdate |date:'d. MMM yyyy' }})
+            <li class="btn-group pull-right" uib-dropdown is-open="">
+                <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle ng-disabled="disabled">
+                    Optionen <span class="caret"></span>
+                </a>
+                <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                    <li><a ng-click="bestellungen.delete_doc(bestellung.id)">Bestellung löschen</a></li>
+                </ul>
+            </li>
         </div>
         <div class="panel-body">
             <table class="table">
@@ -51,7 +59,15 @@
                     <td> {{ item.price |currency:""}} €</td>
                     <td> {{ item.amount |currency:""}} €</td>
                     <td>
-                        <button ng-click="bestellungen.delete(item.rowid)">entfernen</button>
+                        <li class="btn-group pull-right" uib-dropdown is-open="">
+                            <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                               ng-disabled="disabled">
+                                Optionen <span class="caret"></span>
+                            </a>
+                            <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                                <li><a ng-click="bestellungen.delete_docdata(item.rowid)">Eintrag löschen</a></li>
+                            </ul>
+                        </li>
                     </td>
                 </tr>
                 </tbody>

@@ -8,14 +8,16 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService)
     }
 
     var purchasedoc = $resource(
-        "/api/purchasedoc\\/:id", {id: "@id"}, {
-            create: {method: 'POST', headers: {"Authorization": getToken}}
+        "/api/purchasedoc/:id", {id: "@id"}, {
+            create: {method: 'POST', headers: {"Authorization": getToken}},
+            delete: {method: 'DELETE', headers: {"Authorization": getToken}}
         }
     );
 
     var purchasedocdata = $resource(
-        "/api/purchasedocdata\\/:id", {id: "@id"}, {
-            create: {method: 'POST', headers: {"Authorization": getToken}}
+        "/api/purchasedocdata/:id", {id: "@id"}, {
+            create: {method: 'POST', headers: {"Authorization": getToken}},
+            delete: {method: 'DELETE', headers: {"Authorization": getToken}}
         }
     );
 
@@ -37,6 +39,15 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService)
         });
     }
 
+    function purchasedoc_delete(id) {
+        tokenService.getToken().then(function (response) {
+            token = response.token;
+            purchasedoc.delete({}, {"id": id}).$promise.then(function (response) {
+                clearCache();
+            });
+        });
+    }
+
     function purchasedocdata_create(data) {
         tokenService.getToken().then(function (response) {
             token = response.token;
@@ -46,13 +57,24 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService)
         });
     }
 
+    function purchasedocdata_delete(id) {
+        tokenService.getToken().then(function (response) {
+            token = response.token;
+            purchasedocdata.delete({}, {"id": id}).$promise.then(function (response) {
+                clearCache();
+            });
+        });
+    }
+
     return {
         purchasedoc: {
             list: purchasedoc_list,
-            create: purchasedoc_create
+            create: purchasedoc_create,
+            delete: purchasedoc_delete
         },
         purchasedocdata: {
-            create: purchasedocdata_create
+            create: purchasedocdata_create,
+            delete: purchasedocdata_delete
         }
     };
 });
