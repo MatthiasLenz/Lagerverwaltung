@@ -1,16 +1,27 @@
-<table class="table">
-    <thead>
-    <th>ID Bestellung</th>
-    <th>Verantwortlich</th>
-    <th>ID Lieferant</th>
-    <th>Datum</th>
-    </thead>
-    <tbody>
-    <tr ng-repeat="bestellung in bestellungen1.list" ng-class="{title: bestellung.title}">
-        <td>{{ bestellung.id }}</td>
-        <td>{{ bestellung.responsible }}</td>
-        <td>{{ bestellung.supplierid }}</td>
-        <td>{{ bestellung.docdate }}</td>
-    </tr>
-    </tbody>
-</table>
+<div ng-repeat="bestellung in bestellungen1.list | orderBy: '-docdate'">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}
+            ({{ bestellung.docdate |date:'d. MMM yyyy' }})
+        </div>
+        <div class="panel-body">
+            <table class="table">
+                <thead>
+                <th>Name</th>
+                <th>Anzahl</th>
+                <th>Einheit</th>
+                <th>Preis</th>
+                <th>Kosten</th>
+                </thead>
+                <tbody>
+                <tr class="text-muted" ng-repeat="(key, item) in bestellung.data">
+                    <td> {{ item.name }}</td>
+                    <td> {{ item.quantity }}</td>
+                    <td> {{ item.unit }}</td>
+                    <td> {{ item.price |currency:""}} €</td>
+                    <td> {{ item.amount |currency:""}} €</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

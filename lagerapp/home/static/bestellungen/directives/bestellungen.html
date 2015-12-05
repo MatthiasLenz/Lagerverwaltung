@@ -1,34 +1,3 @@
-<!--<div class="row">
-    <div class="col-lg-2">ID Bestellung</div>
-    <div class="col-lg-2">Verantwortlich</div>
-    <div class="col-lg-2">ID Lieferant</div>
-    <div class="col-lg-2">Datum</div>
-    <div class="col-lg-2">Details</div>
-</div>
-<div ng-repeat="bestellung in bestellungen.list">
-    <div ng-class="{title: bestellung.title}" class="row">
-        <div class="col-lg-2">{{ bestellung.id }}</div>
-        <div class="col-lg-2">{{ bestellung.responsible }}</div>
-        <div class="col-lg-2">{{ bestellung.supplier.namea }}</div>
-        <div class="col-lg-2">{{ bestellung.docdate }}</div>
-        <div class="col-lg-2"><a ng-click="bestellungen.toggleDetail(bestellung.id)">K</a></div>
-    </div>
-    <div class="row" ng-repeat-end>
-        <div class="col-lg-10" ng-show="bestellungen.showDetail[bestellung.id]">
-            <table class="table">
-                <tr ng-repeat="(key, value) in bestellung.data">
-                    <td>{{ value.prodid }}</td>
-                    <td>{{ value.name }}</td>
-                    <td>{{ value.unit }}</td>
-                    <td>{{ value.quantity }}</td>
-                    <td>{{ value.price|currency:"" }} €</td>
-                    <td>{{ value.amount|currency:"" }} €</td>
-                </tr>
-            </table>
-            <br/>
-        </div>
-    </div>
-</div>-->
 <div ng-repeat="bestellung in bestellungen.list | orderBy: '-docdate'">
     <div class="panel panel-primary">
         <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}

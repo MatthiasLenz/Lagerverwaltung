@@ -5,11 +5,23 @@ directive('bestellungen1', function () {
         controller: ['$scope', 'bestellungenService', 'supplierService', function ($scope, bestellungenService, supplierService) {
             var controller = this;
             controller.list = [];
-            bestellungenService.list({'status': 1}).then(function (result) {
-                controller.list = result;
-                supplier = supplierService.resource.query({'id': controller.list.supplierid});
-                controller.list.supplierid = supplier;
-            });
+            updateList();
+            controller.showDetail = {};
+            function updateList() {
+                controller.list = [];
+                bestellungenService.purchasedoc.list({'status': 1}).then(function (result) {
+                    result.forEach(function (item) {
+                        supplier = supplierService.resource.query({'id': item.supplierid});
+                        item.supplier = supplier;
+                        controller.list.push(item);
+                        controller.showDetail[item.id] = false;
+                    });
+                });
+            }
+
+            controller.toggleDetail = function (id) {
+                controller.showDetail[id] = !(controller.showDetail[id]);
+            };
         }],
         controllerAs: 'bestellungen1'
     };
