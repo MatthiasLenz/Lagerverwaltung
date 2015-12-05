@@ -30,7 +30,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     }
 
     function purchasedoc_create(data) {
-        tokenService.getToken().then(function (response) {
+        return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
@@ -43,8 +43,9 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
 
     function purchasedoc_delete(doc) {
         return tokenService.getToken().then(function (response) {
-            return response.token;
-        }).then(function (token) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
             promises = [];
             doc.data.forEach(function (item) {
                 promises.push(purchasedocdata_delete(item.rowid));
@@ -59,7 +60,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     }
 
     function purchasedocdata_create(data) {
-        tokenService.getToken().then(function (response) {
+        return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
@@ -72,8 +73,9 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     function purchasedocdata_delete(id) {
         //return a promise for purchasedoc_delete
         return tokenService.getToken().then(function (response) {
-            return response.token;
-        }).then(function (token) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
             return purchasedocdata.delete({}, {"id": id}).$promise;
         }).then(function (response) {
                 clearCache();
