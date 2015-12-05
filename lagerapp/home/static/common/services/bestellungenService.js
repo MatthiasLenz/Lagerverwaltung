@@ -1,5 +1,5 @@
 angular.module('baseApp.Services').
-factory("bestellungenService", function ($resource, $cacheFactory, tokenService) {
+factory("bestellungenService", function ($resource, $cacheFactory, tokenService, $q) {
     var purchasedocCache = $cacheFactory('PurchaseDoc');
     var token;
 
@@ -39,11 +39,18 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService)
         });
     }
 
-    function purchasedoc_delete(id) {
+    function purchasedoc_delete(doc) {
         tokenService.getToken().then(function (response) {
             token = response.token;
-            purchasedoc.delete({}, {"id": id}).$promise.then(function (response) {
-                clearCache();
+            promises = [];
+            doc.data.forEach(function (item) {
+                promises.push(purchasedocdata_delete(item.rowid));
+            });
+            $q.all(promises).then(function () {
+                //after all the purchasedocdata entries for purchasedoc are deleted
+                purchasedoc.delete({}, {"id": doc.id}).$promise.then(function (response) {
+                    clearCache();
+                });
             });
         });
     }
@@ -58,7 +65,8 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService)
     }
 
     function purchasedocdata_delete(id) {
-        tokenService.getToken().then(function (response) {
+        //return a promise for purchasedoc_delete
+        return tokenService.getToken().then(function (response) {
             token = response.token;
             purchasedocdata.delete({}, {"id": id}).$promise.then(function (response) {
                 clearCache();

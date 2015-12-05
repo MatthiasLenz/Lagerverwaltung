@@ -165,7 +165,6 @@ class PurchaseDocViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('status',)
 
-
 class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
@@ -175,7 +174,6 @@ class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     queryset = PurchaseDocData.objects.all()
     serializer_class = PurchaseDocDataSerializer
     pagination_class = LargeResultsSetPagination
-
 
 from rest_framework.authtoken.models import Token
 
