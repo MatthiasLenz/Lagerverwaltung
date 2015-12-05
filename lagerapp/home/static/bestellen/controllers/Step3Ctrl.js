@@ -50,33 +50,26 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
         //if existing purchasedoc: create purchasedocdata with purchasedocid
         if (controller.supplier.opendoc) {
             var purchasedocid = controller.supplier.opendoc.id;
-            bestellungenService.purchasedocdata.create({
-                        "purchasedocid": purchasedocid,
-                        "prodid": controller.product.id,
-                        "name": controller.product.name1,
-                        "unit": controller.product.unit1,
-                        "quantity": controller.packings['base'].orderAmount,
-                        "price": controller.supplier.purchaseprice,
-                        "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
-            });
+            data = {
+                "purchasedocid": purchasedocid, "prodid": controller.product.id, "name": controller.product.name1,
+                "unit": controller.product.unit1, "quantity": controller.packings['base'].orderAmount,
+                "price": controller.supplier.purchaseprice,
+                "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
+            };
+            bestellungenService.purchasedocdata.create(data);
         }
         else {
-            bestellungenService.purchasedoc.create({
-                "doctype": 2,
-                "module": 5,
-                "status": 0,
+            data = {
+                "doctype": 2, "module": 5, "status": 0,
                 "supplierid": controller.supplier.supplierid.id, //das muss refactored werden
                 "docdate": $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sssZ'),
                 "data": [{
-                    "prodid": controller.product.id,
-                    "name": controller.product.name1,
-                    "unit": controller.product.unit1,
-                    "quantity": controller.packings['base'].orderAmount,
-                    "price": controller.supplier.purchaseprice,
+                    "prodid": controller.product.id, "name": controller.product.name1, "unit": controller.product.unit1,
+                    "quantity": controller.packings['base'].orderAmount, "price": controller.supplier.purchaseprice,
                     "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
                 }]
-            });
+            };
+            bestellungenService.purchasedoc.create(data);
         }
     }
-
     }]);

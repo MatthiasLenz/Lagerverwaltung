@@ -53,7 +53,6 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService)
         },
         purchasedocdata: {
             create: purchasedocdata_create
-        },
-        clearCache: clearCache,
+        }
     };
 });
