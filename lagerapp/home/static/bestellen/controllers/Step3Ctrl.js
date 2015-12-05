@@ -50,11 +50,7 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
         //if existing purchasedoc: create purchasedocdata with purchasedocid
         if (controller.supplier.opendoc) {
             var purchasedocid = controller.supplier.opendoc.id;
-            tokenService.getToken().then(function (ts) {
-                $http({
-                    method: 'POST',
-                    url: '/api/purchasedocdata/',
-                    data: {
+            bestellungenService.purchasedocdata.create({
                         "purchasedocid": purchasedocid,
                         "prodid": controller.product.id,
                         "name": controller.product.name1,
@@ -62,14 +58,10 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                         "quantity": controller.packings['base'].orderAmount,
                         "price": controller.supplier.purchaseprice,
                         "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
-                    },
-                    headers: {"Authorization": "Token " + ts.token}
-                });
-            })
-
+            });
         }
         else {
-            bestellungenService.create({
+            bestellungenService.purchasedoc.create({
                 "doctype": 2,
                 "module": 5,
                 "status": 0,
@@ -85,7 +77,6 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                 }]
             });
         }
-
     }
 
     }]);
