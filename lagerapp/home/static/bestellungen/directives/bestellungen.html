@@ -29,7 +29,7 @@
         </div>
     </div>
 </div>-->
-<div ng-repeat="bestellung in bestellungen.list | orderBy: 'docdate'">
+<div ng-repeat="bestellung in bestellungen.list | orderBy: '-docdate'">
     <div class="panel panel-primary">
         <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}
             ({{ bestellung.docdate |date:'d. MMM yyyy' }})

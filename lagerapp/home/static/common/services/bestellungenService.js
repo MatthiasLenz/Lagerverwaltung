@@ -31,46 +31,52 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
 
     function purchasedoc_create(data) {
         tokenService.getToken().then(function (response) {
-            token = response.token;
-            data.responsible = token.user;
-            purchasedoc.create(data).$promise.then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            data.responsible = tokendata.user;
+            return purchasedoc.create(data).$promise;
+        }).then(function (response) {
                 clearCache();
-            });
         });
     }
 
     function purchasedoc_delete(doc) {
-        tokenService.getToken().then(function (response) {
-            token = response.token;
+        return tokenService.getToken().then(function (response) {
+            return response.token;
+        }).then(function (token) {
             promises = [];
             doc.data.forEach(function (item) {
                 promises.push(purchasedocdata_delete(item.rowid));
             });
-            $q.all(promises).then(function () {
-                //after all the purchasedocdata entries for purchasedoc are deleted
-                purchasedoc.delete({}, {"id": doc.id}).$promise.then(function (response) {
-                    clearCache();
-                });
-            });
+            return $q.all(promises);
+        }).then(function () {
+            //after all the purchasedocdata entries for purchasedoc are deleted
+            return purchasedoc.delete({}, {"id": doc.id}).$promise;
+        }).then(function (response) {
+            clearCache();
         });
     }
 
     function purchasedocdata_create(data) {
         tokenService.getToken().then(function (response) {
-            token = response.token;
-            purchasedocdata.create(data).$promise.then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return purchasedocdata.create(data).$promise;
+        }).then(function (response) {
                 clearCache();
-            });
         });
     }
 
     function purchasedocdata_delete(id) {
         //return a promise for purchasedoc_delete
         return tokenService.getToken().then(function (response) {
-            token = response.token;
-            purchasedocdata.delete({}, {"id": id}).$promise.then(function (response) {
+            return response.token;
+        }).then(function (token) {
+            return purchasedocdata.delete({}, {"id": id}).$promise;
+        }).then(function (response) {
                 clearCache();
-            });
         });
     }
 
