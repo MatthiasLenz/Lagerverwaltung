@@ -124,7 +124,7 @@ class FastProductSerializer(serializers.ModelSerializer):
 class PurchaseDocDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseDocData
-        fields = ('url', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
+        fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
 
 class MinPurchaseDocDataSerializer(serializers.ModelSerializer):
     # used for nested

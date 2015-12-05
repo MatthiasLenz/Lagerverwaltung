@@ -6,8 +6,10 @@ directive('bestellungen', function () {
             var controller = this;
             controller.list = [];
             controller.showDetail = {};
-
-            bestellungenService.list({'status': 0}).then(function (result) {
+            controller.delete = function (resource_url) {
+                bestellungenService.purchasedocdata.remove(resource_url);
+            };
+            bestellungenService.purchasedoc.list({'status': 0}).then(function (result) {
                 result.forEach(function (item) {
                     supplier = supplierService.resource.query({'id': item.supplierid});
                     item.supplier = supplier;
