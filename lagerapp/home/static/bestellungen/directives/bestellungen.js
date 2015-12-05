@@ -7,7 +7,7 @@ directive('bestellungen', function () {
             controller.list = [];
             controller.showDetail = {};
 
-            bestellungenService.resource.query({'status': 0}).$promise.then(function (result) {
+            bestellungenService.list({'status': 0}).then(function (result) {
                 result.forEach(function (item) {
                     supplier = supplierService.resource.query({'id': item.supplierid});
                     item.supplier = supplier;

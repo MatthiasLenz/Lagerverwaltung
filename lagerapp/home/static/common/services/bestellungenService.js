@@ -1,18 +1,15 @@
 angular.module('baseApp.Services').
-factory("bestellungenService", function ($resource, $cacheFactory) {
+factory("bestellungenService", function ($resource, $cacheFactory, tokenService, $q) {
     var purchasedocCache = $cacheFactory('PurchaseDoc');
     var token;
 
-    function setToken(value) {
-        token = value;
-    }
 
     function getToken() {
         return "Token " + token;
     }
+
     var resource = $resource(
         "/api/purchasedoc\\/:id", {id: "@id"}, {
-            query: {method: 'GET', cache: purchasedocCache, isArray: true},
             create: {method: 'POST', headers: {"Authorization": getToken}}
         }
     );
@@ -20,9 +17,25 @@ factory("bestellungenService", function ($resource, $cacheFactory) {
     function clearCache() {
         purchasedocCache.removeAll();
     }
+
+    function list(kwargs) {
+        return resource.query({'status': kwargs.status}).$promise;
+    }
+
+    function create(data) {
+        tokenService.getToken().then(function (response) {
+            token = response.token;
+            data.responsible = token.user;
+            resource.create(data).$promise.then(function (response) {
+                clearCache();
+            });
+        });
+    }
+
     return {
-        setToken: setToken,
         clearCache: clearCache,
-        resource: resource
+        resource: resource,
+        list: list,
+        create: create
     };
 });

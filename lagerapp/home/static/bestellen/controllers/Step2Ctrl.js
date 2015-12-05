@@ -13,7 +13,7 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
         $interval.cancel(dotIntervall);
     });
     function getPurchases() {
-        return bestellungenService.resource.query({status: 0}).$promise;
+        return bestellungenService.list({status: 0});
     }
 
     var i = 0;

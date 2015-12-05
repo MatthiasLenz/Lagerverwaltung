@@ -66,28 +66,26 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                     headers: {"Authorization": "Token " + ts.token}
                 });
             })
+
         }
         else {
-            tokenService.getToken().then(function (ts) {
-                bestellungenService.setToken(ts.token);
-                bestellungenService.resource.create({
-                        "responsible": ts.user,
-                        "doctype": 2,
-                        "module": 5,
-                        "status": 0,
-                        "supplierid": controller.supplier.supplierid.id, //das muss refactored werden
-                        "docdate": $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sssZ'),
-                        "data": [{
-                            "prodid": controller.product.id,
-                            "name": controller.product.name1,
-                            "unit": controller.product.unit1,
-                            "quantity": controller.packings['base'].orderAmount,
-                            "price": controller.supplier.purchaseprice,
-                            "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
-                        }]
-                });
+            bestellungenService.create({
+                "doctype": 2,
+                "module": 5,
+                "status": 0,
+                "supplierid": controller.supplier.supplierid.id, //das muss refactored werden
+                "docdate": $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sssZ'),
+                "data": [{
+                    "prodid": controller.product.id,
+                    "name": controller.product.name1,
+                    "unit": controller.product.unit1,
+                    "quantity": controller.packings['base'].orderAmount,
+                    "price": controller.supplier.purchaseprice,
+                    "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
+                }]
             });
         }
-        bestellungenService.clearCache();
+
     }
-}]);
+
+    }]);
