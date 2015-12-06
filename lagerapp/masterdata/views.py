@@ -7,7 +7,7 @@ from masterdata.serializers import UserSerializer, UserDataSerializer, SupplierS
     ProductSerializer, \
     NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, MinPurchaseDocSerializer,\
     PurchaseDocDataSerializer, ProductPackingSerializer
-from rest_framework.authentication import TokenAuthentication, BasicAuthentication, SessionAuthentication
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, mixins, pagination, filters, generics, views
 from rest_framework.response import Response

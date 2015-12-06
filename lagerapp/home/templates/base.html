@@ -2,17 +2,24 @@
     <!DOCTYPE html>
     <html ng-app="baseApp">
     <head>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
           integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
           crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.2/angular-material.min.css">
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"
           integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
     <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-resource.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-resource.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.4/angular-material.min.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.3.js"></script>
     <meta charset="utf-8">
     <title>Lagermodul</title>
 {% endverbatim %}
@@ -21,7 +28,7 @@
 {% load custom_tags %}
 {% load i18n %}
 <script src="{% static "base.js" %}"></script>
-<script src="{% static "ui-bootstrap.js" %}"></script>
+
 <script src="{% static "common/controllers/BaseCtrl.js" %}"></script>
 <script src="{% static "common/directives/docsTimeDirective.js" %}"></script>
 <script src="{% static "common/directives/head.js" %}"></script>
@@ -44,7 +51,7 @@
 <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
     </head>
-    <body>
+    <body id="popupContainer" class="md-padding dialogdemoBasicUsage">
 {% endverbatim %}
 <div class="nav navbar-nav pull-right" id="top">
     {% if user.is_authenticated %}
@@ -60,6 +67,9 @@
     <head-content></head-content>
 
     <div ng-controller="BaseCtrl as cc">
+
+        <button type="button" class="btn btn-default" ng-click="open()">Login</button>
+
         <ul class="nav nav-tabs">
             <li ng-class="{active: cc.isActive('productlist_state')}">
                 <a href="" ng-click="cc.setState('productlist_state')">Bestellen</a></li>
@@ -76,6 +86,7 @@
             </li>
         </ul>
         <br/>
+
         <div ng-switch="cc.state">
             <div ng-switch-when="productlist_state" bestellen-base></div>
             <div ng-switch-when="purchasedoc0_state" bestellungen></div>

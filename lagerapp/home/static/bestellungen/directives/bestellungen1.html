@@ -2,31 +2,35 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                               ng-options="bestellung as bestellung.supplier.namea+' ('+(bestellung.docdate|date:'d. MMM yyyy')+')'
                               for bestellung in bestellungen1.list | orderBy: 'supplier.namea'"></select>
 <br>
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <span ng-show="bestellungen1.select">Lieferant: {{ bestellungen1.select.supplier.namea }} Bestellung: {{ bestellungen1.select.id }}
-        ({{ bestellungen1.select.docdate |date:'d. MMM yyyy' }})
-        </span>
-    </div>
-    <div class="panel-body">
-        <table class="table">
-            <thead>
-            <th>Name</th>
-            <th>Anzahl</th>
-            <th>Einheit</th>
-            <th>Preis</th>
-            <th>Kosten</th>
-            </thead>
-            <tbody>
-            <tr class="text-muted" ng-repeat="(key, item) in bestellungen1.select.data">
-                <td> {{ item.name }}</td>
-                <td> {{ item.quantity }}</td>
-                <td> {{ item.unit }}</td>
-                <td> {{ item.price |currency:""}} €</td>
-                <td> {{ item.amount |currency:""}} €</td>
-            </tr>
-            </tbody>
-        </table>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <span ng-show="bestellungen1.select">Lieferant: {{ bestellungen1.select.supplier.namea }} Bestellung: {{ bestellungen1.select.id }}
+                ({{ bestellungen1.select.docdate |date:'d. MMM yyyy' }})
+                </span>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <th>Name</th>
+                    <th>Anzahl</th>
+                    <th>Einheit</th>
+                    <th>Preis</th>
+                    <th>Kosten</th>
+                    </thead>
+                    <tbody>
+                    <tr class="text-muted" ng-repeat="(key, item) in bestellungen1.select.data">
+                        <td> {{ item.name }}</td>
+                        <td> {{ item.quantity }}</td>
+                        <td> {{ item.unit }}</td>
+                        <td> {{ item.price |currency:""}} €</td>
+                        <td> {{ item.amount |currency:""}} €</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <!--<div ng-repeat="bestellung in bestellungen1.list | orderBy: '-docdate'">

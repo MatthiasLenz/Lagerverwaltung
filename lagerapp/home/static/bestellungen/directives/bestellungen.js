@@ -13,10 +13,11 @@ directive('bestellungen', function () {
                 });
             };
             controller.edit_doc = function (doc) {
+                var temp = doc.edit;
                 controller.list.forEach(function (item) {
                     item.edit = false;
                 });
-                doc.edit = true;
+                doc.edit = !temp;
             };
             controller.save_doc = function (doc) {
                 doc.edit = false;
