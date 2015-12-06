@@ -175,25 +175,6 @@ class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     serializer_class = PurchaseDocDataSerializer
     pagination_class = LargeResultsSetPagination
 
-from rest_framework.authtoken.models import Token
-
-
-class TokenView(views.APIView):
-    """ when we request this at the beginning, the user will be prompted for username and password (BasicAuthentication),
-        his token will be returned """
-    authentication_classes = (BasicAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    def get(self, request, format=None):
-        user = request.user
-        token, created = Token.objects.get_or_create(user=user)
-        content = {
-            'created': unicode(created),
-            'token': unicode(token),
-            'user': unicode(user),
-        }
-        return Response(content)
-
-
 class NatureViewSet(mixins.RetrieveModelMixin,
                     mixins.ListModelMixin,
                     viewsets.GenericViewSet):
