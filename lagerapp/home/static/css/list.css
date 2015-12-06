@@ -1,3 +1,16 @@
+.panel-edit {
+    border-color: #BDA639;
+}
+
+.panel-edit .panel-heading {
+    background-image: -webkit-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
+    background-image: -o-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fcf8e3), to(#faf2cc));
+    background-image: linear-gradient(to bottom, #F1DE79 0, #BDA639 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffcf8e3', endColorstr='#fffaf2cc', GradientType=0);
+    background-repeat: repeat-x;
+}
+
 #top {
     margin-right: 80px;
 }

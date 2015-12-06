@@ -17,6 +17,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     var purchasedocdata = $resource(
         "/api/purchasedocdata/:id", {id: "@id"}, {
             create: {method: 'POST', headers: {"Authorization": getToken}},
+            update: {method: 'PUT', headers: {"Authorization": getToken}},
             delete: {method: 'DELETE', headers: {"Authorization": getToken}}
         }
     );
@@ -70,6 +71,16 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
 
+    function purchasedocdata_update(rowid, data) {
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return purchasedocdata.update(rowid, data).$promise;
+        }).then(function (response) {
+            clearCache();
+        });
+    }
     function purchasedocdata_delete(id) {
         //return a promise for purchasedoc_delete
         return tokenService.getToken().then(function (response) {
@@ -90,6 +101,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         },
         purchasedocdata: {
             create: purchasedocdata_create,
+            update: purchasedocdata_update,
             delete: purchasedocdata_delete
         }
     };

@@ -1,46 +1,56 @@
-<div ng-repeat="bestellung in bestellungen.list | orderBy: '-docdate'">
-    <div class="panel panel-primary">
-        <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}
-            ({{ bestellung.docdate |date:'d. MMM yyyy' }})
-            <li class="btn-group pull-right" uib-dropdown is-open="">
-                <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle ng-disabled="disabled">
-                    Optionen <span class="caret"></span>
-                </a>
-                <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                    <li><a ng-click="bestellungen.delete_doc(bestellung)">Bestellung löschen</a></li>
-                </ul>
-            </li>
-        </div>
-        <div class="panel-body">
-            <table class="table">
-                <thead>
-                <th>Name</th>
-                <th>Anzahl</th>
-                <th>Einheit</th>
-                <th>Preis</th>
-                <th>Kosten</th>
-                </thead>
-                <tbody>
-                <tr class="text-muted" ng-repeat="(key, item) in bestellung.data">
-                    <td> {{ item.name }}</td>
-                    <td> {{ item.quantity }}</td>
-                    <td> {{ item.unit }}</td>
-                    <td> {{ item.price |currency:""}} €</td>
-                    <td> {{ item.amount |currency:""}} €</td>
-                    <td>
-                        <li class="btn-group pull-right" uib-dropdown is-open="">
-                            <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
-                               ng-disabled="disabled">
-                                Optionen <span class="caret"></span>
-                            </a>
-                            <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                                <li><a ng-click="bestellungen.delete_docdata(item.rowid)">Eintrag löschen</a></li>
-                            </ul>
-                        </li>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+<div class="row" ng-repeat="bestellung in bestellungen.list | orderBy: '-docdate'">
+    <div class="col-lg-6">
+        <div class="panel" ng-class="{'panel-primary': !bestellung.edit, 'panel-edit' : bestellung.edit }">
+            <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}
+                ({{ bestellung.docdate |date:'d. MMM yyyy' }})
+                <li class="btn-group pull-right" uib-dropdown is-open="">
+                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                       ng-disabled="disabled">
+                        Optionen <span class="caret"></span>
+                    </a>
+                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                        <li><a ng-click="bestellungen.delete_doc(bestellung)">Bestellung löschen</a></li>
+                        <li><a ng-click="bestellungen.edit_doc(bestellung)">Bestellung bearbeiten</a></li>
+                    </ul>
+                </li>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <th>Name</th>
+                    <th>Anzahl</th>
+                    <th>Einheit</th>
+                    <th>Preis</th>
+                    <th>Kosten</th>
+                    </thead>
+                    <tbody>
+                    <tr class="text-muted" ng-repeat="(key, item) in bestellung.data">
+                        <td> {{ item.name }}</td>
+                        <td> <span ng-show="bestellung.edit">
+                                <input type="number" step="0.01" class="form-control" style="width:100px;"
+                                       placeholder="{{ item.quantity }}"
+                                       ng-model="item.quantity"></span>
+                            <span ng-show="!bestellung.edit">{{ item.quantity }}</span>
+                        </td>
+                        <td> {{ item.unit }}</td>
+                        <td> {{ item.price |currency:""}} €</td>
+                        <td> {{ item.quantity*item.price |currency:""}} €</td>
+                        <td><span ng-show="bestellung.edit">
+                            <li class="btn-group pull-right" uib-dropdown is-open="">
+                                <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                                   ng-disabled="disabled">
+                                    Optionen <span class="caret"></span>
+                                </a>
+                                <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                                    <li><a ng-click="bestellungen.delete_docdata(item.rowid)">Eintrag löschen</a></li>
+                                </ul>
+                            </li></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button ng-show="bestellung.edit" ng-click="bestellungen.save_doc(bestellung)">Speichern</button>
+            </div>
         </div>
     </div>
 </div>
