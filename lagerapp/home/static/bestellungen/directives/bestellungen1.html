@@ -1,5 +1,6 @@
-Bestellung auswählen: <select class="form-control" style="width:250px;" ng-model="bestellungen1.select"
-                              ng-options="bestellung as bestellung.supplier.namea for bestellung in bestellungen1.list"></select>
+Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
+                              ng-options="bestellung as bestellung.supplier.namea+' ('+(bestellung.docdate|date:'d. MMM yyyy')+')'
+                              for bestellung in bestellungen1.list | orderBy: 'supplier.namea'"></select>
 <br>
 <div class="panel panel-primary">
     <div class="panel-heading">
