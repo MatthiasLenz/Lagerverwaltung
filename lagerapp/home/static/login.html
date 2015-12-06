@@ -4,9 +4,9 @@
     </div>
     <div class="modal-body">
         <form>
-            <input type="text" name="user" placeholder="Benutzername">
-            <input type="password" name="pass" placeholder="Passwort">
-            <input type="submit" name="login" class="login loginmodal-submit" value="Login">
+            <input ng-model="credentials.username" type="text" name="user" placeholder="Benutzername">
+            <input ng-model="credentials.password" type="password" name="pass" placeholder="Passwort">
+            <input ng-click="ok()" type="submit" name="login" class="login loginmodal-submit" value="Login">
         </form>
     </div>
     <div class="modal-footer">

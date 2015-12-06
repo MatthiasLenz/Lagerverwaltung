@@ -1,5 +1,5 @@
 angular.module('baseApp').
-controller('BaseCtrl', ['$scope', '$uibModal', function ($scope, $uibModal) {
+controller('BaseCtrl', ['$scope', '$uibModal', 'tokenService', function ($scope, $uibModal, tokenService) {
     // 1. Self-reference
     var controller = this;
     // 2. requirements
@@ -19,7 +19,6 @@ controller('BaseCtrl', ['$scope', '$uibModal', function ($scope, $uibModal) {
     // 4. Expose methods and properties on the controller instance
     // 5. Clean up
     // 6. All the actual implementations go here.
-    $scope.items = ['item1', 'item2', 'item3'];
 
     $scope.animationsEnabled = true;
 
@@ -31,16 +30,14 @@ controller('BaseCtrl', ['$scope', '$uibModal', function ($scope, $uibModal) {
             controller: 'ModalInstanceCtrl',
             size: size,
             resolve: {
-                items: function () {
-                    return $scope.items;
+                credentials: function () {
+                    return $scope.credentials;
                 }
             }
         });
 
-        modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
-        }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
+        modalInstance.result.then(function (credentials) {
+            tokenService.getToken(credentials);
         });
     };
 
@@ -51,18 +48,14 @@ controller('BaseCtrl', ['$scope', '$uibModal', function ($scope, $uibModal) {
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
 // It is not the same as the $uibModal service used above.
-angular.module('baseApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items) {
+angular.module('baseApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance) {
 
-    $scope.items = items;
-    $scope.selected = {
-        item: $scope.items[0]
+    $scope.credentials = {
+        username: '',
+        password: ''
     };
-
     $scope.ok = function () {
-        $uibModalInstance.close($scope.selected.item);
+        $uibModalInstance.close($scope.credentials);
     };
 
-    $scope.cancel = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
 });
