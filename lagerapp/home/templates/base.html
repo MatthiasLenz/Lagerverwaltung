@@ -52,24 +52,17 @@
 {% verbatim %}
     </head>
     <body id="popupContainer" class="md-padding dialogdemoBasicUsage">
-{% endverbatim %}
-<div class="nav navbar-nav pull-right" id="top">
-    {% if user.is_authenticated %}
-        {% optional_logout request user %}
-    {% else %}
-        {% optional_login request %}
-    {% endif %}
 
-</div>
-{% verbatim %}
     <span my-current-time="'d. MMM yyyy h:mm:ss'"></span>
 
-    <head-content></head-content>
 
     <div ng-controller="BaseCtrl as cc">
-
-        <button type="button" class="btn btn-default" ng-click="open()">Login</button>
-
+        <div class="nav navbar-nav pull-right" id="top">
+            <span ng-hide="cc.loggedin"><button type="button" class="btn btn-default" ng-click="open()">Login
+            </button></span>
+            <span ng-show="cc.loggedin"><button type="button" class="btn btn-default">{{ cc.user }}</button></span>
+        </div>
+        <head-content></head-content>
         <ul class="nav nav-tabs">
             <li ng-class="{active: cc.isActive('productlist_state')}">
                 <a href="" ng-click="cc.setState('productlist_state')">Bestellen</a></li>

@@ -13,6 +13,8 @@ controller('BaseCtrl', ['$scope', '$uibModal', 'tokenService', function ($scope,
     controller.isActive = function (state) {
         return controller.state == state;
     };
+    controller.user = "";
+    controller.loggedin = false;
     controller.dropdown = false;
     window.base = controller;
     // 3c. Listen to events on the scope
@@ -32,12 +34,13 @@ controller('BaseCtrl', ['$scope', '$uibModal', 'tokenService', function ($scope,
             resolve: {
                 credentials: function () {
                     return $scope.credentials;
-                }
+                },
             }
         });
 
-        modalInstance.result.then(function (credentials) {
-            tokenService.getToken(credentials);
+        modalInstance.result.then(function (user) {
+            controller.loggedin = true;
+            controller.user = user;
         });
     };
 
@@ -48,14 +51,18 @@ controller('BaseCtrl', ['$scope', '$uibModal', 'tokenService', function ($scope,
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
 // It is not the same as the $uibModal service used above.
-angular.module('baseApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance) {
-
+angular.module('baseApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, tokenService) {
+    $scope.error = false;
     $scope.credentials = {
         username: '',
-        password: ''
+        password: '',
     };
     $scope.ok = function () {
-        $uibModalInstance.close($scope.credentials);
+        tokenService.getToken($scope.credentials).then(function (tokendata) {
+            $uibModalInstance.close($scope.credentials.username);
+        }, function (error) {
+            $scope.error = true;
+        });
     };
 
 });

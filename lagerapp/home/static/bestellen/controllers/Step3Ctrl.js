@@ -57,8 +57,10 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                 "price": controller.supplier.purchaseprice,
                 "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
             };
-            bestellungenService.purchasedocdata.create(data).then(function () {
+            bestellungenService.purchasedocdata.create(data).then(function (response) {
                 $scope.bestellen.finish();
+            }, function (error) {
+                alert("Bitte loggen Sie sich ein. Die Bestellung wurde nicht gespeichert");
             });
         }
         else {
@@ -73,8 +75,10 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                     "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
                 }]
             };
-            bestellungenService.purchasedoc.create(data).then(function () {
+            bestellungenService.purchasedoc.create(data).then(function (response) {
                 $scope.bestellen.finish();
+            }, function (error) {
+                alert("Bitte loggen Sie sich ein. Die Bestellung wurde nicht gespeichert");
             });
         }
     }
