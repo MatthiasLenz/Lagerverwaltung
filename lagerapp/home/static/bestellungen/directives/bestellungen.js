@@ -25,7 +25,11 @@ directive('bestellungen', function () {
                     docdata.amount = docdata.quantity * docdata.price;
                     bestellungenService.purchasedocdata.update({id: docdata.rowid}, docdata);
                 });
-
+            };
+            controller.set_status_sent = function (doc) {
+                bestellungenService.purchasedoc.update({id: doc.id}, {status: 1}).then(function (response) {
+                    updateList();
+                });
             };
             controller.delete_docdata = function (id) {
                 bestellungenService.purchasedocdata.delete(id).then(function () {

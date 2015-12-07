@@ -19,7 +19,7 @@ controller('BaseCtrl', ['$scope', '$uibModal', 'tokenService', function ($scope,
     // 4. Expose methods and properties on the controller instance
     // 5. Clean up
     // 6. All the actual implementations go here.
-
+    // TODO: response for failed login
     $scope.animationsEnabled = true;
 
     $scope.open = function (size) {

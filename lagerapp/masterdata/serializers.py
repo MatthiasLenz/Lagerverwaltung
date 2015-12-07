@@ -148,6 +148,13 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
             PurchaseDocData.objects.create(purchasedocid=purchasedoc, **data_data)
         return purchasedoc
 
+    def update(self, instance, validated_data):
+        # The standard implementation is fine, as long as we do not use it for nested writes
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
 class MinPurchaseDocSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)
     class Meta:
