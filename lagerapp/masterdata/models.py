@@ -241,6 +241,58 @@ class PurchaseDocData(models.Model):
         db_table = 'PurchaseDocData'
         app_label = 'hit_01_purchase'
 
+
+class DeliveryNote(models.Model):
+    id = models.CharField(db_column='ID', primary_key=True, max_length=15)
+    orderid = models.ForeignKey(PurchaseDoc, db_column='OrderID', blank=True, null=True)
+    extdocno = models.CharField(db_column='ExtDocNo', max_length=15)
+    subject = models.CharField(db_column='Subject', default='', max_length=255)
+    responsible = models.CharField(db_column='Responsible', max_length=15)
+    doctype = models.SmallIntegerField(db_column='DocType', blank=True, null=True, default=0)
+    module = models.SmallIntegerField(db_column='Module', blank=True, null=True)
+    supplierid = models.ForeignKey(Supplier, db_column='SupplierID', blank=True, null=True)
+    status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
+    docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
+    stockid = models.CharField(db_column='StockID', max_length=15)
+    supplierinvoicenumber = models.CharField(db_column='SupplierInvoiceNumber', max_length=20)
+
+    def __unicode__(self):
+        return self.id
+
+    class Meta:
+        managed = False
+        db_table = 'DeliveryNote'
+        app_label = 'hit_01_purchase'
+
+
+class DeliveryNoteData(models.Model):
+    linetype = models.SmallIntegerField(db_column='LineType', blank=True, null=True, default=0)
+    rowid = models.IntegerField(db_column='RowID', primary_key=True)
+    # purchasedocdataid = models.ForeignField(db_column='PurchaseDocDataID', blank=True, null=True)
+    deliverynoteid = models.ForeignKey(DeliveryNote, db_column='DeliveryNoteID', blank=True, null=True)
+    prodid = models.CharField(db_column='´ProdID', max_length=15)
+    name = models.CharField(db_column='Name', max_length=255, blank=True, null=True)
+    unit = models.CharField(db_column='Unit', max_length=5, blank=True, null=True)
+    quantity = models.FloatField(db_column='Quantity', blank=True, null=True)
+    price = models.FloatField(db_column='Price', blank=True, null=True)
+    amount = models.FloatField(db_column='Amount', blank=True, null=True)
+    projectid = models.CharField(db_column='ProjectID', max_length=15, blank=True, null=True)
+    comment = models.CharField(db_column='Comment', max_length=255, blank=True, null=True)
+    dataid = models.IntegerField(db_column='DataID', blank=True, null=True)
+    packing = models.CharField(db_column='Packing', max_length=255, blank=True, null=True)
+    calclineexpression = models.CharField(db_column='CalcLineExpression', max_length=60, blank=True, null=True)
+    quantityrejected = models.FloatField(db_column='QuantityRejected', blank=True, null=True)
+    stockmovementid = models.IntegerField(db_column='StockMovementID', blank=True, null=True)
+
+    def __unicode__(self):
+        return str(self.rowid)
+
+    class Meta:
+        managed = False
+        db_table = 'DeliveryNoteData'
+        app_label = 'hit_01_purchase'
+
+
 class StockData(models.Model):
     id = models.IntegerField(db_column='RowID')
     rowid = models.IntegerField(db_column='RowID', primary_key=True) # Field name made lowercase.
