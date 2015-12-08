@@ -196,11 +196,6 @@ class ProductSupplier(models.Model):
 
 from django.db import router
 class PurchaseDoc(models.Model):
-    def save(self, *args, **kwargs):
-        """http://stackoverflow.com/questions/4616787/django-making-a-custom-pk-auto-increment"""
-        if not self.id:
-            self.id = str(int(self.__class__.objects.all().order_by('-id')[0].id) + 1)
-        super(self.__class__, self).save(*args, **kwargs)
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)  # Field name made lowercase.
     responsible = models.CharField(db_column='Responsible', max_length=15, blank=True, null=True)
     doctype = models.SmallIntegerField(db_column='DocType', blank=True, null=True)
@@ -209,8 +204,15 @@ class PurchaseDoc(models.Model):
     status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        """http://stackoverflow.com/questions/4616787/django-making-a-custom-pk-auto-increment"""
+        if not self.id:
+            self.id = str(int(self.__class__.objects.all().order_by('-id')[0].id) + 1)
+        super(self.__class__, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return self.id
+
     class Meta:
         managed = False
         db_table = 'PurchaseDoc'
@@ -229,13 +231,13 @@ class PurchaseDocData(models.Model):
     amount = models.FloatField(db_column='Amount', blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        """http://stackoverflow.com/questions/4616787/django-making-a-custom-pk-auto-increment"""
         if not self.rowid:
             self.rowid = self.__class__.objects.all().order_by('-rowid')[0].rowid + 1
         super(self.__class__, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return str(self.rowid)
+
     class Meta:
         managed = False
         db_table = 'PurchaseDocData'
@@ -244,17 +246,22 @@ class PurchaseDocData(models.Model):
 
 class DeliveryNote(models.Model):
     id = models.CharField(db_column='ID', primary_key=True, max_length=15)
-    orderid = models.ForeignKey(PurchaseDoc, db_column='OrderID', blank=True, null=True)
-    extdocno = models.CharField(db_column='ExtDocNo', max_length=15)
-    subject = models.CharField(db_column='Subject', default='', max_length=255)
-    responsible = models.CharField(db_column='Responsible', max_length=15)
+    orderid = models.ForeignKey(PurchaseDoc, db_column='OrderID', blank=True, null=True, related_name='deliverynotes')
+    extdocno = models.CharField(db_column='ExtDocNo', max_length=15, blank=True)
+    subject = models.CharField(db_column='Subject', default='', max_length=255, blank=True)
+    responsible = models.CharField(db_column='Responsible', max_length=15, blank=True)
     doctype = models.SmallIntegerField(db_column='DocType', blank=True, null=True, default=0)
     module = models.SmallIntegerField(db_column='Module', blank=True, null=True)
     supplierid = models.ForeignKey(Supplier, db_column='SupplierID', blank=True, null=True)
     status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
-    stockid = models.CharField(db_column='StockID', max_length=15)
-    supplierinvoicenumber = models.CharField(db_column='SupplierInvoiceNumber', max_length=20)
+    stockid = models.CharField(db_column='StockID', max_length=15, blank=True)
+    supplierinvoicenumber = models.CharField(db_column='SupplierInvoiceNumber', max_length=20, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.id = str(int(self.__class__.objects.all().order_by('-id')[0].id) + 1)
+        super(self.__class__, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.id
@@ -284,6 +291,11 @@ class DeliveryNoteData(models.Model):
     calclineexpression = models.CharField(db_column='CalcLineExpression', max_length=60, blank=True, null=True)
     quantityrejected = models.FloatField(db_column='QuantityRejected', blank=True, null=True)
     stockmovementid = models.IntegerField(db_column='StockMovementID', blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.rowid:
+            self.rowid = self.__class__.objects.all().order_by('-rowid')[0].rowid + 1
+        super(self.__class__, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return str(self.rowid)

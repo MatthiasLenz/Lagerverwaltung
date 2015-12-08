@@ -120,6 +120,37 @@ class FastProductSerializer(serializers.ModelSerializer):
                   'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')
 
 
+class DeliveryNoteDataSerializer(serializers.ModelSerializer):
+    rowid = serializers.IntegerField(allow_null=True)
+
+    class Meta:
+        model = DeliveryNoteData
+        fields = (
+        'linetype', 'rowid', 'deliverynoteid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'projectid',
+        'comment', 'dataid', 'packing', 'calclineexpression', 'quantityrejected', 'stockmovementid')
+
+
+class DeliveryNoteSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(required=False, max_length=15, allow_blank=True)
+    data = DeliveryNoteDataSerializer(many=True, allow_null=True, required=False)
+
+    class Meta:
+        model = DeliveryNote
+        fields = ('id', 'orderid', 'extdocno', 'subject', 'responsible', 'doctype', 'module', 'supplierid', 'status',
+                  'docdate', 'stockid', 'supplierinvoicenumber', 'data')
+
+    def create(self, validated_data):
+        data = validated_data.pop('data')  # 'data' needs to be removed first
+        deliverynote = DeliveryNote.objects.create(**validated_data)
+        # Wichtig: Im foreign key feld muss immer das Object selbst referenziert werden, nicht die ID des Objekts,
+        # also 'prodid': <Product: N999> und nicht 'prodid': 'N999'
+        # Die Feldbezeichnung purchasedocid ist in diesem Fall verwirrend: In purchasedoc umbenennen?
+        for entry in data:
+            data_data = dict(entry)
+            DeliveryNoteData.objects.create(deliverynoteid=deliverynote, **data_data)
+
+        return deliverynote
+
 class PurchaseDocDataSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
     class Meta:
@@ -130,14 +161,16 @@ class PurchaseDocDataSerializer(serializers.ModelSerializer):
 class PurchaseDocSerializer(serializers.ModelSerializer):
     # supplier = SupplierSerializer(read_only=True, allow_null=True)
     data = PurchaseDocDataSerializer(many=True, allow_null=True, required=False)
+    deliverynotes = DeliveryNoteSerializer(many=True, allow_null=True, required=False)
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)
     class Meta:
         model = PurchaseDoc
-        fields = ('url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data')
+        fields = (
+        'url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data', 'deliverynotes')
 
     def create(self, validated_data):
-        print(repr(validated_data))
         data = validated_data.pop('data')  # 'data' needs to be removed first
+        deilverynotes = validated_data.pop('deliverynotes')
         purchasedoc = PurchaseDoc.objects.create(**validated_data)
         # Wichtig: Im foreign key feld muss immer das Object selbst referenziert werden, nicht die ID des Objekts,
         # also 'prodid': <Product: N999> und nicht 'prodid': 'N999'
@@ -145,6 +178,7 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
         for entry in data:
             data_data = dict(entry)
             PurchaseDocData.objects.create(purchasedocid=purchasedoc, **data_data)
+
         return purchasedoc
 
     def update(self, instance, validated_data):
@@ -161,18 +195,3 @@ class MinPurchaseDocSerializer(serializers.ModelSerializer):
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'status', 'docdate')
 
 
-class DeliveryNoteDataSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DeliveryNoteData
-        fields = (
-        'linetype', 'rowid', 'deliverynoteid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'projectid',
-        'comment', 'dataid', 'packing', 'calclineexpression', 'quantityrejected', 'stockmovementid')
-
-
-class DeliveryNoteSerializer(serializers.ModelSerializer):
-    data = DeliveryNoteDataSerializer(many=True, allow_null=True, required=False)
-
-    class Meta:
-        model = DeliveryNote
-        fields = ('id', 'orderid', 'extdocno', 'subject', 'responsible', 'doctype', 'module', 'supplierid', 'status',
-                  'docdate', 'stockid', 'supplierinvoicenumber', 'data')

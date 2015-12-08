@@ -159,7 +159,7 @@ class PurchaseDocViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = PurchaseDoc.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
     serializer_class = PurchaseDocSerializer
-    pagination_class = LargeResultsSetPagination
+    pagination_class = None
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('status',)
 
