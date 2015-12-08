@@ -4,11 +4,24 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
 <br>
 <div class="row">
     <div class="col-lg-6">
-        <div class="panel panel-primary">
+        <div class="panel"
+             ng-class="{'panel-primary': !bestellungen1.select.edit, 'panel-edit' : bestellungen1.select.edit }">
             <div class="panel-heading">
                 <span ng-show="bestellungen1.select">Lieferant: {{ bestellungen1.select.supplier.namea }} Bestellung: {{ bestellungen1.select.id }}
                 ({{ bestellungen1.select.docdate |date:'d. MMM yyyy' }})
                 </span>
+                <li class="btn-group pull-right" uib-dropdown is-open="">
+                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                       ng-disabled="disabled">
+                        Optionen <span class="caret"></span>
+                    </a>
+                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                        <li><a ng-click="bestellungen1.delete_doc(bestellungen1.select)">Bestellung löschen</a></li>
+                        <li><a ng-click="bestellungen1.edit_doc(bestellungen1.select)">Lieferung eintragen</a></li>
+                        <!--Eingabefelder für extdocno, supplierinvoicenumber und datum hinzufügen-->
+                        <li><a ng-click="bestellungen1.set_status_2(bestellungen1.select)">Status 2</a></li>
+                    </ul>
+                </li>
             </div>
             <div class="panel-body">
                 <table class="table">
@@ -26,6 +39,17 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                         <td> {{ item.unit }}</td>
                         <td> {{ item.price |currency:""}} €</td>
                         <td> {{ item.amount |currency:""}} €</td>
+                        <td><span ng-show="bestellung.edit">
+                            <li class="btn-group pull-right" uib-dropdown is-open="">
+                                <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                                   ng-disabled="disabled">
+                                    Optionen <span class="caret"></span>
+                                </a>
+                                <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                                    <li><a ng-click="bestellungen.delete_docdata(item.rowid)">Eintrag löschen</a></li>
+                                </ul>
+                            </li></span>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

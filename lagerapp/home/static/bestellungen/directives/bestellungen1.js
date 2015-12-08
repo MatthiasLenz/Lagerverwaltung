@@ -8,6 +8,18 @@ directive('bestellungen1', function () {
             updateList();
             controller.showDetail = {};
             controller.select = null;
+            controller.edit_doc = function (doc) {
+                var temp = doc.edit;
+                controller.list.forEach(function (item) {
+                    item.edit = false;
+                });
+                doc.edit = !temp;
+            };
+            controller.delete_doc = function (doc) {
+                bestellungenService.purchasedoc.delete(doc).then(function () {
+                    updateList();
+                });
+            };
             function updateList() {
                 controller.list = [];
                 bestellungenService.purchasedoc.list({'status': 1}).then(function (result) {
