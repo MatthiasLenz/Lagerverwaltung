@@ -269,8 +269,9 @@ class DeliveryNoteData(models.Model):
     linetype = models.SmallIntegerField(db_column='LineType', blank=True, null=True, default=0)
     rowid = models.IntegerField(db_column='RowID', primary_key=True)
     # purchasedocdataid = models.ForeignField(db_column='PurchaseDocDataID', blank=True, null=True)
-    deliverynoteid = models.ForeignKey(DeliveryNote, db_column='DeliveryNoteID', blank=True, null=True)
-    prodid = models.CharField(db_column='´ProdID', max_length=15)
+    deliverynoteid = models.ForeignKey(DeliveryNote, db_column='DeliveryNoteID', blank=True, null=True,
+                                       related_name='data')
+    prodid = models.CharField(db_column='ProdID', max_length=15)
     name = models.CharField(db_column='Name', max_length=255, blank=True, null=True)
     unit = models.CharField(db_column='Unit', max_length=5, blank=True, null=True)
     quantity = models.FloatField(db_column='Quantity', blank=True, null=True)

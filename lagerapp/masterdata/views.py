@@ -1,12 +1,10 @@
 #encoding=UTF-8
 from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc, \
-    ProductPacking, \
-    PurchaseDocData
+    ProductPacking, PurchaseDocData, DeliveryNote, DeliveryNoteData
 from masterdata.serializers import UserSerializer, UserDataSerializer, SupplierSerializer, StockSerializer, \
-    StockDataSerializer, \
-    ProductSerializer, \
-    NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, MinPurchaseDocSerializer,\
-    PurchaseDocDataSerializer, ProductPackingSerializer
+    StockDataSerializer, ProductSerializer, \
+    NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, MinPurchaseDocSerializer, \
+    PurchaseDocDataSerializer, ProductPackingSerializer, DeliveryNoteSerializer, DeliveryNoteDataSerializer
 from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, mixins, pagination, filters, generics, views
@@ -161,7 +159,7 @@ class PurchaseDocViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = PurchaseDoc.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
     serializer_class = PurchaseDocSerializer
-    pagination_class = None
+    pagination_class = LargeResultsSetPagination
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('status',)
 
@@ -173,6 +171,30 @@ class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = PurchaseDocData.objects.all()
     serializer_class = PurchaseDocDataSerializer
+    pagination_class = LargeResultsSetPagination
+
+
+class DeliveryNoteViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    queryset = DeliveryNote.objects.filter(module=5).prefetch_related('data')
+    serializer_class = DeliveryNoteSerializer
+    pagination_class = LargeResultsSetPagination
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('status',)
+
+
+class DeliveryNoteDataViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    queryset = DeliveryNoteData.objects.all()
+    serializer_class = DeliveryNoteDataSerializer
     pagination_class = LargeResultsSetPagination
 
 class NatureViewSet(mixins.RetrieveModelMixin,
@@ -227,8 +249,6 @@ class ProductViewSet(mixins.RetrieveModelMixin,
 
 
 from rest_framework.views import APIView
-
-
 class CompleteProductView(APIView):
     """
     This view provides the list action
@@ -241,3 +261,4 @@ class CompleteProductView(APIView):
                                         'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')
         serializer = FastProductSerializer(queryset, many=True)
         return Response(serializer.data)
+

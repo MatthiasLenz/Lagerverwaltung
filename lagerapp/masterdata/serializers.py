@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, \
-    PurchaseDoc, \
-    PurchaseDocData
+    PurchaseDoc, PurchaseDocData, DeliveryNote, DeliveryNoteData
 from django.contrib.auth.models import User
 
 
@@ -160,3 +159,20 @@ class MinPurchaseDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseDoc
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'status', 'docdate')
+
+
+class DeliveryNoteDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliveryNoteData
+        fields = (
+        'linetype', 'rowid', 'deliverynoteid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'projectid',
+        'comment', 'dataid', 'packing', 'calclineexpression', 'quantityrejected', 'stockmovementid')
+
+
+class DeliveryNoteSerializer(serializers.ModelSerializer):
+    data = DeliveryNoteDataSerializer(many=True, allow_null=True, required=False)
+
+    class Meta:
+        model = DeliveryNote
+        fields = ('id', 'orderid', 'extdocno', 'subject', 'responsible', 'doctype', 'module', 'supplierid', 'status',
+                  'docdate', 'stockid', 'supplierinvoicenumber', 'data')
