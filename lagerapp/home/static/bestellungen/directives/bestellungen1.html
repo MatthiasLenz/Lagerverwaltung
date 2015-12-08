@@ -1,6 +1,7 @@
 Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
-                              ng-options="bestellung as bestellung.supplier.namea+' ('+(bestellung.docdate|date:'d. MMM yyyy')+')'
-                              for bestellung in bestellungen1.list | orderBy: 'supplier.namea'"></select>
+                              ng-options="bestellung as bestellung.status +' '+bestellung.supplier.namea+
+                              ' ('+(bestellung.docdate|date:'d. MMM yyyy')+')'
+                              for bestellung in bestellungen1.list | orderBy: 'status+supplier.namea'"></select>
 <br>
 <div class="row">
     <div class="col-lg-12">
@@ -38,20 +39,22 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                                 <th>Kosten</th>
                                 </thead>
                                 <tbody>
-                                <tr class="text-muted" ng-repeat="(key, item) in bestellungen1.select.data">
+                                <tr ng-class="{'bg-success':bestellungen1.marked==item.prodid}"
+                                    ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
+                                    ng-repeat="(key, item) in bestellungen1.select.data">
                                     <td> {{ item.name }}</td>
                                     <td> {{ item.quantity }}</td>
                                     <td> {{ item.unit }}</td>
                                     <td> {{ item.price |currency:""}} €</td>
                                     <td> {{ item.amount |currency:""}} €</td>
-                                    <td><span ng-show="bestellung.edit">
+                                    <td><span ng-show="bestellungen1.select.edit">
                                 <li class="btn-group pull-right" uib-dropdown is-open="">
                                     <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
                                        ng-disabled="disabled">
                                         Optionen <span class="caret"></span>
                                     </a>
                                     <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                                        <li><a ng-click="bestellungen.delete_docdata(item.rowid)">Eintrag löschen</a>
+                                        <li><a ng-click="bestellungen1.delete_docdata(item.rowid)">Eintrag löschen</a>
                                         </li>
                                     </ul>
                                 </li></span>
@@ -62,8 +65,33 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">Lieferschein 1</div>
+                        <div ng-repeat="deliverynote in bestellungen1.select.deliverynotes" class="panel panel-default">
+                            <div class="panel-heading">Lieferschein {{ deliverynote.id }}
+                                {{ deliverynote.docdate|date:'d. MMM yyyy' }}</div>
+                            <div class="panel-body">
+                                <table class="table">
+                                    <thead>
+                                    <th>Name</th>
+                                    <th>Anzahl</th>
+                                    <th>Einheit</th>
+                                    <th>Preis</th>
+                                    <th>Kosten</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-class="{'bg-success':bestellungen1.marked==item.prodid}"
+                                        ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
+                                        ng-repeat="(key, item) in deliverynote.data">
+                                        <td> {{ item.name }}</td>
+                                        <td> {{ item.quantity }}</td>
+                                        <td> {{ item.unit }}</td>
+                                        <td> {{ item.price |currency:""}} €</td>
+                                        <td> {{ item.amount |currency:""}} €</td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,30 +100,3 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
         </div>
     </div>
 </div>
-<!--<div ng-repeat="bestellung in bestellungen1.list | orderBy: '-docdate'">
-    <div class="panel panel-primary">
-        <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}
-            ({{ bestellung.docdate |date:'d. MMM yyyy' }})
-        </div>
-        <div class="panel-body">
-            <table class="table">
-                <thead>
-                <th>Name</th>
-                <th>Anzahl</th>
-                <th>Einheit</th>
-                <th>Preis</th>
-                <th>Kosten</th>
-                </thead>
-                <tbody>
-                <tr class="text-muted" ng-repeat="(key, item) in bestellung.data">
-                    <td> {{ item.name }}</td>
-                    <td> {{ item.quantity }}</td>
-                    <td> {{ item.unit }}</td>
-                    <td> {{ item.price |currency:""}} €</td>
-                    <td> {{ item.amount |currency:""}} €</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>-->
