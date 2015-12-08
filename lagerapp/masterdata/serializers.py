@@ -133,7 +133,6 @@ class DeliveryNoteDataSerializer(serializers.ModelSerializer):
 class DeliveryNoteSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)
     data = DeliveryNoteDataSerializer(many=True, allow_null=True, required=False)
-
     class Meta:
         model = DeliveryNote
         fields = ('id', 'orderid', 'extdocno', 'subject', 'responsible', 'doctype', 'module', 'supplierid', 'status',
