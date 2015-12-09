@@ -1,5 +1,5 @@
 angular.module('baseApp.Services').
-factory("bestellungenService", function ($resource, $cacheFactory, tokenService, $q) {
+factory("bestellungenService", function ($resource, $cacheFactory, tokenService, $q, $http) {
     var purchasedocCache = $cacheFactory('PurchaseDoc');
     var token;
 
@@ -105,6 +105,15 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
 
+    function makepdf(id) {
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return $http({method: "POST", url: "/api/makepdf", data: {"id": id}, headers: {"Authorization": getToken}});
+        });
+    };
+
     return {
         purchasedoc: {
             list: purchasedoc_list,
@@ -116,6 +125,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             create: purchasedocdata_create,
             update: purchasedocdata_update,
             delete: purchasedocdata_delete
-        }
+        },
+        makepdf: makepdf
     };
 });

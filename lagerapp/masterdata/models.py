@@ -359,3 +359,5 @@ class StockData(models.Model):
         managed = False
         db_table = 'StockData'
         app_label = 'hit_01_masterdata'
+
+        # ToDo auch das Lager 50 Konz berücksichtigen

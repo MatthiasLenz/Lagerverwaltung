@@ -262,3 +262,14 @@ class CompleteProductView(APIView):
         serializer = FastProductSerializer(queryset, many=True)
         return Response(serializer.data)
 
+
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+
+
+@api_view(['POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def makepdf(request):
+    purchasedocid = request.data['id']
+    print("danach", str(purchasedocid))
+    return Response(str(purchasedocid))

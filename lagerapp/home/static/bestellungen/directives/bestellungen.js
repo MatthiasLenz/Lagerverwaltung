@@ -2,7 +2,7 @@ angular.module('baseApp').
 directive('bestellungen', function () {
     return {
         templateUrl: 'static/bestellungen/directives/bestellungen.html',
-        controller: ['$scope', 'bestellungenService', 'supplierService', function ($scope, bestellungenService, supplierService) {
+        controller: ['$scope', '$http', 'bestellungenService', 'supplierService', function ($scope, $http, bestellungenService, supplierService) {
             var controller = this;
             controller.list = [];
             updateList();
@@ -27,15 +27,19 @@ directive('bestellungen', function () {
                 });
             };
             controller.set_status_sent = function (doc) {
-                bestellungenService.purchasedoc.update({id: doc.id}, {status: 1}).then(function (response) {
+                bestellungenService.makepdf(doc.id).then(function (response) {
+                    bestellungenService.purchasedoc.update({id: doc.id}, {status: 1}).then(function (response) {
                     updateList();
+                    });
                 });
+
             };
             controller.delete_docdata = function (id) {
                 bestellungenService.purchasedocdata.delete(id).then(function () {
                     updateList();
                 });
             };
+
             function updateList() {
                 controller.list = [];
                 bestellungenService.purchasedoc.list({'status': 0}).then(function (result) {
