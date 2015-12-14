@@ -26,13 +26,14 @@ directive('bestellungen', function () {
                     bestellungenService.purchasedocdata.update({id: docdata.rowid}, docdata);
                 });
             };
-            controller.set_status_sent = function (doc) {
-                bestellungenService.makepdf(doc).then(function (response) {
-                    bestellungenService.purchasedoc.update({id: doc.id}, {status: 1}).then(function (response) {
-                    updateList();
-                    });
+            controller.makepdf = function (doc) {
+                bestellungenService.makepdf(doc).then(function (docurl) {
                 });
-
+            };
+            controller.set_status_sent = function (doc) {
+                bestellungenService.purchasedoc.update({id: doc.id}, {status: 1}).then(function (response) {
+                    updateList();
+                });
             };
             controller.delete_docdata = function (id) {
                 bestellungenService.purchasedocdata.delete(id).then(function () {

@@ -1,6 +1,6 @@
 #encoding=UTF-8
 from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc, \
-    ProductPacking, PurchaseDocData, DeliveryNote, DeliveryNoteData
+    ProductPacking, PurchaseDocData, DeliveryNote, DeliveryNoteData, Staff
 from masterdata.serializers import UserSerializer, UserDataSerializer, SupplierSerializer, StockSerializer, \
     StockDataSerializer, ProductSerializer, \
     NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, MinPurchaseDocSerializer, \
@@ -263,45 +263,63 @@ class CompleteProductView(APIView):
         return Response(serializer.data)
 
 
+from genshi.core import Markup
+
+
+def format_py3o_context_value(value):
+    return Markup(unicode(value).replace('\n', '<text:line-break/>').replace('&', '&amp;'))
+
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from py3o.template import Template
-from masterdata.models import Staff
-import ftplib, random, json, os
+import ftplib, random, json, os, subprocess
+from django.utils.dateparse import parse_datetime
+
 @api_view(['POST'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
 def makepdf(request):
     with open('settings.json') as settings_file:
-        ftpcreds = json.load(settings_file)["ftp"]
-        purchase = json.load(settings_file)["purchase"]
-    t = Template(os.path.abspath("masterdata/bestellung.odt"),
-                 os.path.abspath("masterdata/bestellung_output.odt"))
+        settings = json.load(settings_file)
+        ftpcreds = settings["ftp"]
+        purchase = settings["purchase"]
+    t = Template(os.path.abspath("masterdata/bestellung_template.odt"),
+                 os.path.abspath("masterdata/bestellung.odt"))
     t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
     purchasedoc = request.data['doc']
     supplier = purchasedoc['supplier']
     responsible = Staff.objects.get(id=purchasedoc['responsible'])
     items = []
+    total = '%.2f' % sum(item['amount'] for item in purchasedoc['data'])
     for item in purchasedoc['data']:
-        items.append({'id': item['prodid'], 'name': item['name'], 'unit': item['unit'], 'quantity': item['quantity'],
-                      'price': item['price'], 'amount': item['amount']})
-    recipient = {'address': '%s\n%s\n\n%s %s' % (supplier.namea, supplier.address, supplier.zipcode, supplier.city)}
+        items.append(
+            {'id': item['prodid'], 'name': item['name'], 'unit': item['unit'], 'quantity': '%.3f' % item['quantity'],
+             'price': '%.2f' % item['price'], 'amount': '%.2f' % item['amount']})
+    recipient = {'address': format_py3o_context_value(
+        '%s\n%s\n\n%s %s' % (supplier['namea'], supplier['address'], supplier['zipcode'], supplier['city']))}
     sender = {'address': purchase['adr_kurz'], 'info': 'info'}
     # company specific
-    info = {'kostenstelle': purchase['kostenstelle'], 'id': purchasedoc['id'], 'date': purchasedoc['docdate'],
-            'bauleiter': '%s %s (%s)' % (responsible.firstname, responsible.lastname, responsible.mobile),
+    dt = parse_datetime(purchasedoc['docdate'])
+    format_date = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
+    info = {'kostenstelle': purchase['kostenstelle'], 'bez_kostenstelle': purchase['bez_kostenstelle'],
+            'id': purchasedoc['id'], 'date': format_date,
+            'bauleiter': '%s %s' % (responsible.firstname, responsible.lastname),
+            'bauleitertel': responsible.mobile,
             'polier': '', 'lieferadresse': purchase['adr_lang'],
-            'infotext': purchase['infotext']}
-    total = 4
+            'infotext': format_py3o_context_value(unicode(purchase['infotext']))}
     data = dict(items=items, recipient=recipient, sender=sender, info=info, total=total)
     t.render(data)
-
+    subprocess.call(os.path.abspath(
+        'C:/Users/matthias.lenz.SOLIDSA/apps/LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to pdf ' +
+                    os.path.abspath('masterdata/bestellung.odt') + ' --outdir ' + os.path.abspath('masterdata/'),
+                    shell=True)
     ftp = ftplib.FTP(ftpcreds["server"], ftpcreds["user"], ftpcreds["password"])
     dirname = str(random.randint(10000000000, 99999999999))
     ftp.cwd('/web1063u1/html/uploads')
     ftp.mkd(dirname)
     ftp.cwd('/web1063u1/html/uploads/%s' % dirname)
-    filename = purchasedoc['id'] + ".txt"
-    with open("test.txt", 'r') as f:
+    filename = "bestellung.pdf"
+
+    with open("masterdata/bestellung.pdf", 'rb') as f:
         ftp.storbinary('STOR %s' % filename, f)
-    print('%s/%s' % (dirname, filename))
-    return Response(str(purchasedoc))
+    print('%s/%s/%s' % (ftpcreds['uploads'], dirname, filename))
+    return Response('%s/%s/%s' % (ftpcreds['uploads'], dirname, filename))

@@ -117,7 +117,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
                 headers: {"Authorization": getToken}
             });
         });
-    };
+    }
 
     return {
         purchasedoc: {
