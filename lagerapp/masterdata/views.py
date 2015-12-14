@@ -278,6 +278,10 @@ from django.utils.dateparse import parse_datetime
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
 def makepdf(request):
+    """ Build a data dictionary and use py3o.template to render an odt file from an odt template.
+        Use the libreoffice odt to pdf converter with a subprocess call.
+        Upload the generated pdf document to a webserver via FTP.
+        Return the url to the generated file."""
     with open('settings.json') as settings_file:
         settings = json.load(settings_file)
         ftpcreds = settings["ftp"]
