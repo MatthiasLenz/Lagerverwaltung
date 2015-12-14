@@ -105,12 +105,17 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
 
-    function makepdf(id) {
+    function makepdf(doc) {
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return $http({method: "POST", url: "/api/makepdf", data: {"id": id}, headers: {"Authorization": getToken}});
+            return $http({
+                method: "POST",
+                url: "/api/makepdf",
+                data: {"doc": doc},
+                headers: {"Authorization": getToken}
+            });
         });
     };
 

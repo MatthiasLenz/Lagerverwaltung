@@ -361,3 +361,18 @@ class StockData(models.Model):
         app_label = 'hit_01_masterdata'
 
         # ToDo auch das Lager 50 Konz berücksichtigen
+
+
+class Staff(models.Model):
+    id = models.TextField(db_column='ID', primary_key=True)
+    firstname = models.TextField(db_column='FirstName', blank=True, null=True)
+    lastname = models.TextField(db_column='LastName', blank=True, null=True)
+    phone = models.TextField(db_column='Phone', blank=True, null=True)
+    mobile = models.TextField(db_column='Mobile', blank=True, null=True)
+    mail = models.TextField(db_column='Mail', blank=True, null=True)
+    gender = models.NullBooleanField(db_column='Gender')
+
+    class Meta:
+        managed = False
+        db_table = 'Staff'
+        app_label = 'hit_01_staff'

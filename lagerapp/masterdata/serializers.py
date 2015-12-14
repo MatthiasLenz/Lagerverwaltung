@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, \
-    PurchaseDoc, PurchaseDocData, DeliveryNote, DeliveryNoteData
+    PurchaseDoc, PurchaseDocData, DeliveryNote, DeliveryNoteData, Staff
 from django.contrib.auth.models import User
 
 
@@ -194,3 +194,7 @@ class MinPurchaseDocSerializer(serializers.ModelSerializer):
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'status', 'docdate')
 
 
+class StaffSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Staff
+        fields = ('id', 'firstname', 'lastname', 'phone', 'mobile', 'mail', 'gender')

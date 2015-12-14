@@ -27,7 +27,7 @@ directive('bestellungen', function () {
                 });
             };
             controller.set_status_sent = function (doc) {
-                bestellungenService.makepdf(doc.id).then(function (response) {
+                bestellungenService.makepdf(doc).then(function (response) {
                     bestellungenService.purchasedoc.update({id: doc.id}, {status: 1}).then(function (response) {
                     updateList();
                     });

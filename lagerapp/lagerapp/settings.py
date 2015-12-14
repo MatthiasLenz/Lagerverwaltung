@@ -152,6 +152,8 @@ class HitRouter(object):
             return 'hit_01_masterdata'
         if model._meta.app_label == 'hit_01_purchase':
             return 'hit_01_purchase'
+        if model._meta.app_label == 'hit_01_staff':
+            return 'hit_01_staff'
         # go to default
         return None
 
