@@ -165,7 +165,8 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseDoc
         fields = (
-        'url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data', 'deliverynotes')
+            'url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data', 'deliverynotes',
+            'docurl')
 
     def create(self, validated_data):
         data = validated_data.pop('data')  # 'data' needs to be removed first

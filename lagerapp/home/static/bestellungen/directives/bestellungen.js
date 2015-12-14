@@ -28,6 +28,9 @@ directive('bestellungen', function () {
             };
             controller.makepdf = function (doc) {
                 bestellungenService.makepdf(doc).then(function (docurl) {
+                    bestellungenService.purchasedoc.update({id: doc.id}, {docurl: docurl.data}).then(function (response) {
+                        updateList();
+                    });
                 });
             };
             controller.set_status_sent = function (doc) {

@@ -11,7 +11,7 @@
                     <ul class="uib-dropdown-menu" aria-labelledby="single-button">
                         <li><a ng-click="bestellungen.delete_doc(bestellung)">Bestellung löschen</a></li>
                         <li><a ng-click="bestellungen.edit_doc(bestellung)">Bestellung bearbeiten</a></li>
-                        <li><a ng-click="bestellungen.makepdf(bestellung)">Rechnungsdokument erzeugen</a></li>
+                        <li><a ng-click="bestellungen.makepdf(bestellung)">Bestelldokument erzeugen</a></li>
                         <li><a ng-click="bestellungen.set_status_sent(bestellung)">als gesendet markieren</a></li>
                     </ul>
                 </li>
@@ -51,7 +51,7 @@
                     </tr>
                     </tbody>
                 </table>
-
+                <span ng-show="bestellung.docurl"><a target="_blank" href="http://{{ bestellung.docurl }}">Bestelldokument</a></span>
                 <button ng-show="bestellung.edit" ng-click="bestellungen.save_doc(bestellung)">Speichern</button>
             </div>
         </div>
