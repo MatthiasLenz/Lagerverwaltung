@@ -290,7 +290,7 @@ def makepdf(request):
     data.update(purchase)
     renderdoc(data, os.path.abspath("masterdata/bestellung.odt"))
     subprocess.call(os.path.abspath(
-        'C:/Users/matthias.lenz.SOLIDSA/apps/LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to pdf ' +
+        'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to pdf ' +
                     os.path.abspath('masterdata/bestellung.odt') + ' --outdir ' + os.path.abspath('masterdata/'),
                     shell=True)
     with open("masterdata/bestellung.pdf", 'rb') as f:
