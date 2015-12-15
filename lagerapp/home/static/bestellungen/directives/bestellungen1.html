@@ -1,7 +1,10 @@
+Bestellstatus: <select class="form-control" style="width:350px;" ng-model="bestellungen1.status"
+                       ng-options="option.id as option.descr for option in bestellungen1.status_options"></select>
+
 Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
-                              ng-options="bestellung as bestellung.status +' '+bestellung.supplier.namea+
+                              ng-options="bestellung.supplier.namea+
                               ' ('+(bestellung.docdate|date:'d. MMM yyyy')+')'
-                              for bestellung in bestellungen1.list | orderBy: 'status+supplier.namea'"></select>
+                              for bestellung in bestellungen1.list | orderBy: 'status+supplier.namea' | filter: bestellung.status=bestellungen1.status"></select>
 <br>
 <div class="row">
     <div class="col-lg-12">
