@@ -286,10 +286,23 @@ def makepdf(request):
         settings = json.load(settings_file)
         ftpcreds = settings["ftp"]
         purchase = settings["purchase"]
+
+    renderdoc(request.data['doc'], purchase, os.path.abspath("masterdata/bestellung.odt"))
+    subprocess.call(os.path.abspath(
+        'C:/Users/matthias.lenz.SOLIDSA/apps/LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to pdf ' +
+                    os.path.abspath('masterdata/bestellung.odt') + ' --outdir ' + os.path.abspath('masterdata/'),
+                    shell=True)
+
+    filename = "bestellung.pdf"
+    url = ftpupload(ftpcreds, filename)
+    return Response(url)
+
+
+def renderdoc(purchasedoc, purchase_generaldata, outputfile):
     t = Template(os.path.abspath("masterdata/bestellung_template.odt"),
-                 os.path.abspath("masterdata/bestellung.odt"))
+                 outputfile)
     t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
-    purchasedoc = request.data['doc']
+
     supplier = purchasedoc['supplier']
     responsible = Staff.objects.get(id=purchasedoc['responsible'])
     items = []
@@ -300,30 +313,27 @@ def makepdf(request):
              'price': '%.2f' % item['price'], 'amount': '%.2f' % item['amount']})
     recipient = {'address': format_py3o_context_value(
         '%s\n%s\n\n%s %s' % (supplier['namea'], supplier['address'], supplier['zipcode'], supplier['city']))}
-    sender = {'address': purchase['adr_kurz'], 'info': 'info'}
+    sender = {'address': purchase_generaldata['adr_kurz'], 'info': 'info'}
     # company specific
     dt = parse_datetime(purchasedoc['docdate'])
     format_date = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
-    info = {'kostenstelle': purchase['kostenstelle'], 'bez_kostenstelle': purchase['bez_kostenstelle'],
+    info = {'kostenstelle': purchase_generaldata['kostenstelle'],
+            'bez_kostenstelle': purchase_generaldata['bez_kostenstelle'],
             'id': purchasedoc['id'], 'date': format_date,
             'bauleiter': '%s %s' % (responsible.firstname, responsible.lastname),
             'bauleitertel': responsible.mobile,
-            'polier': '', 'lieferadresse': purchase['adr_lang'],
-            'infotext': format_py3o_context_value(unicode(purchase['infotext']))}
+            'polier': '', 'lieferadresse': purchase_generaldata['adr_lang'],
+            'infotext': format_py3o_context_value(unicode(purchase_generaldata['infotext']))}
     data = dict(items=items, recipient=recipient, sender=sender, info=info, total=total)
     t.render(data)
-    subprocess.call(os.path.abspath(
-        'C:/Users/matthias.lenz.SOLIDSA/apps/LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to pdf ' +
-                    os.path.abspath('masterdata/bestellung.odt') + ' --outdir ' + os.path.abspath('masterdata/'),
-                    shell=True)
+
+
+def ftpupload(ftpcreds, filename):
     ftp = ftplib.FTP(ftpcreds["server"], ftpcreds["user"], ftpcreds["password"])
     dirname = str(random.randint(10000000000, 99999999999))
     ftp.cwd('/web1063u1/html/uploads')
     ftp.mkd(dirname)
     ftp.cwd('/web1063u1/html/uploads/%s' % dirname)
-    filename = "bestellung.pdf"
-
     with open("masterdata/bestellung.pdf", 'rb') as f:
         ftp.storbinary('STOR %s' % filename, f)
-    print('%s/%s/%s' % (ftpcreds['uploads'], dirname, filename))
-    return Response('%s/%s/%s' % (ftpcreds['uploads'], dirname, filename))
+    return '%s/%s/%s' % (ftpcreds['uploads'], dirname, filename)
