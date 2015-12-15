@@ -284,56 +284,55 @@ def makepdf(request):
         Return the url to the generated file."""
     with open('settings.json') as settings_file:
         settings = json.load(settings_file)
-        ftpcreds = settings["ftp"]
+        ftpsettings = settings["ftp"]
         purchase = settings["purchase"]
-
-    renderdoc(request.data['doc'], purchase, os.path.abspath("masterdata/bestellung.odt"))
+    data = dict(request.data['doc'])
+    data.update(purchase)
+    renderdoc(data, os.path.abspath("masterdata/bestellung.odt"))
     subprocess.call(os.path.abspath(
         'C:/Users/matthias.lenz.SOLIDSA/apps/LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to pdf ' +
                     os.path.abspath('masterdata/bestellung.odt') + ' --outdir ' + os.path.abspath('masterdata/'),
                     shell=True)
-
-    filename = "bestellung.pdf"
-    url = ftpupload(ftpcreds, filename)
+    with open("masterdata/bestellung.pdf", 'rb') as f:
+        url = ftpupload(ftpsettings, f, "bestellung.pdf")
     return Response(url)
 
 
-def renderdoc(purchasedoc, purchase_generaldata, outputfile):
+def renderdoc(data_input, outputfile):
     t = Template(os.path.abspath("masterdata/bestellung_template.odt"),
                  outputfile)
     t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
 
-    supplier = purchasedoc['supplier']
-    responsible = Staff.objects.get(id=purchasedoc['responsible'])
+    supplier = data_input['supplier']
+    responsible = Staff.objects.get(id=data_input['responsible'])
     items = []
-    total = '%.2f' % sum(item['amount'] for item in purchasedoc['data'])
-    for item in purchasedoc['data']:
+    total = '%.2f' % sum(item['amount'] for item in data_input['data'])
+    for item in data_input['data']:
         items.append(
             {'id': item['prodid'], 'name': item['name'], 'unit': item['unit'], 'quantity': '%.3f' % item['quantity'],
              'price': '%.2f' % item['price'], 'amount': '%.2f' % item['amount']})
     recipient = {'address': format_py3o_context_value(
         '%s\n%s\n\n%s %s' % (supplier['namea'], supplier['address'], supplier['zipcode'], supplier['city']))}
-    sender = {'address': purchase_generaldata['adr_kurz'], 'info': 'info'}
+    sender = {'address': data_input['adr_kurz'], 'info': 'info'}
     # company specific
-    dt = parse_datetime(purchasedoc['docdate'])
+    dt = parse_datetime(data_input['docdate'])
     format_date = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
-    info = {'kostenstelle': purchase_generaldata['kostenstelle'],
-            'bez_kostenstelle': purchase_generaldata['bez_kostenstelle'],
-            'id': purchasedoc['id'], 'date': format_date,
+    info = {'kostenstelle': data_input['kostenstelle'],
+            'bez_kostenstelle': data_input['bez_kostenstelle'],
+            'id': data_input['id'], 'date': format_date,
             'bauleiter': '%s %s' % (responsible.firstname, responsible.lastname),
             'bauleitertel': responsible.mobile,
-            'polier': '', 'lieferadresse': purchase_generaldata['adr_lang'],
-            'infotext': format_py3o_context_value(unicode(purchase_generaldata['infotext']))}
+            'polier': '', 'lieferadresse': data_input['adr_lang'],
+            'infotext': format_py3o_context_value(unicode(data_input['infotext']))}
     data = dict(items=items, recipient=recipient, sender=sender, info=info, total=total)
     t.render(data)
 
 
-def ftpupload(ftpcreds, filename):
-    ftp = ftplib.FTP(ftpcreds["server"], ftpcreds["user"], ftpcreds["password"])
+def ftpupload(ftpsettings, file, filename):
+    ftp = ftplib.FTP(ftpsettings["server"], ftpsettings["user"], ftpsettings["password"])
     dirname = str(random.randint(10000000000, 99999999999))
-    ftp.cwd('/web1063u1/html/uploads')
+    ftp.cwd(ftpsettings["folder"])
     ftp.mkd(dirname)
-    ftp.cwd('/web1063u1/html/uploads/%s' % dirname)
-    with open("masterdata/bestellung.pdf", 'rb') as f:
-        ftp.storbinary('STOR %s' % filename, f)
-    return '%s/%s/%s' % (ftpcreds['uploads'], dirname, filename)
+    ftp.cwd('%s/%s' % (ftpsettings["folder"], dirname))
+    ftp.storbinary('STOR %s' % filename, file)
+    return '%s/%s/%s' % (ftpsettings['uploads'], dirname, filename)
