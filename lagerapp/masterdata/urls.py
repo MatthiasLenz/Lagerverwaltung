@@ -16,6 +16,7 @@ router.register(r'purchasedoc', views.PurchaseDocViewSet)
 router.register(r'purchasedocdata', views.PurchaseDocDataViewSet)
 router.register(r'deliverynote', views.DeliveryNoteViewSet)
 router.register(r'deliverynotedata', views.DeliveryNoteDataViewSet)
+router.register(r'purchasedocuments', views.PurchaseDocumentsView)
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
 urlpatterns = [

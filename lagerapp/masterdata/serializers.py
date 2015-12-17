@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, \
-    PurchaseDoc, PurchaseDocData, DeliveryNote, DeliveryNoteData, Staff
+    PurchaseDoc, PurchaseDocData, DeliveryNote, DeliveryNoteData, Staff, PurchaseDocuments
 from django.contrib.auth.models import User
 
 
@@ -165,8 +165,7 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseDoc
         fields = (
-            'url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data', 'deliverynotes',
-            'docurl')
+            'url', 'id', 'responsible', 'doctype', 'module', 'supplierid', 'status', 'docdate', 'data', 'deliverynotes')
 
     def create(self, validated_data):
         data = validated_data.pop('data')  # 'data' needs to be removed first
@@ -187,6 +186,11 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+
+
+class PurchaseDocumentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseDocuments
 
 class MinPurchaseDocSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)

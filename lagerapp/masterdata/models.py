@@ -203,7 +203,6 @@ class PurchaseDoc(models.Model):
     supplierid = models.ForeignKey(Supplier, db_column='SupplierID', blank=True, null=True)
     status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
-    docurl = models.CharField(db_column='Concerns', max_length=60, blank=True, null=True)
     def save(self, *args, **kwargs):
         """http://stackoverflow.com/questions/4616787/django-making-a-custom-pk-auto-increment"""
         if not self.id:
@@ -218,6 +217,13 @@ class PurchaseDoc(models.Model):
         db_table = 'PurchaseDoc'
         app_label = 'hit_01_purchase'
 
+
+class PurchaseDocuments(models.Model):
+    # extends legacy database table PurchaseDoc
+    purchasedocid = models.CharField(max_length=15, primary_key=True)
+    pdf = models.CharField(max_length=128, blank=True, null=True)
+    doc = models.CharField(max_length=128, blank=True, null=True)
+    odt = models.CharField(max_length=128, blank=True, null=True)
 
 class PurchaseDocData(models.Model):
     rowid = models.IntegerField(db_column='RowID', primary_key=True)

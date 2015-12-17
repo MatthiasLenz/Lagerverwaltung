@@ -1,10 +1,11 @@
 #encoding=UTF-8
 from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, PurchaseDoc, \
-    ProductPacking, PurchaseDocData, DeliveryNote, DeliveryNoteData, Staff
+    ProductPacking, PurchaseDocData, DeliveryNote, DeliveryNoteData, Staff, PurchaseDocuments
 from masterdata.serializers import UserSerializer, UserDataSerializer, SupplierSerializer, StockSerializer, \
     StockDataSerializer, ProductSerializer, \
     NatureSerializer, FastProductSerializer, ProductSupplierSerializer, PurchaseDocSerializer, MinPurchaseDocSerializer, \
-    PurchaseDocDataSerializer, ProductPackingSerializer, DeliveryNoteSerializer, DeliveryNoteDataSerializer
+    PurchaseDocDataSerializer, ProductPackingSerializer, DeliveryNoteSerializer, DeliveryNoteDataSerializer, \
+    PurchaseDocumentsSerializer
 from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, mixins, pagination, filters, generics, views
@@ -263,9 +264,12 @@ class CompleteProductView(APIView):
         return Response(serializer.data)
 
 
+class PurchaseDocumentsView(viewsets.ModelViewSet):
+    queryset = PurchaseDocuments.objects.all()
+    serializer_class = PurchaseDocumentsSerializer
+
+
 from genshi.core import Markup
-
-
 def format_py3o_context_value(value):
     return Markup(unicode(value).replace('\n', '<text:line-break/>').replace('&', '&amp;'))
 
@@ -287,15 +291,32 @@ def makepdf(request):
         ftpsettings = settings["ftp"]
         purchase = settings["purchase"]
     data = dict(request.data['doc'])
+    dt = parse_datetime(data['docdate'])
+    data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
     data.update(purchase)
     renderdoc(data, os.path.abspath("masterdata/bestellung.odt"))
+    document_folder = data['folder'] + data['supplier']['id'] + '/'
+    doctype = request.data['type']
     subprocess.call(os.path.abspath(
-        'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to pdf ' +
-                    os.path.abspath('masterdata/bestellung.odt') + ' --outdir ' + os.path.abspath('masterdata/'),
+        'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to ' + doctype + ' ' +
+                    os.path.abspath('masterdata/bestellung.odt') + ' --outdir ' + document_folder,
                     shell=True)
-    with open("masterdata/bestellung.pdf", 'rb') as f:
-        url = ftpupload(ftpsettings, f, "bestellung.pdf")
-    return Response(url)
+    docname = '%s-Bestellung-%s.%s' % (data['company'], data['docdate'].replace('.', '-'), doctype)
+    try:
+        os.remove(document_folder + docname)
+    except WindowsError:
+        pass
+    os.rename(document_folder + 'bestellung.' + doctype, document_folder + docname)
+    # with open(document_folder+"bestellung.pdf", 'rb') as f:
+    #    url = ftpupload(ftpsettings, f, "bestellung.pdf")
+    fileurl = 'http://localhost/static/' + data['supplier']['id'] + '/' + docname
+    try:
+        obj = PurchaseDocuments.objects.get(purchasedocid=data['id'])
+        setattr(obj, doctype, fileurl)
+        obj.save()
+    except PurchaseDocuments.DoesNotExist:
+        PurchaseDocuments.objects.create(purchasedocid=data['id'], pdf=fileurl)
+    return Response('')
 
 
 def renderdoc(data_input, outputfile):
@@ -315,11 +336,9 @@ def renderdoc(data_input, outputfile):
         '%s\n%s\n\n%s %s' % (supplier['namea'], supplier['address'], supplier['zipcode'], supplier['city']))}
     sender = {'address': data_input['adr_kurz'], 'info': 'info'}
     # company specific
-    dt = parse_datetime(data_input['docdate'])
-    format_date = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
     info = {'kostenstelle': data_input['kostenstelle'],
             'bez_kostenstelle': data_input['bez_kostenstelle'],
-            'id': data_input['id'], 'date': format_date,
+            'id': data_input['id'], 'date': data_input['docdate'],
             'bauleiter': '%s %s' % (responsible.firstname, responsible.lastname),
             'bauleitertel': responsible.mobile,
             'polier': '', 'lieferadresse': data_input['adr_lang'],

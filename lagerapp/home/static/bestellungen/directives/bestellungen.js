@@ -6,7 +6,7 @@ directive('bestellungen', function () {
             var controller = this;
             controller.list = [];
             updateList();
-
+            controller.files = {};
             controller.delete_doc = function (doc) {
                 bestellungenService.purchasedoc.delete(doc).then(function () {
                     updateList();
@@ -26,10 +26,20 @@ directive('bestellungen', function () {
                     bestellungenService.purchasedocdata.update({id: docdata.rowid}, docdata);
                 });
             };
-            controller.makepdf = function (doc) {
-                bestellungenService.makepdf(doc).then(function (docurl) {
-                    bestellungenService.purchasedoc.update({id: doc.id}, {docurl: docurl.data}).then(function (response) {
-                        updateList();
+            bestellungenService.purchasedoc.files().then(function (files) {
+                //build a dictionary
+                files.data.results.forEach(function (item) {
+                    controller.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
+                });
+
+            });
+            controller.make = function (doc, type) {
+                bestellungenService.make(doc, type).then(function (docurl) {
+                    //Todo: only reload the specific doc, not the list
+                    bestellungenService.purchasedoc.files().then(function (files) {
+                        files.data.results.forEach(function (item) {
+                            controller.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
+                        });
                     });
                 });
             };
@@ -43,7 +53,6 @@ directive('bestellungen', function () {
                     updateList();
                 });
             };
-
             function updateList() {
                 controller.list = [];
                 bestellungenService.purchasedoc.list({'status': 0}).then(function (result) {
@@ -54,6 +63,8 @@ directive('bestellungen', function () {
                     });
                 });
             }
+
+            //Todo change purchasedoc date
         }],
         controllerAs: 'bestellungen'
     };

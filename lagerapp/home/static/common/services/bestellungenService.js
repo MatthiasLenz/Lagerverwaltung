@@ -105,7 +105,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
 
-    function makepdf(doc) {
+    function make(doc, type) {
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
@@ -113,24 +113,32 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return $http({
                 method: "POST",
                 url: "/api/makepdf",
-                data: {"doc": doc},
+                data: {"doc": doc, "type": type},
                 headers: {"Authorization": getToken}
             });
         });
     }
 
+    function getfiles() {
+        return $http({
+            method: "GET",
+            url: "/api/purchasedocuments",
+            headers: {"Authorization": getToken}
+        });
+    }
     return {
         purchasedoc: {
             list: purchasedoc_list,
             create: purchasedoc_create,
             update: purchasedoc_update,
-            delete: purchasedoc_delete
+            delete: purchasedoc_delete,
+            files: getfiles
         },
         purchasedocdata: {
             create: purchasedocdata_create,
             update: purchasedocdata_update,
             delete: purchasedocdata_delete
         },
-        makepdf: makepdf
+        make: make
     };
 });
