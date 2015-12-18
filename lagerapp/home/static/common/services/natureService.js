@@ -1,4 +1,4 @@
-angular.module('baseApp.Services', ['ngResource']).
+angular.module('baseApp.Services').
 factory("natureService", function ($resource) {
     var resource = $resource(
         "/api/nature/:id", {id: "@id"}, {}

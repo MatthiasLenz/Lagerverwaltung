@@ -29,25 +29,27 @@
 {% load i18n %}
 <script src="{% static "base.js" %}"></script>
 
-<script src="{% static "common/controllers/BaseCtrl.js" %}"></script>
 <script src="{% static "common/directives/docsTimeDirective.js" %}"></script>
 <script src="{% static "common/directives/head.js" %}"></script>
 <script src="{% static "common/services/natureService.js" %}"></script>
 <script src="{% static "common/services/productService.js" %}"></script>
 <script src="{% static "common/services/bestellungenService.js" %}"></script>
+<script src="{% static "common/services/loginService.js" %}"></script>
 <script src="{% static "common/services/tokenService.js" %}"></script>
 <script src="{% static "common/services/supplierService.js" %}"></script>
 <script src="{% static "common/filters/total.js" %}"></script>
+
 
 <script src="{% static "bestellen/controllers/BestellungCtrl.js" %}"></script>
 <script src="{% static "bestellen/controllers/Step1Ctrl.js" %}"></script>
 <script src="{% static "bestellen/controllers/Step2Ctrl.js" %}"></script>
 <script src="{% static "bestellen/controllers/Step3Ctrl.js" %}"></script>
+<script src="{% static "common/controllers/BaseCtrl.js" %}"></script>
 <script src="{% static "bestellen/directives/base.js" %}"></script>
 <script src="{% static "bestellen/directives/steps.js" %}"></script>
-
 <script src="{% static "bestellungen/directives/bestellungen.js" %}"></script>
 <script src="{% static "bestellungen/directives/bestellungen1.js" %}"></script>
+
 <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
     </head>
@@ -58,9 +60,11 @@
 
     <div ng-controller="BaseCtrl as cc">
         <div class="nav navbar-nav pull-right" id="top">
-            <span ng-hide="cc.loggedin"><button type="button" class="btn btn-default" ng-click="open()">Login
+            <span ng-hide="cc.logininfo.loggedin"><button type="button" class="btn btn-default" ng-click="cc.login()">
+                Login
             </button></span>
-            <span ng-show="cc.loggedin"><button type="button" class="btn btn-default">{{ cc.user }}</button></span>
+            <span ng-show="cc.logininfo.loggedin"><button type="button"
+                                                          class="btn btn-default">{{ cc.logininfo.user }}</button></span>
         </div>
         <head-content></head-content>
         <ul class="nav nav-tabs">

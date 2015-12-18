@@ -35,6 +35,8 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     function purchasedoc_create(data) {
         return tokenService.getToken().then(function (response) {
             return response;
+        }, function (error) {
+            alert("Bitte loggen Sie sich ein. Die Bestellung wurde nicht gespeichert");
         }).then(function (tokendata) {
             token = tokendata.token;
             data.responsible = tokendata.user;

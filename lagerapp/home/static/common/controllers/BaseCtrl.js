@@ -1,11 +1,15 @@
 angular.module('baseApp').
-controller('BaseCtrl', ['$scope', '$uibModal', 'tokenService', function ($scope, $uibModal, tokenService) {
+controller('BaseCtrl', ['loginService', function (loginService) {
     // 1. Self-reference
     var controller = this;
+    window.scope = controller;
     // 2. requirements
     // 3. Do scope stuff
     // 3a. Set up watchers on the scope.
     // 3b. Expose methods or data on the scope
+    controller.logininfo = loginService.data;
+    controller.login = loginService.login;
+    loginService.login();
     controller.state = 'productlist_state';
     controller.setState = function (state) {
         controller.state = state;
@@ -13,56 +17,8 @@ controller('BaseCtrl', ['$scope', '$uibModal', 'tokenService', function ($scope,
     controller.isActive = function (state) {
         return controller.state == state;
     };
-    controller.user = "";
-    controller.loggedin = false;
+
     controller.dropdown = false;
     window.base = controller;
-    // 3c. Listen to events on the scope
-    // 4. Expose methods and properties on the controller instance
-    // 5. Clean up
-    // 6. All the actual implementations go here.
-    // TODO: response for failed login
-    $scope.animationsEnabled = true;
 
-    $scope.open = function (size) {
-
-        var modalInstance = $uibModal.open({
-            animation: $scope.animationsEnabled,
-            templateUrl: 'static/login.html',
-            controller: 'ModalInstanceCtrl',
-            size: size,
-            resolve: {
-                credentials: function () {
-                    return $scope.credentials;
-                },
-            }
-        });
-
-        modalInstance.result.then(function (user) {
-            controller.loggedin = true;
-            controller.user = user;
-        });
-    };
-
-    $scope.toggleAnimation = function () {
-        $scope.animationsEnabled = !$scope.animationsEnabled;
-    };
 }]);
-
-// Please note that $modalInstance represents a modal window (instance) dependency.
-// It is not the same as the $uibModal service used above.
-angular.module('baseApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, tokenService) {
-    $scope.error = false;
-    $scope.credentials = {
-        username: '',
-        password: '',
-    };
-    $scope.ok = function () {
-        tokenService.getToken($scope.credentials).then(function (tokendata) {
-            $uibModalInstance.close($scope.credentials.username);
-        }, function (error) {
-            $scope.error = true;
-        });
-    };
-
-});

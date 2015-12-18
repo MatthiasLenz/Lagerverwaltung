@@ -1,6 +1,6 @@
 angular.module('baseApp.bestellen').
-controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService', '$filter',
-    function ($http, $scope, bestellungenService, tokenService, $filter) {
+controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService', '$filter', 'loginService',
+    function ($http, $scope, bestellungenService, tokenService, $filter, loginService) {
     var controller = this;
     controller.changeIn = changeIn;
     controller.toggleDetail = toggleDetail;
@@ -60,7 +60,7 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
             bestellungenService.purchasedocdata.create(data).then(function (response) {
                 $scope.bestellen.finish();
             }, function (error) {
-                alert("Bitte loggen Sie sich ein. Die Bestellung wurde nicht gespeichert");
+                loginService.login();
             });
         }
         else {
@@ -78,8 +78,6 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
             };
             bestellungenService.purchasedoc.create(data).then(function (response) {
                 $scope.bestellen.finish();
-            }, function (error) {
-                alert("Bitte loggen Sie sich ein. Die Bestellung wurde nicht gespeichert");
             });
         }
     }

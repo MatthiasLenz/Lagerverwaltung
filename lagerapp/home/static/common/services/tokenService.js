@@ -8,6 +8,8 @@ factory("tokenService", function ($http, $q) {
             return $q.when(token);
         }
         else {
+            //only called by loginService
+            //ToDo: split into two functions and init a login here
             return $http.post('api/api-token-auth/', credentials).then(function (response) {
                 // The then function here is an opportunity to modify the response
                 // The return value gets picked up by the then in the controller.
