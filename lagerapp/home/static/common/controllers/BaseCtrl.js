@@ -9,7 +9,6 @@ controller('BaseCtrl', ['loginService', function (loginService) {
     // 3b. Expose methods or data on the scope
     controller.logininfo = loginService.data;
     controller.login = loginService.login;
-    loginService.login();
     controller.state = 'productlist_state';
     controller.setState = function (state) {
         controller.state = state;

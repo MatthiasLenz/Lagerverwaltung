@@ -6,16 +6,14 @@ factory("loginService", function ($uibModal) {
             animation: true,
             templateUrl: 'static/login.html',
             controller: 'LoginInstanceCtrl',
-            resolve: {
-                //credentials: function () {
-                //    return $scope.credentials;
-                //}
-            }
+            resolve: {}
         });
-        modalInstance.result.then(function (username) {
+        modalInstance.result.then(function (tokendata) {
+            data.user = tokendata.user;
             data.loggedin = true;
-            data.user = username;
         });
+        //return a promise
+        return modalInstance.result;
     };
     return {
         login: login,
@@ -24,18 +22,26 @@ factory("loginService", function ($uibModal) {
 });
 // Please note that $modalInstance represents a modal window (instance) dependency.
 // It is not the same as the $uibModal service used above.
-angular.module('baseApp').controller('LoginInstanceCtrl', function ($scope, $uibModalInstance, tokenService) {
+angular.module('baseApp').controller('LoginInstanceCtrl', function ($scope, $uibModalInstance, $http) {
     $scope.error = false;
     $scope.credentials = {
         username: '',
         password: ''
     };
     $scope.ok = function () {
-        tokenService.getToken($scope.credentials).then(function (tokendata) {
-            $uibModalInstance.close($scope.credentials.username);
+        $http.post('api/api-token-auth/', $scope.credentials).then(function (response) {
+            return {token: response.data.token, user: $scope.credentials.username};
+        }).then(function (tokendata) {
+            $uibModalInstance.close(tokendata);
         }, function (error) {
             $scope.error = true;
         });
+
+        /*tokenService.getToken($scope.credentials).then(function (tokendata) {
+            $uibModalInstance.close($scope.credentials.username);
+        }, function (error) {
+            $scope.error = true;
+         });*/
     };
 
 });
