@@ -10,7 +10,7 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
     controller.product = $scope.bestellen.selectedprod;
     controller.supplier = $scope.bestellen.selectedsupp;
     controller.packings = {"base": {"name": controller.product.unit1, "quantity": 1, "orderAmount": 0}};
-
+        controller.selectedpacking = "";
     controller.product.packing.forEach(
         function (entry) {
             var packdata = {};
@@ -33,6 +33,7 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                 / controller.packings[key2].quantity).toFixed(2));
             }
         }
+        controller.selectedpacking = controller.packings[key1];
     }
 
     function toggleDetail() {
@@ -55,7 +56,8 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                 "purchasedocid": purchasedocid, "prodid": controller.product.id, "name": controller.product.name1,
                 "unit": controller.product.unit1, "quantity": controller.packings['base'].orderAmount,
                 "price": controller.supplier.purchaseprice,
-                "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
+                "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice,
+                "packing": controller.selectedpacking.orderAmount + ' ' + controller.selectedpacking.name
             };
             bestellungenService.purchasedocdata.create(purchasedocid, data).then(function (response) {
                 $scope.bestellen.finish();
@@ -72,7 +74,8 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                     "rowid": null,
                     "prodid": controller.product.id, "name": controller.product.name1, "unit": controller.product.unit1,
                     "quantity": controller.packings['base'].orderAmount, "price": controller.supplier.purchaseprice,
-                    "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
+                    "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice,
+                    "packing": controller.selectedpacking.orderAmount + ' ' + controller.selectedpacking.name
                 }],
                 "deliverynotes": []
             };

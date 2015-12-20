@@ -27,6 +27,7 @@
                     <th>Einheit</th>
                     <th>Preis</th>
                     <th>Kosten</th>
+                    <th>Verpackung</th>
                     </thead>
                     <tbody>
                     <tr class="text-muted" ng-repeat="(key, item) in bestellung.data">
@@ -40,6 +41,7 @@
                         <td> {{ item.unit }}</td>
                         <td> {{ item.price |currency:""}} €</td>
                         <td> {{ item.quantity*item.price |currency:""}} €</td>
+                        <td> {{ item.packing }}</td>
                         <td><span ng-show="bestellung.edit">
                             <li class="btn-group pull-right" uib-dropdown is-open="">
                                 <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle

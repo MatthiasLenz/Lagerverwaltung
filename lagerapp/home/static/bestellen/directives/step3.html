@@ -28,10 +28,10 @@
             </div>
             <div class="panel-body">
                 <p ng-hide="!step3.supplier.opendoc">Betrag: {{ (step3.supplier.opendoc.data | total:'amount') +
-                        (step3.packings['base'].orderAmount * step3.supplier.purchaseprice) | currency:""}} €</p>
+                        (step3.packings['base'].orderAmount * step3.supplier.purchaseprice) | currency:"" }} €</p>
 
                 <p ng-show="!step3.supplier.opendoc">Betrag:
-                    {{ step3.packings['base'].orderAmount * step3.supplier.purchaseprice |currency:""}} €</p>
+                    {{ step3.packings['base'].orderAmount * step3.supplier.purchaseprice |currency:"" }} €</p>
                 <table class="table">
                     <thead>
                     <th>Name</th>
@@ -39,6 +39,7 @@
                     <th>Einheit</th>
                     <th>Preis</th>
                     <th>Kosten</th>
+                    <th>Verpackung</th>
                     </thead>
                     <tbody>
                     <tr class="text-success bg-info">
@@ -46,15 +47,16 @@
                         <td>{{ step3.packings['base'].orderAmount }}</td>
                         <td>{{ step3.product.unit1 }}</td>
                         <td>{{ step3.supplier.purchaseprice |currency:""}} €</td>
-                        <td>{{ step3.packings['base'].orderAmount * step3.supplier.purchaseprice |currency:""}} €</td>
-
+                        <td>{{ step3.packings['base'].orderAmount * step3.supplier.purchaseprice |currency:"" }} €</td>
+                        <td>{{ step3.selectedpacking.orderAmount }} {{ step3.selectedpacking.name }}</td>
                     </tr>
                     <tr class="text-muted" ng-repeat="item in step3.supplier.opendoc.data" ng-show="step3.showDetail">
                         <td> {{ item.name }}</td>
                         <td> {{ item.quantity }}</td>
                         <td> {{ item.unit }}</td>
-                        <td> {{ item.price |currency:""}} €</td>
-                        <td> {{ item.amount |currency:""}} €</td>
+                        <td> {{ item.price |currency:"" }} €</td>
+                        <td> {{ item.amount |currency:"" }} €</td>
+                        <td> {{ item.packing }}</td>
                     </tr>
                     </tbody>
                 </table>

@@ -154,7 +154,7 @@ class PurchaseDocDataSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
     class Meta:
         model = PurchaseDocData
-        fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount')
+        fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'packing')
 
 
 class PurchaseDocSerializer(serializers.ModelSerializer):
