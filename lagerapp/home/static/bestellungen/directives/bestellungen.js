@@ -2,7 +2,7 @@ angular.module('baseApp').
 directive('bestellungen', function () {
     return {
         templateUrl: 'static/bestellungen/directives/bestellungen.html',
-        controller: ['$scope', '$http', 'bestellungenService', 'supplierService', function ($scope, $http, bestellungenService, supplierService) {
+        controller: ['$scope', '$http', 'bestellungenService', 'supplierService', 'tokenService', function ($scope, $http, bestellungenService, supplierService) {
             var controller = this;
             controller.list = [];
             updateList();
@@ -22,10 +22,10 @@ directive('bestellungen', function () {
             };
             controller.save_doc = function (doc) {
                 doc.edit = false;
-                doc.data.forEach(function (docdata) {
-                    docdata.amount = docdata.quantity * docdata.price;
-                    bestellungenService.purchasedocdata.update(doc.id, docdata);
-                });
+                //if all updates are started at the same time, the tokenService might not have a token yet (if the
+                //user did not log in) and it will prompt the login view for each update
+
+                bestellungenService.purchasedocdata.batch_update(doc.data);
                 delete controller.files[doc.id];
             };
             bestellungenService.purchasedoc.files().then(function (files) {

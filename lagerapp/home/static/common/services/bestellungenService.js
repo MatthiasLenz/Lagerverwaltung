@@ -95,6 +95,21 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
 
+    function purchasedocdata_batchupdate(data_array) {
+        var update_promises = [];
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            data_array.forEach(function (docdata) {
+                docdata.amount = docdata.quantity * docdata.price;
+                update_promises.push(purchasedocdata.update({id: docdata.rowid}, docdata).$promise);
+            });
+            return $q.all(update_promises);
+        }).then(function (response) {
+            clearCache();
+        });
+    }
     function purchasedocdata_delete(purchasedocid, rowid) {
         //return a promise for purchasedoc_delete
         return tokenService.getToken().then(function (response) {
@@ -152,6 +167,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         purchasedocdata: {
             create: purchasedocdata_create,
             update: purchasedocdata_update,
+            batch_update: purchasedocdata_batchupdate,
             delete: purchasedocdata_delete
         },
         make: make
