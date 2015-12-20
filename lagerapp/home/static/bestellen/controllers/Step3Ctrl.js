@@ -57,7 +57,7 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                 "price": controller.supplier.purchaseprice,
                 "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice
             };
-            bestellungenService.purchasedocdata.create(data).then(function (response) {
+            bestellungenService.purchasedocdata.create(purchasedocid, data).then(function (response) {
                 $scope.bestellen.finish();
             }, function (error) {
                 loginService.login();

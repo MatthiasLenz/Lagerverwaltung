@@ -40,7 +40,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             data.responsible = tokendata.user;
             return purchasedoc.create(data).$promise;
         }).then(function (response) {
-                clearCache();
+            clearCache();
         });
     }
 
@@ -72,28 +72,30 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             clearCache();
         });
     }
-    function purchasedocdata_create(data) {
+
+    function purchasedocdata_create(purchasedocid, data) {
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
             return purchasedocdata.create(data).$promise;
         }).then(function (response) {
-                clearCache();
+            clearCache();
         });
     }
 
-    function purchasedocdata_update(rowid, data) {
+    function purchasedocdata_update(purchasedocid, data) {
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return purchasedocdata.update(rowid, data).$promise;
+            return purchasedocdata.update({id: data.rowid}, data).$promise;
         }).then(function (response) {
             clearCache();
         });
     }
-    function purchasedocdata_delete(id) {
+
+    function purchasedocdata_delete(purchasedocid, rowid) {
         //return a promise for purchasedoc_delete
         return tokenService.getToken().then(function (response) {
             return response;
@@ -101,7 +103,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             token = tokendata.token;
             return purchasedocdata.delete({}, {"id": id}).$promise;
         }).then(function (response) {
-                clearCache();
+            clearCache();
         });
     }
 
@@ -119,20 +121,33 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
 
+
+    var documents = $resource(
+        "/api/purchasedocuments/:id", {id: "@purchasedocid"}, {
+            delete: {method: 'DELETE', headers: {"Authorization": getToken}},
+            getfiles: {method: 'GET', isArray: false, headers: {"Authorization": getToken}}
+        }
+    );
+
     function getfiles() {
-        return $http({
-            method: "GET",
-            url: "/api/purchasedocuments",
-            headers: {"Authorization": getToken}
+        return documents.getfiles().$promise;
+    }
+
+    function delete_documents(id) {
+        return tokenService.getToken().then(function (tokendata) {
+            token = tokendata.token;
+            return documents.delete({}, {"purchasedocid": id}).$promise;
         });
     }
+
     return {
         purchasedoc: {
             list: purchasedoc_list,
             create: purchasedoc_create,
             update: purchasedoc_update,
             delete: purchasedoc_delete,
-            files: getfiles
+            files: getfiles,
+            delete_documents: delete_documents
         },
         purchasedocdata: {
             create: purchasedocdata_create,

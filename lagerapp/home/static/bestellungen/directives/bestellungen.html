@@ -15,6 +15,7 @@
                         <li><a ng-click="bestellungen.make(bestellung,'doc')">Bestellung.doc erzeugen</a></li>
                         <li><a ng-click="bestellungen.make(bestellung,'odt')">Bestellung.odt erzeugen</a></li>
                         <li><a ng-click="bestellungen.set_status_sent(bestellung)">als gesendet markieren</a></li>
+                        <li><a ng-click="bestellungen.delete_documents(bestellung)">Dokumente löschen</a></li>
                     </ul>
                 </li>
             </div>
@@ -46,7 +47,8 @@
                                     Optionen <span class="caret"></span>
                                 </a>
                                 <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                                    <li><a ng-click="bestellungen.delete_docdata(item.rowid)">Eintrag löschen</a></li>
+                                    <li><a ng-click="bestellungen.delete_docdata(bestellung.id, item.rowid)">Eintrag
+                                        löschen</a></li>
                                 </ul>
                             </li></span>
                         </td>

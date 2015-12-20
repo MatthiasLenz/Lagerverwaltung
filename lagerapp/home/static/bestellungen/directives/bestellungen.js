@@ -7,6 +7,7 @@ directive('bestellungen', function () {
             controller.list = [];
             updateList();
             controller.files = {};
+            window.scope1 = controller;
             controller.delete_doc = function (doc) {
                 bestellungenService.purchasedoc.delete(doc).then(function () {
                     updateList();
@@ -23,12 +24,13 @@ directive('bestellungen', function () {
                 doc.edit = false;
                 doc.data.forEach(function (docdata) {
                     docdata.amount = docdata.quantity * docdata.price;
-                    bestellungenService.purchasedocdata.update({id: docdata.rowid}, docdata);
+                    bestellungenService.purchasedocdata.update(doc.id, docdata);
                 });
+                delete controller.files[doc.id];
             };
             bestellungenService.purchasedoc.files().then(function (files) {
                 //build a dictionary
-                files.data.results.forEach(function (item) {
+                files.results.forEach(function (item) {
                     controller.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
                 });
 
@@ -37,7 +39,7 @@ directive('bestellungen', function () {
                 bestellungenService.make(doc, type).then(function (docurl) {
                     //Todo: only reload the specific doc, not the list
                     bestellungenService.purchasedoc.files().then(function (files) {
-                        files.data.results.forEach(function (item) {
+                        files.results.forEach(function (item) {
                             controller.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
                         });
                     });
@@ -48,10 +50,14 @@ directive('bestellungen', function () {
                     updateList();
                 });
             };
-            controller.delete_docdata = function (id) {
-                bestellungenService.purchasedocdata.delete(id).then(function () {
+            controller.delete_docdata = function (purchasedocid, id) {
+                bestellungenService.purchasedocdata.delete(purchasedocid, id).then(function () {
                     updateList();
                 });
+            };
+            controller.delete_documents = function (doc) {
+                delete controller.files[doc.id];
+                bestellungenService.purchasedoc.delete_documents(doc.id);
             };
             function updateList() {
                 controller.list = [];
