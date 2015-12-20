@@ -24,9 +24,10 @@ directive('bestellungen', function () {
                 doc.edit = false;
                 //if all updates are started at the same time, the tokenService might not have a token yet (if the
                 //user did not log in) and it will prompt the login view for each update
-
-                bestellungenService.purchasedocdata.batch_update(doc.data);
-                delete controller.files[doc.id];
+                bestellungenService.purchasedocdata.batch_update(doc.data).then(function () {
+                    bestellungenService.purchasedoc.delete_documents(doc.id);
+                    delete controller.files[doc.id];
+                });
             };
             bestellungenService.purchasedoc.files().then(function (files) {
                 //build a dictionary
