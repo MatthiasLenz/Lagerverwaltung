@@ -29,6 +29,7 @@ directive('bestellungen', function () {
                     delete controller.files[doc.id];
                 });
             };
+
             bestellungenService.purchasedoc.files().then(function (files) {
                 //build a dictionary
                 files.results.forEach(function (item) {
@@ -36,16 +37,15 @@ directive('bestellungen', function () {
                 });
 
             });
+
             controller.make = function (doc, type) {
                 bestellungenService.make(doc, type).then(function (docurl) {
-                    //Todo: only reload the specific doc, not the list
-                    bestellungenService.purchasedoc.files().then(function (files) {
-                        files.results.forEach(function (item) {
+                    bestellungenService.purchasedoc.file(doc.id).then(function (item) {
                             controller.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
-                        });
                     });
                 });
             };
+
             controller.set_status_sent = function (doc) {
                 bestellungenService.purchasedoc.update({id: doc.id}, {status: 1}).then(function (response) {
                     updateList();

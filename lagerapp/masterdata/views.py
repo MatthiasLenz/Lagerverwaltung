@@ -246,7 +246,7 @@ class ProductViewSet(mixins.RetrieveModelMixin,
     filter_fields = ('resourcenatureid',)
     #Suche in zu resourcenatureid gehörendem Namen, über das Related Field resourcenatureid__name
     search_fields = ('id','name1','resourcenatureid__name')
-    #ToDo: ordering_fields = ()
+
 
 
 from rest_framework.views import APIView

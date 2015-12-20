@@ -12,7 +12,6 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             create: {method: 'POST', headers: {"Authorization": getToken}},
             update: {method: 'PUT', headers: {"Authorization": getToken}},
             delete: {method: 'DELETE', headers: {"Authorization": getToken}}
-
         }
     );
 
@@ -137,7 +136,6 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
 
-
     var documents = $resource(
         "/api/purchasedocuments/:id", {id: "@purchasedocid"}, {
             delete: {method: 'DELETE', headers: {"Authorization": getToken}},
@@ -147,6 +145,10 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
 
     function getfiles() {
         return documents.getfiles().$promise;
+    }
+
+    function getfile(id) {
+        return documents.getfiles({id: id}).$promise;
     }
 
     function delete_documents(id) {
@@ -163,6 +165,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             update: purchasedoc_update,
             delete: purchasedoc_delete,
             files: getfiles,
+            file: getfile,
             delete_documents: delete_documents
         },
         purchasedocdata: {
