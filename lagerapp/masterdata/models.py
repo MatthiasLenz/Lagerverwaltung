@@ -234,9 +234,26 @@ class PurchaseDocData(models.Model):
     unit = models.CharField(db_column='Unit', max_length=5, blank=True, null=True)
     quantity = models.FloatField(db_column='Quantity', blank=True, null=True)
     price = models.FloatField(db_column='Price', blank=True, null=True)
+    netprice = models.FloatField(db_column='NetPrice', default=0)
     amount = models.FloatField(db_column='Amount', blank=True, null=True)
+    packing = models.CharField(db_column='Packing', max_length=255, blank=True)
+    # unused default fields
+    linetype = models.SmallIntegerField(db_column='LineType', blank=True, null=True, default=0)
+    projectid = models.CharField(db_column='ProjectID', max_length=15, blank=True)
+    posid = models.CharField(db_column='PosID', max_length=15, blank=True)
+    weight = models.FloatField(db_column='Weight', default=0)
+    volume = models.FloatField(db_column='Volume', default=0)
+    comment = models.CharField(db_column='Comment', max_length=255, default='')
+    calclineexpression = models.CharField(db_column='CalcLineExpression', max_length=60, default='')
+    discount = models.FloatField(db_column='Discount', default=1)
+    discountcalclineexpression = models.CharField(db_column='DiscountCalcLineExpression', max_length=60, default='')
+    budgetprice = models.FloatField(db_column='BudgetPrice', default=0)
+    budgetamount = models.FloatField(db_column='BudgetAmount', default=0)
+    taxcode = models.CharField(db_column='TaxCode', max_length=6, blank=True)
+    resourcememo = models.TextField(db_column='ResourceMemo', blank=True)
 
     def save(self, *args, **kwargs):
+        self.netprice = self.price
         if not self.rowid:
             self.rowid = self.__class__.objects.all().order_by('-rowid')[0].rowid + 1
         super(self.__class__, self).save(*args, **kwargs)

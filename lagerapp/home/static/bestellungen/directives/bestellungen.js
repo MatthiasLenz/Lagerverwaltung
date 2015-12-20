@@ -51,8 +51,8 @@ directive('bestellungen', function () {
                     updateList();
                 });
             };
-            controller.delete_docdata = function (purchasedocid, id) {
-                bestellungenService.purchasedocdata.delete(purchasedocid, id).then(function () {
+            controller.delete_docdata = function (id) {
+                bestellungenService.purchasedocdata.delete(id).then(function () {
                     updateList();
                 });
             };

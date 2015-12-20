@@ -110,13 +110,14 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             clearCache();
         });
     }
-    function purchasedocdata_delete(purchasedocid, rowid) {
+
+    function purchasedocdata_delete(rowid) {
         //return a promise for purchasedoc_delete
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return purchasedocdata.delete({}, {"id": id}).$promise;
+            return purchasedocdata.delete({}, {"id": rowid}).$promise;
         }).then(function (response) {
             clearCache();
         });
