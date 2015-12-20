@@ -11,8 +11,6 @@
                     <ul class="uib-dropdown-menu" aria-labelledby="single-button">
                         <li><a ng-click="bestellungen.delete_doc(bestellung)">Bestellung löschen</a></li>
                         <li><a ng-click="bestellungen.edit_doc(bestellung)">Bestellung bearbeiten</a></li>
-                        <li><a ng-click="bestellungen.make(bestellung,'pdf')">Bestellung.pdf erzeugen</a></li>
-                        <li><a ng-click="bestellungen.make(bestellung,'doc')">Bestellung.doc erzeugen</a></li>
                         <li><a ng-click="bestellungen.set_status_sent(bestellung)">als gesendet markieren</a></li>
                         <li><a ng-click="bestellungen.delete_documents(bestellung)">Dokumente löschen</a></li>
                     </ul>
@@ -56,7 +54,9 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="well" ng-show="bestellungen.files[bestellung.id] != undefined">
+
+
+                <div class="well col-lg-8 pull-left" ng-hide="bestellung.edit">
                     <span ng-show="bestellungen.files[bestellung.id].pdf">
                         <a target="_blank" href="{{ bestellungen.files[bestellung.id].pdf }}">
                             <img ng-src="static/pdficon.png" width="32">Bestellung.pdf</a>
@@ -70,7 +70,27 @@
                             <img ng-src="static/odticon.png" width="32">Bestellung.odt</a>
                     </span>
                 </div>
-                <button ng-show="bestellung.edit" ng-click="bestellungen.save_doc(bestellung)">Speichern</button>
+
+
+                <div ng-hide="bestellung.edit" class="btn-group col-lg-4 pull-right" role="group" aria-label="...">
+                    <div class="btn-group-vertical" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default"
+                                ng-click="bestellungen.make(bestellung,'pdf')"
+                                ng-hide="bestellungen.files[bestellung.id].pdf">
+                            <img ng-src="static/pdficon.png" width="24"> erstellen
+                        </button>
+                        <button type="button" class="btn btn-default"
+                                ng-click="bestellungen.make(bestellung,'doc')"
+                                ng-hide="bestellungen.files[bestellung.id].doc">
+                            <img ng-src="static/wordicon.png" width="24"> erstellen
+                        </button>
+                    </div>
+                </div>
+
+
+                <button ng-show="bestellung.edit" ng-click="bestellungen.save_doc(bestellung)"
+                        type="button" class="btn btn-default">Speichern
+                </button>
             </div>
         </div>
     </div>
