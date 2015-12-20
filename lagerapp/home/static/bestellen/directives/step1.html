@@ -14,21 +14,22 @@
 <br/>
 <table class="table">
     <thead>
-    <th ng-click="step1.setOrder('name1')" ng-class="{sort: step1.getOrder() == 'name1', sortable:true}">
+    <th class="col-md-2" ng-click="step1.setOrder('name1')"
+        ng-class="{sort: step1.getOrder() == 'name1', sortable:true}">
         Bezeichnung <b ng-class="step1.sortDirection"></b>
     </th>
-    <th></th>
-    <th>ID</th>
-    <th>Einheit</th>
-    <th ng-click="step1.setOrder('stockcur')"
+    <th class="col-md-1"></th>
+    <th class="col-md-1">ID</th>
+    <th class="col-md-1">Einheit</th>
+    <th class="col-md-1" ng-click="step1.setOrder('stockcur')"
         ng-class="{sort: step1.getOrder() == 'stockcur', sortable:true}">
         Stock verfügbar <b ng-class="step1.sortDirection"></b>
     </th>
-    <th ng-click="step1.setOrder('netpurchaseprice')"
+    <th class="col-md-1" ng-click="step1.setOrder('netpurchaseprice')"
         ng-class="{sort: step1.getOrder() == 'netpurchaseprice', sortable:true}">
         Netto Preis <b ng-class="step1.sortDirection"></b>
     </th>
-    <th ng-click="step1.setOrder('defaultsupplier')"
+    <th class="col-md-1" ng-click="step1.setOrder('defaultsupplier')"
         ng-class="{sort: step1.getOrder() == 'defaultsupplier', sortable:true}">
         Standard Lieferant <b ng-class="step1.sortDirection"></b>
     </th>
