@@ -30,7 +30,7 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
             </div>
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 fixed">
                         <div class="panel panel-default">
                             <div class="panel-heading">Bestellung</div>
                             <table class="table">
@@ -67,7 +67,7 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                             </table>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 scrollit">
                         <div ng-repeat="deliverynote in bestellungen1.select.deliverynotes" class="panel panel-default">
                             <div class="panel-heading">Lieferschein {{ deliverynote.id }}
                                 {{ deliverynote.docdate|date:'d. MMM yyyy' }}</div>
