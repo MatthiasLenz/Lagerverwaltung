@@ -49,6 +49,10 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
 
     function save() {
         //if existing purchasedoc: create purchasedocdata with purchasedocid
+        packing = "";
+        if (controller.selectedpacking.name != controller.packings['base'].name) {
+            packing = controller.selectedpacking.orderAmount + ' ' + controller.selectedpacking.name;
+        }
         if (controller.supplier.opendoc) {
             var purchasedocid = controller.supplier.opendoc.id;
             data = {
@@ -57,9 +61,10 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                 "unit": controller.product.unit1, "quantity": controller.packings['base'].orderAmount,
                 "price": controller.supplier.purchaseprice,
                 "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice,
-                "packing": controller.selectedpacking.orderAmount + ' ' + controller.selectedpacking.name
+                "packing": packing
             };
             bestellungenService.purchasedocdata.create(purchasedocid, data).then(function (response) {
+                bestellungenService.purchasedoc.delete_documents(purchasedocid);
                 $scope.bestellen.finish();
             }, function (error) {
                 loginService.login();
@@ -75,7 +80,7 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                     "prodid": controller.product.id, "name": controller.product.name1, "unit": controller.product.unit1,
                     "quantity": controller.packings['base'].orderAmount, "price": controller.supplier.purchaseprice,
                     "amount": controller.packings['base'].orderAmount * controller.supplier.purchaseprice,
-                    "packing": controller.selectedpacking.orderAmount + ' ' + controller.selectedpacking.name
+                    "packing": packing
                 }],
                 "deliverynotes": []
             };

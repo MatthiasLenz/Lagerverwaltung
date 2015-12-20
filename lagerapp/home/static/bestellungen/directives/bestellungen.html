@@ -56,7 +56,7 @@
                 </table>
 
 
-                <div class="well col-lg-8 pull-left" ng-hide="bestellung.edit">
+                <div class="well col-md-8 pull-left" ng-hide="bestellung.edit">
                     <span ng-show="bestellungen.files[bestellung.id].pdf">
                         <a target="_blank" href="{{ bestellungen.files[bestellung.id].pdf }}">
                             <img ng-src="static/pdficon.png" width="32">Bestellung.pdf</a>
@@ -72,7 +72,7 @@
                 </div>
 
 
-                <div ng-hide="bestellung.edit" class="btn-group col-lg-4 pull-right" role="group" aria-label="...">
+                <div ng-hide="bestellung.edit" class="btn-group col-md-4 pull-right" role="group" aria-label="...">
                     <div class="btn-group-vertical" role="group" aria-label="...">
                         <button type="button" class="btn btn-default"
                                 ng-click="bestellungen.make(bestellung,'pdf')"

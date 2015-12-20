@@ -329,9 +329,11 @@ def renderdoc(data_input, outputfile):
     items = []
     total = '%.2f' % sum(item['amount'] for item in data_input['data'])
     for item in data_input['data']:
+        if item['packing'] != '':
+            item['packing'] = 'Verpackt als: %s' % item['packing']
         items.append(
             {'id': item['prodid'], 'name': item['name'], 'unit': item['unit'], 'quantity': '%.3f' % item['quantity'],
-             'price': '%.2f' % item['price'], 'amount': '%.2f' % item['amount']})
+             'price': '%.2f' % item['price'], 'amount': '%.2f' % item['amount'], 'packing': item['packing']})
     recipient = {'address': format_py3o_context_value(
         '%s\n%s\n\n%s %s' % (supplier['namea'], supplier['address'], supplier['zipcode'], supplier['city']))}
     sender = {'address': data_input['adr_kurz'], 'info': 'info'}
