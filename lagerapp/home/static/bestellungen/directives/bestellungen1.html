@@ -35,6 +35,7 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                     <div class="col-lg-6 fixed">
                         <div class="panel panel-default">
                             <div class="panel-heading">Bestellung</div>
+                            <div class="panel-body">
                             <table class="table">
                                 <thead>
                                 <th class="col-md-5">Name</th>
@@ -67,9 +68,10 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                                 </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 scrollit">
+                    <div class="col-lg-6" ng-class="{'scrollit': !bestellungen1.select.edit}">
                         <div ng-repeat="deliverynote in bestellungen1.select.deliverynotes" class="panel panel-default">
                             <div class="panel-heading">Lieferschein {{ deliverynote.id }}
                                 {{ deliverynote.docdate|date:'d. MMM yyyy' }}</div>
@@ -100,9 +102,13 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                         </div>
                     </div>
                 </div>
-                <span ng-show="bestellungen1.select.edit"><button ng-click="bestellungen1.add_delnote()">
-                    Lieferschein hinzufügen
-                </button></span>
+            </div>
+            <div class="panel-footer">
+                <span ng-show="bestellungen1.select.edit">
+                     <button ng-click="bestellungen1.add_delnote()">
+                         Lieferschein hinzufügen
+                     </button>
+                    </span>
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@
     border-color: #BDA639;
 }
 
-.panel-edit .panel-heading {
+.panel-edit > .panel-heading {
     background-image: -webkit-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
     background-image: -o-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fcf8e3), to(#faf2cc));
