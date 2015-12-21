@@ -7,6 +7,14 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         return "Token " + token;
     }
 
+    var deliverynote = $resource(
+        "/api/deliverynote/:id", {id: "@id"}, {
+            create: {method: 'POST', headers: {"Authorization": getToken}},
+            update: {method: 'PUT', headers: {"Authorization": getToken}},
+            delete: {method: 'DELETE', headers: {"Authorization": getToken}}
+        }
+    );
+
     var purchasedoc = $resource(
         "/api/purchasedoc/:id", {id: "@id"}, {
             create: {method: 'POST', headers: {"Authorization": getToken}},
@@ -25,6 +33,16 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
 
     function clearCache() {
         purchasedocCache.removeAll();
+    }
+
+    function deliverynote_create(data) {
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            data.responsible = tokendata.user;
+            return deliverynote.create(data).$promise;
+        });
     }
 
     function purchasedoc_list(kwargs) {
@@ -173,6 +191,9 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             update: purchasedocdata_update,
             batch_update: purchasedocdata_batchupdate,
             delete: purchasedocdata_delete
+        },
+        deliverynote: {
+            create: deliverynote_create
         },
         make: make
     };

@@ -331,13 +331,13 @@ class DeliveryNoteData(models.Model):
     quantity = models.FloatField(db_column='Quantity', blank=True, null=True)
     price = models.FloatField(db_column='Price', blank=True, null=True)
     amount = models.FloatField(db_column='Amount', blank=True, null=True)
-    projectid = models.CharField(db_column='ProjectID', max_length=15, blank=True, null=True)
-    comment = models.CharField(db_column='Comment', max_length=255, blank=True, null=True)
-    dataid = models.IntegerField(db_column='DataID', blank=True, null=True)
-    packing = models.CharField(db_column='Packing', max_length=255, blank=True, null=True)
-    calclineexpression = models.CharField(db_column='CalcLineExpression', max_length=60, blank=True, null=True)
-    quantityrejected = models.FloatField(db_column='QuantityRejected', blank=True, null=True)
-    stockmovementid = models.IntegerField(db_column='StockMovementID', blank=True, null=True)
+    projectid = models.CharField(db_column='ProjectID', max_length=15, blank=True)
+    comment = models.CharField(db_column='Comment', max_length=255, blank=True)
+    dataid = models.IntegerField(db_column='DataID', blank=True)
+    packing = models.CharField(db_column='Packing', max_length=255, blank=True)
+    calclineexpression = models.CharField(db_column='CalcLineExpression', max_length=60, blank=True)
+    quantityrejected = models.FloatField(db_column='QuantityRejected', blank=True)
+    stockmovementid = models.IntegerField(db_column='StockMovementID', blank=True)
 
     def save(self, *args, **kwargs):
         if not self.rowid:

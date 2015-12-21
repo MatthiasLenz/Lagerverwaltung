@@ -2,21 +2,43 @@ angular.module('baseApp').
 directive('bestellungen1', function () {
     return {
         templateUrl: 'static/bestellungen/directives/bestellungen1.html',
-        controller: ['$scope', 'bestellungenService', 'supplierService', function ($scope, bestellungenService, supplierService) {
+        controller: ['$scope', 'bestellungenService', 'supplierService', '$filter',
+            function ($scope, bestellungenService, supplierService, $filter) {
             var controller = this;
+                controller.select = null; //purchasedoc
             controller.list = [];
             controller.showDetail = {};
             controller.marked = "";
             controller.status = 1;
             updateList();
+                controller.update_status = function () {
+                    updateList();
+                };
+                controller.set_status_2 = function (doc) {
+                    bestellungenService.purchasedoc.update({id: doc.id}, {"status": 2})
+                };
+                controller.add_delnote = function () {
+                    var data = {
+                        "module": 5, "status": 1, "orderid": controller.select.id,
+                        "supplierid": controller.select.supplierid,
+                        "docdate": $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sssZ'), "data": []
+                    };
+                    controller.select.data.forEach(function (item) {
+                        data.data.push({
+                            "rowid": null, "prodid": item.prodid, "name": item.name, "unit": item.unit, "quantity": 0,
+                            "price": item.price, "amount": 0
+                        });
+                    });
+                    bestellungenService.deliverynote.create(data)
+                };
             controller.status_options = [
                 {id: 1, descr: "Verschickt"},
                 {id: 2, descr: "Lieferung hat begonnen"},
                 {id: 3, descr: "Lieferung wahrscheinlich abgeschlossen"},
                 {id: 4, descr: "Abgeschlossen"}
             ];
-            controller.select = null;
-            controller.mark = function (prodid) {
+
+                controller.mark = function (prodid) {
                 controller.marked = prodid;
             };
             controller.edit_doc = function (doc) {
@@ -43,13 +65,9 @@ directive('bestellungen1', function () {
                 });
 
             }
-
             controller.toggleDetail = function (id) {
                 controller.showDetail[id] = !(controller.showDetail[id]);
             };
-            $scope.$watch('[bestellungen1.status]', function () {
-                updateList();
-            });
         }],
         controllerAs: 'bestellungen1'
     };

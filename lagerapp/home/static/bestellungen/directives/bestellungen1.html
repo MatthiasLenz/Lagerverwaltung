@@ -1,5 +1,6 @@
 Bestellstatus: <select class="form-control" style="width:350px;" ng-model="bestellungen1.status"
-                       ng-options="option.id as option.descr for option in bestellungen1.status_options"></select>
+                       ng-options="option.id as option.descr for option in bestellungen1.status_options"
+                       ng-change="bestellungen1.update_status()"></select>
 
 Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
                               ng-options="bestellung.supplier.namea+
@@ -23,7 +24,8 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                         <li><a ng-click="bestellungen1.delete_doc(bestellungen1.select)">Bestellung löschen</a></li>
                         <li><a ng-click="bestellungen1.edit_doc(bestellungen1.select)">Bestellung bearbeiten</a></li>
                         <!--Eingabefelder für extdocno, supplierinvoicenumber und datum hinzufügen-->
-                        <li><a ng-click="bestellungen1.set_status_2(bestellungen1.select)">Status 2</a></li>
+                        <li><a ng-click="bestellungen1.set_status_2(bestellungen1.select)">Lieferung hat begonnen</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -98,7 +100,9 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                         </div>
                     </div>
                 </div>
-                <span ng-show="bestellungen1.select.edit"><button>Lieferschein hinzufügen</button></span>
+                <span ng-show="bestellungen1.select.edit"><button ng-click="bestellungen1.add_delnote()">
+                    Lieferschein hinzufügen
+                </button></span>
             </div>
         </div>
     </div>

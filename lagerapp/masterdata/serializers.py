@@ -122,13 +122,11 @@ class FastProductSerializer(serializers.ModelSerializer):
 
 class DeliveryNoteDataSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
-
     class Meta:
         model = DeliveryNoteData
         fields = (
         'linetype', 'rowid', 'deliverynoteid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'projectid',
         'comment', 'dataid', 'packing', 'calclineexpression', 'quantityrejected', 'stockmovementid')
-
 
 class DeliveryNoteSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)
