@@ -309,7 +309,7 @@ def makepdf(request):
     os.rename(document_folder + 'bestellung.' + doctype, document_folder + docname)
     # with open(document_folder+"bestellung.pdf", 'rb') as f:
     #    url = ftpupload(ftpsettings, f, "bestellung.pdf")
-    fileurl = 'http://localhost/static/' + data['supplier']['id'] + '/' + docname
+    fileurl = 'http://%s/static/%s/%s' % (settings['server'], data['supplier']['id'], docname)
     try:
         obj = PurchaseDocuments.objects.get(purchasedocid=data['id'])
         setattr(obj, doctype, fileurl)
