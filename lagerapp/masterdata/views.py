@@ -163,7 +163,7 @@ class PurchaseDocViewSet(viewsets.ModelViewSet):
     serializer_class = PurchaseDocSerializer
     pagination_class = None
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('status',)
+    filter_fields = ('status', 'supplierid')
 
 class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
@@ -185,7 +185,6 @@ class PurchaseDocSupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier.objects.filter(pk__in=supplierids)
     serializer_class = SupplierSerializer
     pagination_class = None
-    filter_fields = ('status',)
 
 
 class CompleteProductView(APIView):

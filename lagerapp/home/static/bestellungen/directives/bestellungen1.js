@@ -7,12 +7,15 @@ directive('bestellungen1', function () {
                 var controller = this;
                 controller.select = null; //purchasedoc
                 controller.list = [];
+                controller.supplierid = '';
+                controller.suppliers = [];
                 controller.showDetail = {};
                 controller.marked = "";
                 controller.status = 1;
                 window.scope11 = controller;
-                updateList();
-                controller.update_status = function () {
+                get_suppliers();
+
+                controller.update = function () {
                     updateList();
                 };
                 controller.set_status_2 = function (doc) {
@@ -48,6 +51,13 @@ directive('bestellungen1', function () {
                     });
                     controller.edit_delnote = data;
                 };
+                function get_suppliers() {
+                    bestellungenService.purchasedoc.suppliers().then(function (result) {
+                        result.forEach(function (item) {
+                            controller.suppliers.push(item);
+                        });
+                    });
+                }
                 controller.add_delnote = function () {
                     var data = {
                         "module": 5, "status": 1, "orderid": controller.select.id,
@@ -74,8 +84,8 @@ directive('bestellungen1', function () {
                 controller.status_options = [
                     {id: 1, descr: "Verschickt"},
                     {id: 2, descr: "Lieferung hat begonnen"},
-                    {id: 3, descr: "Lieferung wahrscheinlich abgeschlossen"},
-                    {id: 4, descr: "Abgeschlossen"}
+                    {id: 3, descr: "Lieferung wahrscheinlich abgeschlossen"}
+                    //{id: 4, descr: "Abgeschlossen"}
                 ];
 
                 controller.mark = function (prodid) {
@@ -96,7 +106,10 @@ directive('bestellungen1', function () {
 
                 function updateList() {
                     controller.list = [];
-                    bestellungenService.purchasedoc.list({'status': controller.status}).then(function (result) {
+                    bestellungenService.purchasedoc.list({
+                        'status': controller.status,
+                        'supplierid': controller.supplierid
+                    }).then(function (result) {
                         result.forEach(function (item) {
                             supplier = supplierService.resource.query({'id': item.supplierid});
                             item.supplier = supplier;

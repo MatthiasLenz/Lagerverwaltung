@@ -30,7 +30,9 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             delete: {method: 'DELETE', headers: {"Authorization": getToken}}
         }
     );
-
+    var purchasedocsupplier = $resource(
+        "/api/purchasedocsupplier/:id", {id: "@id"}, {}
+    );
     function clearCache() {
         purchasedocCache.removeAll();
     }
@@ -58,7 +60,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         return purchasedoc.get(id).$promise;
     }
     function purchasedoc_list(kwargs) {
-        return purchasedoc.query({'status': kwargs.status}).$promise;
+        return purchasedoc.query({'status': kwargs.status, 'supplierid': kwargs.supplierid}).$promise;
     }
 
     function purchasedoc_create(data) {
@@ -188,6 +190,12 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
 
+    function getsuppliers(status) {
+        return tokenService.getToken().then(function (tokendata) {
+            token = tokendata.token;
+            return purchasedocsupplier.query({}).$promise;
+        });
+    }
     return {
         purchasedoc: {
             get: purchasedoc_get,
@@ -197,7 +205,8 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             delete: purchasedoc_delete,
             files: getfiles,
             file: getfile,
-            delete_documents: delete_documents
+            delete_documents: delete_documents,
+            suppliers: getsuppliers
         },
         purchasedocdata: {
             create: purchasedocdata_create,

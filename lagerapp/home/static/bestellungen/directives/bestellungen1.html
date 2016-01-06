@@ -1,9 +1,11 @@
+Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.supplierid"
+                             ng-options="supplier.id as supplier.namea for supplier in bestellungen1.suppliers | orderBy: 'namea'"
+                             ng-change="bestellungen1.update()"></select>
+
 Bestellstatus: <select class="form-control" style="width:350px;" ng-model="bestellungen1.status"
                        ng-options="option.id as option.descr for option in bestellungen1.status_options"
-                       ng-change="bestellungen1.update_status()"></select>
+                       ng-change="bestellungen1.update()"></select>
 
-Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
-                             ng-options="bestellung.supplier.namea for bestellung in bestellungen1.list | orderBy: 'supplier.namea'"></select>
 
 Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
                               ng-options="bestellung.supplier.namea+
