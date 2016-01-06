@@ -45,6 +45,18 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
 
+    function deliverynote_delete(rowid) {
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return deliverynotedata.delete({}, {"id": rowid}).$promise;
+        });
+    }
+
+    function purchasedoc_get(id) {
+        return purchasedoc.get(id).$promise;
+    }
     function purchasedoc_list(kwargs) {
         return purchasedoc.query({'status': kwargs.status}).$promise;
     }
@@ -178,6 +190,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
 
     return {
         purchasedoc: {
+            get: purchasedoc_get,
             list: purchasedoc_list,
             create: purchasedoc_create,
             update: purchasedoc_update,
@@ -193,7 +206,8 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             delete: purchasedocdata_delete
         },
         deliverynote: {
-            create: deliverynote_create
+            create: deliverynote_create,
+            delete: deliverynote_delete
         },
         make: make
     };

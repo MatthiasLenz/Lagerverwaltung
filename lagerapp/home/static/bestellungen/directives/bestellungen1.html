@@ -2,6 +2,9 @@ Bestellstatus: <select class="form-control" style="width:350px;" ng-model="beste
                        ng-options="option.id as option.descr for option in bestellungen1.status_options"
                        ng-change="bestellungen1.update_status()"></select>
 
+Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
+                             ng-options="bestellung.supplier.namea for bestellung in bestellungen1.list | orderBy: 'supplier.namea'"></select>
+
 Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
                               ng-options="bestellung.supplier.namea+
                               ' ('+(bestellung.docdate|date:'d. MMM yyyy')+')'
@@ -26,6 +29,9 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                         <!--Eingabefelder für extdocno, supplierinvoicenumber und datum hinzufügen-->
                         <li><a ng-click="bestellungen1.set_status_2(bestellungen1.select)">Lieferung hat begonnen</a>
                         </li>
+                        <li><a ng-click="bestellungen1.new_edit_delnote()">
+                            Neuen Lieferschein anlegen</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -36,24 +42,24 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                         <div class="panel panel-default">
                             <div class="panel-heading">Bestellung</div>
                             <div class="panel-body">
-                            <table class="table">
-                                <thead>
-                                <th class="col-md-5">Name</th>
-                                <th class="col-md-2">Anzahl</th>
-                                <th class="col-md-1">Einheit</th>
-                                <th class="col-md-2">Preis</th>
-                                <th class="col-md-2">Kosten</th>
-                                </thead>
-                                <tbody>
-                                <tr ng-class="{'bg-success':bestellungen1.marked==item.prodid}"
-                                    ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
-                                    ng-repeat="(key, item) in bestellungen1.select.data">
-                                    <td> {{ item.name }}</td>
-                                    <td> {{ item.quantity }}</td>
-                                    <td> {{ item.unit }}</td>
-                                    <td> {{ item.price |currency:""}} €</td>
-                                    <td> {{ item.amount |currency:""}} €</td>
-                                    <td><span ng-show="bestellungen1.select.edit">
+                                <table class="table">
+                                    <thead>
+                                    <th class="col-md-5">Name</th>
+                                    <th class="col-md-2">Anzahl</th>
+                                    <th class="col-md-1">Einheit</th>
+                                    <th class="col-md-2">Preis</th>
+                                    <th class="col-md-2">Kosten</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-class="{'bg-success':bestellungen1.marked==item.prodid}"
+                                        ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
+                                        ng-repeat="(key, item) in bestellungen1.select.data">
+                                        <td> {{ item.name }}</td>
+                                        <td> {{ item.quantity }}</td>
+                                        <td> {{ item.unit }}</td>
+                                        <td> {{ item.price |currency:""}} €</td>
+                                        <td> {{ item.amount |currency:""}} €</td>
+                                        <td><span ng-show="bestellungen1.select.edit">
                                 <li class="btn-group pull-right" uib-dropdown is-open="">
                                     <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
                                        ng-disabled="disabled">
@@ -64,17 +70,56 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                                         </li>
                                     </ul>
                                 </li></span>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6" ng-class="{'scrollit': !bestellungen1.select.edit}">
+                        <div ng-show="bestellungen1.edit_delnote" class="panel panel-edit">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <thead>
+                                    <th class="col-md-5">Name</th>
+                                    <th class="col-md-2">Anzahl</th>
+                                    <th class="col-md-1">Einheit</th>
+                                    <th class="col-md-2">Preis</th>
+                                    <th class="col-md-2">Kosten</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-class="{'bg-success':bestellungen1.marked==item.prodid}"
+                                        ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
+                                        ng-repeat="(key, item) in bestellungen1.edit_delnote.data">
+                                        <td> {{ item.name }}</td>
+                                        <td><input ng-model="item.quantity"></td>
+                                        <td> {{ item.unit }}</td>
+                                        <td> {{ item.price |currency:""}} €</td>
+                                        <td> {{ item.amount |currency:""}} €</td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <button ng-click="">Speichern</button>
+                            </div>
+                        </div>
                         <div ng-repeat="deliverynote in bestellungen1.select.deliverynotes" class="panel panel-default">
                             <div class="panel-heading">Lieferschein {{ deliverynote.id }}
-                                {{ deliverynote.docdate|date:'d. MMM yyyy' }}</div>
+                                {{ deliverynote.docdate|date:'d. MMM yyyy' }}
+                                <li ng-show="bestellungen1.select" class="btn-group pull-right" uib-dropdown is-open="">
+                                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                                       ng-disabled="disabled">
+                                        Optionen <span class="caret"></span>
+                                    </a>
+                                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                                        <li><a ng-click="bestellungen1.delete_doc(bestellungen1.select)">Lieferschein
+                                            löschen</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </div>
                             <div class="panel-body">
                                 <table class="table">
                                     <thead>
@@ -102,13 +147,6 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="panel-footer">
-                <span ng-show="bestellungen1.select.edit">
-                     <button ng-click="bestellungen1.add_delnote()">
-                         Lieferschein hinzufügen
-                     </button>
-                    </span>
             </div>
         </div>
     </div>

@@ -10,6 +10,7 @@ from rest_framework.authentication import TokenAuthentication, BasicAuthenticati
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, mixins, pagination, filters, generics, views
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.contrib.auth.models import User
 
 
@@ -175,6 +176,32 @@ class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
 
+class PurchaseDocSupplierViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    queryset = PurchaseDoc.objects.filter(module=5).filter(doctype=2)
+    supplierids = [pd.supplierid for pd in queryset]
+    print(supplierids)
+    queryset = Supplier.objects.filter(pk__in=supplierids)
+    serializer_class = SupplierSerializer
+    pagination_class = None
+    filter_fields = ('status',)
+
+
+class CompleteProductView(APIView):
+    """
+    This view provides the list action
+    """
+
+    def get(self, request, *args, **kwargs):
+        queryset = Product.objects.only('id', 'name1', 'detailedname1', 'title', 'marked', 'unit1',
+                                        'grosspurchaseprice', 'netpurchaseprice',
+                                        'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
+                                        'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')
+        serializer = FastProductSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
 class DeliveryNoteViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
@@ -248,8 +275,6 @@ class ProductViewSet(mixins.RetrieveModelMixin,
     search_fields = ('id','name1','resourcenatureid__name')
 
 
-
-from rest_framework.views import APIView
 class CompleteProductView(APIView):
     """
     This view provides the list action
