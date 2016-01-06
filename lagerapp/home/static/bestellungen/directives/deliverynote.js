@@ -2,11 +2,12 @@ angular.module('baseApp').
 directive('deliverynote', function () {
     return {
         templateUrl: 'static/bestellungen/directives/deliverynote.html',
-        controller: ['$scope', 'bestellungenService', 'supplierService', '$filter',
-            function ($scope, bestellungenService, supplierService, $filter) {
+        controller: ['$scope', 'bestellungenService', 'supplierService', '$filter', '$mdToast',
+            function ($scope, bestellungenService, supplierService, $filter, $mdToast) {
                 var controller = this;
                 controller.select = null; //purchasedoc
                 controller.list = [];
+                controller.articles = {};
                 controller.supplierid = '';
                 controller.suppliers = [];
                 controller.showDetail = {};
@@ -36,7 +37,41 @@ directive('deliverynote', function () {
                 // ältesten.
                 // deliverynote.orderid               = purchasedoc.id
                 // deliverynotedata.purchasedocdataid = purchasedocdata.dataid
+                function getArticleList() {
+                    // Digest related errors using this function in ng-repeat,
+                    // it's better to use a property
+                    // if the function creates a new object, the digest will recognize this as a change
+                    // even if the return value is equal to the previous one
+                    controller.articles = {};
+                    controller.list.forEach(function (item) {
+                        item.data.forEach(function (article) {
+                            if (controller.articles[article.prodid] == undefined) {
+                                controller.articles[article.prodid] = [];
+                            }
+                            controller.articles[article.prodid].push({
+                                purchasedocid: item.id,
+                                date: item.docdate,
+                                article: article
+                            });
+                        });
+                        //item.id (purchasedocid)
+                        item.deliverynotes.forEach(function (delnote) {
+                            //all deliverynotes corresponding to the purchases in 'articles'
+                            delnote.data.forEach(function (data) {
+                                //all articles of a specific deliverynote, has a purchasedocid
+                                //$mdToast.show($mdToast.simple().textContent(data.prodid));
+                                if (controller.articles.hasOwnProperty(data.prodid)) {
+                                    controller.articles[data.prodid].forEach(function (article) {
+                                        if (article.purchasedocid == item.id) {
+                                            article.delivered_quantity = data.quantity;
+                                        }
+                                    });
 
+                                }
+                            });
+                        });
+                    });
+                }
                 controller.new_edit_delnote = function () {
                     var data = {
                         "module": 5, "status": 1, "orderid": controller.select.id,
@@ -117,6 +152,8 @@ directive('deliverynote', function () {
                             controller.list.push(item);
                             controller.showDetail[item.id] = false;
                         });
+                    }).then(function (result) {
+                        getArticleList();
                     });
 
                 }
@@ -124,6 +161,7 @@ directive('deliverynote', function () {
                 controller.toggleDetail = function (id) {
                     controller.showDetail[id] = !(controller.showDetail[id]);
                 };
+
             }],
         controllerAs: 'deliverynote'
     };
