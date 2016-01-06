@@ -1,0 +1,155 @@
+Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model="deliverynote.supplierid"
+                             ng-options="supplier.id as supplier.namea for supplier in deliverynote.suppliers | orderBy: 'namea'"
+                             ng-change="deliverynote.update()"></select>
+
+Bestellstatus: <select class="form-control" style="width:350px;" ng-model="deliverynote.status"
+                       ng-options="option.id as option.descr for option in deliverynote.status_options"
+                       ng-change="deliverynote.update()"></select>
+
+
+Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="deliverynote.select"
+                              ng-options="bestellung.supplier.namea+
+                              ' ('+(bestellung.docdate|date:'d. MMM yyyy')+')'
+                              for bestellung in deliverynote.list | orderBy: 'status+supplier.namea' | filter: bestellung.status=deliverynote.status"></select>
+<br>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel"
+             ng-class="{'panel-primary': !deliverynote.select.edit, 'panel-edit' : deliverynote.select.edit }">
+            <div class="panel-heading">
+                <span ng-show="deliverynote.select">Lieferant: {{ deliverynote.select.supplier.namea }} Bestellung: {{ deliverynote.select.id }}
+                ({{ deliverynote.select.docdate |date:'d. MMM yyyy' }})
+                </span>
+                <li ng-show="deliverynote.select" class="btn-group pull-right" uib-dropdown is-open="">
+                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                       ng-disabled="disabled">
+                        Optionen <span class="caret"></span>
+                    </a>
+                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                        <li><a ng-click="deliverynote.delete_doc(deliverynote.select)">Bestellung löschen</a></li>
+                        <li><a ng-click="deliverynote.edit_doc(deliverynote.select)">Bestellung bearbeiten</a></li>
+                        <!--Eingabefelder für extdocno, supplierinvoicenumber und datum hinzufügen-->
+                        <li><a ng-click="deliverynote.set_status_2(deliverynote.select)">Lieferung hat begonnen</a>
+                        </li>
+                        <li><a ng-click="deliverynote.new_edit_delnote()">
+                            Neuen Lieferschein anlegen</a>
+                        </li>
+                    </ul>
+                </li>
+
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-6 fixed">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Bestellung</div>
+                            <div class="panel-body">
+                                <table class="table">
+                                    <thead>
+                                    <th class="col-md-5">Name</th>
+                                    <th class="col-md-2">Anzahl</th>
+                                    <th class="col-md-1">Einheit</th>
+                                    <th class="col-md-2">Preis</th>
+                                    <th class="col-md-2">Kosten</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-class="{'bg-success':deliverynote.marked==item.prodid}"
+                                        ng-mouseover="deliverynote.mark(item.prodid)" class="text-muted"
+                                        ng-repeat="(key, item) in deliverynote.select.data">
+                                        <td> {{ item.name }}</td>
+                                        <td> {{ item.quantity }}</td>
+                                        <td> {{ item.unit }}</td>
+                                        <td> {{ item.price |currency:""}} €</td>
+                                        <td> {{ item.amount |currency:""}} €</td>
+                                        <td><span ng-show="deliverynote.select.edit">
+                                <li class="btn-group pull-right" uib-dropdown is-open="">
+                                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                                       ng-disabled="disabled">
+                                        Optionen <span class="caret"></span>
+                                    </a>
+                                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                                        <li><a ng-click="deliverynote.delete_docdata(item.rowid)">Eintrag löschen</a>
+                                        </li>
+                                    </ul>
+                                </li></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" ng-class="{'scrollit': !deliverynote.select.edit}">
+                        <div ng-show="deliverynote.edit_delnote" class="panel panel-edit">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <thead>
+                                    <th class="col-md-5">Name</th>
+                                    <th class="col-md-2">Anzahl</th>
+                                    <th class="col-md-1">Einheit</th>
+                                    <th class="col-md-2">Preis</th>
+                                    <th class="col-md-2">Kosten</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-class="{'bg-success':deliverynote.marked==item.prodid}"
+                                        ng-mouseover="deliverynote.mark(item.prodid)" class="text-muted"
+                                        ng-repeat="(key, item) in deliverynote.edit_delnote.data">
+                                        <td> {{ item.name }}</td>
+                                        <td><input ng-model="item.quantity"></td>
+                                        <td> {{ item.unit }}</td>
+                                        <td> {{ item.price |currency:""}} €</td>
+                                        <td> {{ item.amount |currency:""}} €</td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <button ng-click="">Speichern</button>
+                            </div>
+                        </div>
+                        <div ng-repeat="deliverynote in deliverynote.select.deliverynotes" class="panel panel-default">
+                            <div class="panel-heading">Lieferschein {{ deliverynote.id }}
+                                {{ deliverynote.docdate|date:'d. MMM yyyy' }}
+                                <li ng-show="deliverynote.select" class="btn-group pull-right" uib-dropdown is-open="">
+                                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                                       ng-disabled="disabled">
+                                        Optionen <span class="caret"></span>
+                                    </a>
+                                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                                        <li><a ng-click="deliverynote.delete_doc(deliverynote.select)">Lieferschein
+                                            löschen</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table">
+                                    <thead>
+                                    <th class="col-md-5">Name</th>
+                                    <th class="col-md-2">Anzahl</th>
+                                    <th class="col-md-1">Einheit</th>
+                                    <th class="col-md-2">Preis</th>
+                                    <th class="col-md-2">Kosten</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-class="{'bg-success':deliverynote.marked==item.prodid}"
+                                        ng-mouseover="deliverynote.mark(item.prodid)" class="text-muted"
+                                        ng-repeat="(key, item) in deliverynote.data">
+                                        <td> {{ item.name }}</td>
+                                        <td> {{ item.quantity }}</td>
+                                        <td> {{ item.unit }}</td>
+                                        <td> {{ item.price |currency:""}} €</td>
+                                        <td> {{ item.amount |currency:""}} €</td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

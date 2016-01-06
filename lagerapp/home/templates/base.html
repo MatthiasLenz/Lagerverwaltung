@@ -53,6 +53,7 @@
 <script src="{% static "bestellen/directives/steps.js" %}"></script>
 <script src="{% static "bestellungen/directives/bestellungen.js" %}"></script>
 <script src="{% static "bestellungen/directives/bestellungen1.js" %}"></script>
+<script src="{% static "bestellungen/directives/deliverynote.js" %}"></script>
 
 <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
@@ -83,6 +84,7 @@
                 <ul class="uib-dropdown-menu" aria-labelledby="single-button">
                     <li><a ng-click="cc.setState('purchasedoc0_state')">Offene Bestellungen</a></li>
                     <li><a ng-click="cc.setState('purchasedoc1_state')">Verschickte Bestellungen</a></li>
+                    <li><a ng-click="cc.setState('purchasedoc2_state')">Lieferschein eintragen</a></li>
                 </ul>
             </li>
         </ul>
@@ -92,6 +94,7 @@
             <div ng-switch-when="productlist_state" bestellen-base></div>
             <div ng-switch-when="purchasedoc0_state" bestellungen></div>
             <div ng-switch-when="purchasedoc1_state" bestellungen1></div>
+            <div ng-switch-when="purchasedoc2_state" deliverynote></div>
         </div>
     </div>
 
