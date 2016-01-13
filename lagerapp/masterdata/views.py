@@ -39,6 +39,28 @@ class LargeResultsSetPagination(pagination.PageNumberPagination):
     max_page_size = 1000
 
 
+import django_filters
+from django_filters import Filter
+from django_filters.fields import Lookup
+
+
+class ListFilter(Filter):
+    def filter(self, qs, value):
+        if not value:
+            return qs
+
+        self.lookup_type = 'in'
+        values = value.split(',')
+        return super(ListFilter, self).filter(qs, values)
+
+
+class StatusFilter(filters.FilterSet):
+    status = ListFilter(name='status')
+
+    class Meta:
+        model = PurchaseDoc
+        fields = ['status', 'supplierid']
+
 class CustomSearchFilter(filters.SearchFilter):
     """Possible duplicate items, when filtering by many-to-many fields, but no problems with text fields"""
     def filter_queryset(self, request, queryset, view):
@@ -163,7 +185,9 @@ class PurchaseDocViewSet(viewsets.ModelViewSet):
     queryset = PurchaseDoc.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
     serializer_class = PurchaseDocSerializer
     pagination_class = None
+
     filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = StatusFilter
     filter_fields = ('status', 'supplierid')
 
 class PurchaseDocDataViewSet(viewsets.ModelViewSet):

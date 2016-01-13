@@ -1,16 +1,6 @@
 Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model="deliverynote.supplierid"
                              ng-options="supplier.id as supplier.namea for supplier in deliverynote.suppliers | orderBy: 'namea'"
                              ng-change="deliverynote.update()"></select>
-
-Bestellstatus: <select class="form-control" style="width:350px;" ng-model="deliverynote.status"
-                       ng-options="option.id as option.descr for option in deliverynote.status_options"
-                       ng-change="deliverynote.update()"></select>
-
-
-Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="deliverynote.select"
-                              ng-options="bestellung.supplier.namea+
-                              ' ('+(bestellung.docdate|date:'d. MMM yyyy')+')'
-                              for bestellung in deliverynote.list | orderBy: 'status+supplier.namea' | filter: bestellung.status=deliverynote.status"></select>
 <br>
 
 <!--mash all the purchasedocs together

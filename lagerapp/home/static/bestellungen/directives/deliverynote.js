@@ -5,6 +5,7 @@ directive('deliverynote', function () {
         controller: ['$scope', 'bestellungenService', 'supplierService', '$filter', '$mdToast',
             function ($scope, bestellungenService, supplierService, $filter, $mdToast) {
                 var controller = this;
+                //TODO remove controller.select
                 controller.select = null; //purchasedoc
                 controller.list = [];
                 controller.articles = {};
@@ -12,7 +13,6 @@ directive('deliverynote', function () {
                 controller.suppliers = [];
                 controller.showDetail = {};
                 controller.marked = "";
-                controller.status = 1;
                 window.scope11 = controller;
                 get_suppliers();
 
@@ -117,13 +117,6 @@ directive('deliverynote', function () {
                     });
                 };
 
-                controller.status_options = [
-                    {id: 1, descr: "Verschickt"},
-                    {id: 2, descr: "Lieferung hat begonnen"},
-                    {id: 3, descr: "Lieferung wahrscheinlich abgeschlossen"}
-                    //{id: 4, descr: "Abgeschlossen"}
-                ];
-
                 controller.mark = function (prodid) {
                     controller.marked = prodid;
                 };
@@ -143,7 +136,7 @@ directive('deliverynote', function () {
                 function updateList() {
                     controller.list = [];
                     bestellungenService.purchasedoc.list({
-                        'status': controller.status,
+                        'status': "2,3",
                         'supplierid': controller.supplierid
                     }).then(function (result) {
                         result.forEach(function (item) {
