@@ -19,17 +19,43 @@ directive('deliverynote', function () {
                 controller.update = function () {
                     updateList();
                 };
-                controller.set_status_2 = function (doc) {
-                    bestellungenService.purchasedoc.update({id: doc.id}, {"status": 2})
+                controller.delivery_complete = function (prodid, articles) {
+                    complete = true;
+                    articles.forEach(function (item) {
+                        if (item.delivered_quantity < item.article.quantity) {
+                            complete = false;
+                        }
+                    });
+                    return complete;
                 };
-                controller.delete_delnote = function (rowid) {
-                    bestellungenService.deliverynote.delete(rowid).then(function (result) {
-                        //reload
-                        supplier = controller.select.supplier;
-                        controller.select = result;
-                        controller.select.supplier = supplier;
-                    })
+                controller.total = function (articles) {
+                    total = 0;
+                    articles.forEach(function (item) {
+                        if (item.quantity !== undefined) {
+                            total = total + parseInt(item.quantity);
+                        }
+                    });
+                    return total;
                 };
+
+                //Datepicker
+                controller.dt = new Date();
+
+                controller.open_datepicker = function () {
+                    controller.popup.opened = true;
+                };
+                controller.disabled = function (date, mode) {
+                    return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+                };
+                controller.popup = {
+                    opened: false
+                };
+                controller.dateOptions = {
+                    formatYear: 'yy',
+                    startingDay: 1
+                };
+
+                controller.exdocnum;
                 //Todo bestellungen des lieferanten zusammenfassen, lieferung
                 // möglichst wenigen bestellungen zuordnen
                 // entweder total angeben, von dem abgezogen wird
@@ -154,7 +180,24 @@ directive('deliverynote', function () {
                 controller.toggleDetail = function (id) {
                     controller.showDetail[id] = !(controller.showDetail[id]);
                 };
-
+                var deliverynotes = {};
+                controller.save = function () {
+                    //Todo: Clear the lists
+                    for (article in controller.articles) {
+                        //vergleich mit controller.articles-> quantity
+                        controller.articles[article].forEach(function (doc) {
+                            if (doc.quantity !== undefined) {
+                                console.log(doc.purchasedocid + " " + article + " " + doc.quantity);
+                                if (deliverynotes[doc.purchasedocid] === undefined) {
+                                    deliverynotes[doc.purchasedocid] = [];
+                                }
+                                deliverynotes[doc.purchasedocid].push(article + " " + doc.quantity + " " +
+                                    doc.article.price + " " + controller.dt + " " + controller.extdocnum);
+                            }
+                        });
+                    }
+                    console.log(deliverynotes);
+                };
             }],
         controllerAs: 'deliverynote'
     };
