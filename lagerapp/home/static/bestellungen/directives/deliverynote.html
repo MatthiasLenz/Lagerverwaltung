@@ -53,9 +53,13 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                             </span>
                         </p>
                         <p>
-                            <input type="text" class="form-control" ng-model="deliverynote.extdocnum"
+                            <input type="text" class="form-control" ng-model="deliverynote.extdocno"
                                    placeholder="Externe Lieferscheinnummer">
                         </p>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" ng-model="deliverynote.comment"
+                               placeholder="Kommentar (optional)">
                     </div>
                 </div>
                 <div class="row">
@@ -90,7 +94,7 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                         <td> {{ item.article.price |currency:""}} €</td>
                                         <td> {{ item.article.amount |currency:""}} €</td>
                                         <td> {{ item.date|date:'d. MMM yyyy'  }}</td>
-                                        <td> {{ item.purchasedocid }}</td>
+                                        <td> {{ item.article.purchasedocid }}</td>
                                         <td> {{ item.article.quantity - item.delivered_quantity - item.quantity }}</td>
                                         <td><input ng-model="item.quantity"></td>
                                     </tr>
@@ -118,5 +122,3 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
         </div>
     </div>
 </div>
-<pre> {{ deliverynote.articles |json }}</pre>
-<pre> {{ deliverynote.list |json }}</pre>

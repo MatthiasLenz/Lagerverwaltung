@@ -230,8 +230,8 @@ class DeliveryNoteViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = DeliveryNote.objects.filter(module=5).prefetch_related('data')
     serializer_class = DeliveryNoteSerializer
     pagination_class = LargeResultsSetPagination
@@ -243,8 +243,8 @@ class DeliveryNoteDataViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = DeliveryNoteData.objects.all()
     serializer_class = DeliveryNoteDataSerializer
     pagination_class = LargeResultsSetPagination

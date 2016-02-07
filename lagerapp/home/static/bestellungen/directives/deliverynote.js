@@ -13,6 +13,8 @@ directive('deliverynote', function () {
                 controller.suppliers = [];
                 controller.showDetail = {};
                 controller.marked = "";
+                controller.extdocno = "";
+                controller.comment = "";
                 window.scope11 = controller;
                 get_suppliers();
 
@@ -180,23 +182,60 @@ directive('deliverynote', function () {
                 controller.toggleDetail = function (id) {
                     controller.showDetail[id] = !(controller.showDetail[id]);
                 };
-                var deliverynotes = {};
+                //Todo: Summe in geliefert wird falsch berechnet
                 controller.save = function () {
-                    //Todo: Clear the lists
+                    deliverynotes = {};
                     for (article in controller.articles) {
                         //vergleich mit controller.articles-> quantity
                         controller.articles[article].forEach(function (doc) {
                             if (doc.quantity !== undefined) {
                                 console.log(doc.purchasedocid + " " + article + " " + doc.quantity);
-                                if (deliverynotes[doc.purchasedocid] === undefined) {
-                                    deliverynotes[doc.purchasedocid] = [];
+                                delnote = deliverynotes[doc.purchasedocid];
+                                if (delnote === undefined) {
+                                    deliverynotes[doc.purchasedocid] = {};
+                                    delnote = deliverynotes[doc.purchasedocid];
                                 }
-                                deliverynotes[doc.purchasedocid].push(article + " " + doc.quantity + " " +
-                                    doc.article.price + " " + controller.dt + " " + controller.extdocnum);
+                                if (delnote.data === undefined) {
+                                    delnote.supplierid = controller.supplierid;
+                                    delnote.extdocno = controller.extdocno;
+                                    delnote.subject = controller.comment;
+                                    delnote.docdate = controller.dt;
+                                    delnote.orderid = doc.purchasedocid;
+                                    delnote.status = 0;
+                                    delnote.module = 5;
+                                    data = {
+                                        "rowid": null,
+                                        "prodid": doc.article.prodid,
+                                        "name": doc.article.name,
+                                        "unit": doc.article.unit,
+                                        "quantity": doc.quantity,
+                                        "price": doc.article.price,
+                                        "amount": doc.quantity * doc.article.price,
+                                        "packing": doc.article.packing
+                                    };
+                                    delnote.data = [data];
+                                }
+                                else {
+                                    delnote.data.push(data);
+                                }
                             }
                         });
                     }
+                    delnote_list = [];
+                    for (purchasedocid in deliverynotes) {
+                        delnote_list.push(deliverynotes[purchasedocid]);
+                    }
+                    last = bestellungenService.deliverynote.create(delnote_list.shift());
+                    delnote_list.forEach(function (note) {
+                        last = last.then(function (response) {
+                            console.log(note);
+                            console.log(delnote_list);
+                            console.log(delnote_list.length);
+                            return bestellungenService.deliverynote.create(note);
+                        });
+                    });
                     console.log(deliverynotes);
+                    updateList();
                 };
             }],
         controllerAs: 'deliverynote'
