@@ -206,7 +206,7 @@ class PurchaseDocSupplierViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = PurchaseDoc.objects.filter(module=5).filter(doctype=2)
     supplierids = [pd.supplierid for pd in queryset]
-    print(supplierids)
+    # print(supplierids)
     queryset = Supplier.objects.filter(pk__in=supplierids)
     serializer_class = SupplierSerializer
     pagination_class = None

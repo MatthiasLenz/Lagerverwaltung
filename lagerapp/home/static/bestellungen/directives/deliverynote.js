@@ -148,8 +148,6 @@ directive('deliverynote', function () {
                                 if (delnote === undefined) {
                                     deliverynotes[doc.purchasedocid] = {};
                                     delnote = deliverynotes[doc.purchasedocid];
-                                }
-                                if (delnote.data === undefined) {
                                     delnote.supplierid = controller.supplier.id;
                                     delnote.extdocno = controller.extdocno;
                                     delnote.subject = controller.comment;
@@ -157,16 +155,15 @@ directive('deliverynote', function () {
                                     delnote.orderid = doc.purchasedocid;
                                     delnote.status = 1;
                                     delnote.module = 5;
-                                    data = {
-                                        "rowid": null,
-                                        "prodid": doc.article.prodid,
-                                        "name": doc.article.name,
-                                        "unit": doc.article.unit,
-                                        "quantity": doc.quantity,
-                                        "price": doc.article.price,
-                                        "amount": doc.quantity * doc.article.price,
-                                        "packing": doc.article.packing
-                                    };
+                                }
+                                data = {
+                                    "rowid": null, "prodid": doc.article.prodid,
+                                    "name": doc.article.name, "unit": doc.article.unit,
+                                    "quantity": doc.quantity, "price": doc.article.price,
+                                    "packing": doc.article.packing, "amount": doc.quantity * doc.article.price
+                                };
+
+                                if (delnote.data === undefined) {
                                     delnote.data = [data];
                                 }
                                 else {
