@@ -9,7 +9,7 @@ directive('deliverynote', function () {
                 controller.select = null; //purchasedoc
                 controller.list = [];
                 controller.articles = {};
-                controller.supplierid = '';
+                controller.supplier = null;
                 controller.suppliers = [];
                 controller.showDetail = {};
                 controller.marked = "";
@@ -91,29 +91,18 @@ directive('deliverynote', function () {
                                 if (controller.articles.hasOwnProperty(data.prodid)) {
                                     controller.articles[data.prodid].forEach(function (article) {
                                         if (article.purchasedocid == item.id) {
-                                            article.delivered_quantity = data.quantity;
+                                            if (article.delivered_quantity === undefined) {
+                                                article.delivered_quantity = 0;
+                                            }
+                                            article.delivered_quantity = article.delivered_quantity + data.quantity;
                                         }
                                     });
-
                                 }
                             });
                         });
                     });
                 }
-                controller.new_edit_delnote = function () {
-                    var data = {
-                        "module": 5, "status": 1, "orderid": controller.select.id,
-                        "supplierid": controller.select.supplierid,
-                        "docdate": $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sssZ'), "data": []
-                    };
-                    controller.select.data.forEach(function (item) {
-                        data.data.push({
-                            "rowid": null, "prodid": item.prodid, "name": item.name, "unit": item.unit, "quantity": 0,
-                            "price": item.price, "amount": 0
-                        });
-                    });
-                    controller.edit_delnote = data;
-                };
+
                 function get_suppliers() {
                     bestellungenService.purchasedoc.suppliers().then(function (result) {
                         result.forEach(function (item) {
@@ -122,50 +111,15 @@ directive('deliverynote', function () {
                     });
                 }
 
-                controller.add_delnote = function () {
-                    var data = {
-                        "module": 5, "status": 1, "orderid": controller.select.id,
-                        "supplierid": controller.select.supplierid,
-                        "docdate": $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sssZ'), "data": []
-                    };
-                    controller.select.data.forEach(function (item) {
-                        data.data.push({
-                            "rowid": null, "prodid": item.prodid, "name": item.name, "unit": item.unit, "quantity": 0,
-                            "price": item.price, "amount": 0
-                        });
-                    });
-                    bestellungenService.deliverynote.create(data).then(function () {
-
-                        bestellungenService.purchasedoc.get({id: controller.select.id}).then(function (result) {
-                            //reload
-                            supplier = controller.select.supplier;
-                            controller.select = result;
-                            controller.select.supplier = supplier;
-                        });
-                    });
-                };
-
                 controller.mark = function (prodid) {
                     controller.marked = prodid;
-                };
-                controller.edit_doc = function (doc) {
-                    var temp = doc.edit;
-                    controller.list.forEach(function (item) {
-                        item.edit = false;
-                    });
-                    doc.edit = !temp;
-                };
-                controller.delete_doc = function (doc) {
-                    bestellungenService.purchasedoc.delete(doc).then(function () {
-                        updateList();
-                    });
                 };
 
                 function updateList() {
                     controller.list = [];
                     bestellungenService.purchasedoc.list({
                         'status': "2,3",
-                        'supplierid': controller.supplierid
+                        'supplierid': controller.supplier.id
                     }).then(function (result) {
                         result.forEach(function (item) {
                             supplier = supplierService.resource.query({'id': item.supplierid});
@@ -196,12 +150,12 @@ directive('deliverynote', function () {
                                     delnote = deliverynotes[doc.purchasedocid];
                                 }
                                 if (delnote.data === undefined) {
-                                    delnote.supplierid = controller.supplierid;
+                                    delnote.supplierid = controller.supplier.id;
                                     delnote.extdocno = controller.extdocno;
                                     delnote.subject = controller.comment;
                                     delnote.docdate = controller.dt;
                                     delnote.orderid = doc.purchasedocid;
-                                    delnote.status = 0;
+                                    delnote.status = 1;
                                     delnote.module = 5;
                                     data = {
                                         "rowid": null,

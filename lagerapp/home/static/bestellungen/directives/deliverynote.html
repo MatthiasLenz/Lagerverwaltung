@@ -1,5 +1,5 @@
-Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model="deliverynote.supplierid"
-                             ng-options="supplier.id as supplier.namea for supplier in deliverynote.suppliers | orderBy: 'namea'"
+Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model="deliverynote.supplier"
+                             ng-options="supplier as supplier.namea for supplier in deliverynote.suppliers | orderBy: 'namea'"
                              ng-change="deliverynote.update()"></select>
 <br>
 
@@ -16,25 +16,9 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
         <div class="panel"
              ng-class="{'panel-primary': !deliverynote.select.edit, 'panel-edit' : deliverynote.select.edit }">
             <div class="panel-heading">
-                <span ng-show="deliverynote.select">Lieferant: {{ deliverynote.select.supplier.namea }} Bestellung: {{ deliverynote.select.id }}
-                ({{ deliverynote.select.docdate |date:'d. MMM yyyy' }})
+                Lieferant: {{ deliverynote.supplier.namea }}
+                ({{ deliverynote.dt |date:'d. MMM yyyy' }})
                 </span>
-                <li ng-show="deliverynote.select" class="btn-group pull-right" uib-dropdown is-open="">
-                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
-                       ng-disabled="disabled">
-                        Optionen <span class="caret"></span>
-                    </a>
-                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                        <li><a ng-click="deliverynote.delete_doc(deliverynote.select)">Bestellung löschen</a></li>
-                        <li><a ng-click="deliverynote.edit_doc(deliverynote.select)">Bestellung bearbeiten</a></li>
-                        <!--Eingabefelder für extdocno, supplierinvoicenumber und datum hinzufügen-->
-                        <li><a ng-click="deliverynote.set_status_2(deliverynote.select)">Lieferung hat begonnen</a>
-                        </li>
-                        <li><a ng-click="deliverynote.new_edit_delnote()">
-                            Neuen Lieferschein anlegen</a>
-                        </li>
-                    </ul>
-                </li>
             </div>
             <div class="panel-body">
                 <div class="row">
