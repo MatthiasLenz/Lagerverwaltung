@@ -79,8 +79,10 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                         <td> {{ item.article.amount |currency:""}} €</td>
                                         <td> {{ item.date|date:'d. MMM yyyy'  }}</td>
                                         <td> {{ item.article.purchasedocid }}</td>
-                                        <td> {{ item.article.quantity - item.delivered_quantity - item.quantity }}</td>
-                                        <td><input ng-model="item.quantity"></td>
+                                        <td>
+                                            {{ item.article.quantity - item.delivered_quantity - item.quantity | number:2}}</td>
+                                        <td><input type="number" class="form-control" ng-model="item.quantity"
+                                                   placeholder="Anzahl"></td>
                                     </tr>
                                     <tr ng-show="deliverynote.total(articles) > 0">
                                         <td></td>
