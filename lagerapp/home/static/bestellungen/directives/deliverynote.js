@@ -2,8 +2,8 @@ angular.module('baseApp').
 directive('deliverynote', function () {
     return {
         templateUrl: 'static/bestellungen/directives/deliverynote.html',
-        controller: ['$scope', 'bestellungenService', 'supplierService', '$filter', '$mdToast',
-            function ($scope, bestellungenService, supplierService, $filter, $mdToast) {
+        controller: ['$scope', 'bestellungenService', 'supplierService', '$filter', '$mdDialog', '$mdToast',
+            function ($scope, bestellungenService, supplierService, $filter, $mdDialog, $mdToast) {
                 var controller = this;
                 //TODO remove controller.select
                 controller.select = null; //purchasedoc
@@ -24,7 +24,7 @@ directive('deliverynote', function () {
                 controller.delivery_complete = function (prodid, articles) {
                     complete = true;
                     articles.forEach(function (item) {
-                        if (item.delivered_quantity < item.article.quantity) {
+                        if (item.delivered_quantity < item.article.quantity - 0.001) {
                             complete = false;
                         }
                     });
@@ -87,7 +87,6 @@ directive('deliverynote', function () {
                             //all deliverynotes corresponding to the purchases in 'articles'
                             delnote.data.forEach(function (data) {
                                 //all articles of a specific deliverynote, has a purchasedocid
-                                //$mdToast.show($mdToast.simple().textContent(data.prodid));
                                 if (controller.articles.hasOwnProperty(data.prodid)) {
                                     controller.articles[data.prodid].forEach(function (article) {
                                         if (article.purchasedocid == item.id) {
@@ -136,14 +135,14 @@ directive('deliverynote', function () {
                 controller.toggleDetail = function (id) {
                     controller.showDetail[id] = !(controller.showDetail[id]);
                 };
-                //Todo: Summe in geliefert wird falsch berechnet
-                controller.save = function () {
-                    deliverynotes = {};
+
+                function prepare() {
+                    var deliverynotes = {};
+                    var delnote, data;
                     for (article in controller.articles) {
                         //vergleich mit controller.articles-> quantity
                         controller.articles[article].forEach(function (doc) {
                             if (doc.quantity !== undefined) {
-                                console.log(doc.purchasedocid + " " + article + " " + doc.quantity);
                                 delnote = deliverynotes[doc.purchasedocid];
                                 if (delnote === undefined) {
                                     deliverynotes[doc.purchasedocid] = {};
@@ -172,11 +171,15 @@ directive('deliverynote', function () {
                             }
                         });
                     }
-                    delnote_list = [];
+                    var delnote_list = [];
                     for (purchasedocid in deliverynotes) {
                         delnote_list.push(deliverynotes[purchasedocid]);
                     }
-                    last = bestellungenService.deliverynote.create(delnote_list.shift());
+                    return delnote_list;
+                }
+
+                function create(delnote_list) {
+                    var last = bestellungenService.deliverynote.create(delnote_list.shift());
                     delnote_list.forEach(function (note) {
                         last = last.then(function (response) {
                             console.log(note);
@@ -185,10 +188,63 @@ directive('deliverynote', function () {
                             return bestellungenService.deliverynote.create(note);
                         });
                     });
-                    console.log(deliverynotes);
-                    updateList();
+                    last.then(function (response) {
+                        updateList();
+                    });
+                }
+
+                controller.save = function (ev) {
+                    var delnote_list = prepare();
+                    var confirm = $mdDialog.confirm()
+                        .title('Wollen Sie die folgenden Lieferscheine eintragen?')
+                        .content('...Lieferscheine...')
+                        .ariaLabel('Eingabe bestätigen')
+                        .targetEvent(ev)
+                        .ok('Bestätigen')
+                        .cancel('Schließen');
+                    $mdDialog.show(confirm).then(function () {
+                        //confirm
+                        create(delnote_list);
+                    }, function () {
+                        //close
+                    });
                 };
-            }],
+                controller.showTabDialog = function (ev) {
+                    var delnote_list = prepare();
+                    $mdDialog.show({
+                            controller: confirmDialogController,
+                            templateUrl: 'static/bestellungen/directives/deliverynote.confirm.html',
+                            parent: angular.element(document.body),
+                            targetEvent: ev,
+                            clickOutsideToClose: false,
+                            controllerAs: "confirm",
+                            locals: {supplier: controller.supplier, deliverynotes: delnote_list},
+                            bindToController: true
+                        })
+                        .then(function (answer) {
+                            //ok
+                            create(delnote_list);
+                        }, function () {
+                            //cancel
+                        });
+                };
+                function confirmDialogController($mdDialog) {
+                    var controller = this;
+                    controller.hide = function () {
+                        $mdDialog.hide();
+                    };
+
+                    controller.cancel = function () {
+                        $mdDialog.cancel();
+                    };
+
+                    controller.ok = function (answer) {
+                        $mdDialog.hide();
+                    };
+                }
+            }
+        ],
         controllerAs: 'deliverynote'
     };
+
 });

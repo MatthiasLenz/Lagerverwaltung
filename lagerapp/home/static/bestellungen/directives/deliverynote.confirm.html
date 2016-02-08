@@ -1,0 +1,56 @@
+<md-dialog aria-label="confirm.deliverynote">
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{ confirm.supplier.namea }}</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="confirm.cancel()">
+                    <md-icon md-svg-src="static/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="max-width:1600px;max-height:810px; ">
+            <br>
+
+            <h3 style="margin-left:20px;">Bitte überprüfen Sie Ihre Eingabe:</h3>
+
+            <p style="margin-left:20px;">Lieferschein zu Bestellung Nr.</p>
+            <md-tabs md-dynamic-height md-border-bottom>
+                <md-tab ng-repeat="delnote in confirm.deliverynotes" label="{{ delnote.orderid }}">
+                    <md-content class="md-padding">
+                        <table class="table">
+                            <thead>
+                            <th class="col-md-5">Name</th>
+                            <th class="col-md-2">Anzahl</th>
+                            <th class="col-md-1">Einheit</th>
+                            <th class="col-md-2">Preis</th>
+                            <th class="col-md-2">Kosten</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="(key, item) in delnote.data">
+                                <td> {{ item.name }}</td>
+                                <td> {{ item.quantity }}</td>
+                                <td> {{ item.unit }}</td>
+                                <td> {{ item.price |currency:""}} €</td>
+                                <td> {{ item.amount |currency:""}} €</td>
+                                <td>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-click="confirm.cancel()">
+                Schließen
+            </md-button>
+            <md-button ng-click="confirm.ok()" style="margin-right:20px;">
+                Bestätigen
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>
