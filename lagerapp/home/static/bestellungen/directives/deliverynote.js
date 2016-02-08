@@ -195,22 +195,6 @@ directive('deliverynote', function () {
 
                 controller.save = function (ev) {
                     var delnote_list = prepare();
-                    var confirm = $mdDialog.confirm()
-                        .title('Wollen Sie die folgenden Lieferscheine eintragen?')
-                        .content('...Lieferscheine...')
-                        .ariaLabel('Eingabe bestätigen')
-                        .targetEvent(ev)
-                        .ok('Bestätigen')
-                        .cancel('Schließen');
-                    $mdDialog.show(confirm).then(function () {
-                        //confirm
-                        create(delnote_list);
-                    }, function () {
-                        //close
-                    });
-                };
-                controller.showTabDialog = function (ev) {
-                    var delnote_list = prepare();
                     $mdDialog.show({
                             controller: confirmDialogController,
                             templateUrl: 'static/bestellungen/directives/deliverynote.confirm.html',
