@@ -2,8 +2,8 @@ angular.module('baseApp').
 directive('deliverynote', function () {
     return {
         templateUrl: 'static/bestellungen/directives/deliverynote.html',
-        controller: ['$scope', 'bestellungenService', 'supplierService', '$filter', '$mdDialog', '$mdToast',
-            function ($scope, bestellungenService, supplierService, $filter, $mdDialog, $mdToast) {
+        controller: ['$scope', 'bestellungenService', 'supplierService', '$filter', '$mdDialog',
+            function ($scope, bestellungenService, supplierService, $filter, $mdDialog) {
                 var controller = this;
                 //TODO remove controller.select
                 controller.select = null; //purchasedoc
@@ -191,6 +191,7 @@ directive('deliverynote', function () {
                     last.then(function (response) {
                         updateList();
                     });
+                    return last; //return the last promise
                 }
 
                 controller.save = function (ev) {
@@ -207,9 +208,12 @@ directive('deliverynote', function () {
                         })
                         .then(function (answer) {
                             //ok
-                            create(delnote_list);
+                            create(delnote_list).then(function (response) {
+                                showAlert('Lieferscheine erfolgreich eingetragen.');
+                            }, function () {
+                                showAlert('Ein Fehler ist aufgetreten.');
+                            });
                         }, function () {
-                            //cancel
                         });
                 };
                 function confirmDialogController($mdDialog) {
@@ -226,6 +230,18 @@ directive('deliverynote', function () {
                         $mdDialog.hide();
                     };
                 }
+
+                showAlert = function (text) {
+                    $mdDialog.show(
+                        $mdDialog.alert()
+                            .parent(angular.element(document.querySelector('#popupContainer')))
+                            .clickOutsideToClose(true)
+                            .title(text)
+                            .textContent('')
+                            .ariaLabel('Alert Dialog Demo')
+                            .ok('OK')
+                    );
+                };
             }
         ],
         controllerAs: 'deliverynote'
