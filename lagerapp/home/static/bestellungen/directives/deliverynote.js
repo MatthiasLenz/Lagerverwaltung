@@ -18,6 +18,18 @@ directive('deliverynote', function () {
                 window.scope11 = controller;
                 get_suppliers();
 
+                function getEligibleArticles(articles) {
+                    var eligible = {};
+                    for (key in articles) {
+                        eligible[key] = [];
+                        articles[key].forEach(function (item) {
+                            if (item.delivered_quantity < item.article.quantity - 0.001) {
+                                eligible[key].push(item);
+                            }
+                        });
+                    }
+                    return eligible;
+                };
                 controller.update = function () {
                     updateList();
                 };
@@ -31,10 +43,10 @@ directive('deliverynote', function () {
                     return complete;
                 };
                 controller.total = function (articles) {
-                    total = 0;
+                    var total = 0;
                     articles.forEach(function (item) {
-                        if (item.quantity !== undefined) {
-                            total = total + parseInt(item.quantity);
+                        if (item.quantity !== undefined && item.quantity != null) {
+                            total = total + parseFloat(item.quantity);
                         }
                     });
                     return total;
@@ -100,6 +112,7 @@ directive('deliverynote', function () {
                             });
                         });
                     });
+                    controller.articles = getEligibleArticles(controller.articles);
                 }
 
                 function get_suppliers() {
@@ -142,7 +155,7 @@ directive('deliverynote', function () {
                     for (article in controller.articles) {
                         //vergleich mit controller.articles-> quantity
                         controller.articles[article].forEach(function (doc) {
-                            if (doc.quantity !== undefined) {
+                            if (doc.quantity !== undefined && doc.quantity != null) {
                                 delnote = deliverynotes[doc.purchasedocid];
                                 if (delnote === undefined) {
                                     deliverynotes[doc.purchasedocid] = {};

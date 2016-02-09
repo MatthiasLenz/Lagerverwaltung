@@ -63,11 +63,11 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                     <th class="col-md-1">Bestellung</th>
                                     <th class="col-md-1">noch zu liefern</th>
                                     <th class="col-md-1">Lieferung</th>
+                                    <th class="col-md-1">Gesamt</th>
                                     </thead>
                                     <tbody ng-show="!deliverynote.delivery_complete(prodid, articles)"
                                            ng-repeat="(prodid, articles) in deliverynote.articles">
-                                    <tr ng-show="item.delivered_quantity<item.article.quantity-0.001"
-                                        ng-class="{'bg-success':item.article.quantity - item.delivered_quantity - item.quantity==0,
+                                    <tr ng-class="{'bg-success':item.article.quantity - item.delivered_quantity - item.quantity==0,
                                         'bg-warning':item.article.quantity - item.delivered_quantity - item.quantity<0}"
                                         ng-mouseover="deliverynote.mark(prodid)" class="text-muted"
                                         ng-repeat="item in articles">
@@ -83,18 +83,7 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                             {{ item.article.quantity - item.delivered_quantity - item.quantity | number:3}}</td>
                                         <td><input type="number" class="form-control" ng-model="item.quantity"
                                                    placeholder="Anzahl"></td>
-                                    </tr>
-                                    <tr ng-show="deliverynote.total(articles) > 0">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td>{{ deliverynote.total(articles) }}</td>
+                                        <td ng-show="$last">{{ deliverynote.total(articles) }}</td>
                                     </tr>
                                     </tbody>
 
