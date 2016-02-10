@@ -42,8 +42,8 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                         </p>
                     </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" ng-model="deliverynote.comment"
-                               placeholder="Kommentar (optional)">
+                        <textarea type="text" class="form-control" ng-model="deliverynote.comment"
+                                  placeholder="Kommentar (optional)" ng-maxlength="255" maxlength="255"></textarea>
                     </div>
                 </div>
                 <div class="row">
