@@ -51,22 +51,24 @@
 </table>
 
 <ul class="pager">
+    <div class="form-inline">
     <li>
-        <select style="width:100px;" ng-model="step1.perPage"
+        <select class="form-control" style="width:80px;" ng-model="step1.perPage"
                 ng-options="number for number in [10,20,50,100,200]">
         </select>
     </li>
 
 
     <li ng-click="step1.previousPage()" ng-class="{disabled:step1.page == 1}">
-        <a>Previous</a>
+        <a>Zurück</a>
     </li>
     <li ng-click="step1.nextPage()" ng-class="{disabled:step1.page==step1.lastPage}">
-        <a>Next</a>
+        <a>Vor</a>
     </li>
     <li>
-        <input type="text" name="page" ng-model="step1.page"
-               style="width: 30px;"><label>/{{ step1.lastPage }}</label>
+        <input class="form-control" type="text" name="page" ng-model="step1.page"
+               style="width: 50px;"><label>/{{ step1.lastPage }}</label>
     </li>
+    </div>
 </ul>
 <!--Directive inner scope: {{ solid }}-->
