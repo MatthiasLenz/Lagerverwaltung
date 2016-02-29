@@ -33,6 +33,7 @@
         ng-class="{sort: step1.getOrder() == 'defaultsupplier', sortable:true}">
         Standard Lieferant <b ng-class="step1.sortDirection"></b>
     </th>
+    <th class="col-md-1">StockID</th>
 
     </thead>
     <tbody>
@@ -46,6 +47,7 @@
         <td><span ng-class="{hide:item.title}">{{ item.stockcur }}</span></td>
         <td><span ng-class="{hide:item.title}">{{ item.netpurchaseprice }}</span></td>
         <td><span ng-class="{hide:item.title}">{{ item.defaultsupplier.namea }}</span></td>
+        <td><span ng-class="{hide:item.title}">{{ item.stockid }}</span></td>
     </tr>
     </tbody>
 </table>

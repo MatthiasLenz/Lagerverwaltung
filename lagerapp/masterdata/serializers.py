@@ -35,15 +35,6 @@ class StockSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'name', 'stockkeeper', 'type', 'defaultlocationid', 'tstamp')
 
 
-class StockDataSerializer(serializers.HyperlinkedModelSerializer):
-    # prodid = serializers.CharField(read_only=True,max_length=100)
-    class Meta:
-        model = StockData
-        fields = (
-            'url', 'id', 'rowid', 'stockid', 'prodid', 'quantitymin', 'quantitymax', 'quantitycur', 'quantityavail',
-            'location')
-
-
 class NatureSerializer(serializers.HyperlinkedModelSerializer):
     """def __init__(self, *args, **kwargs):
         #Only used for debugging. Extend init to print repr of Serializer instance.
@@ -54,6 +45,11 @@ class NatureSerializer(serializers.HyperlinkedModelSerializer):
         model = Nature
         fields = ('url', 'id', 'title', 'name')
 
+
+class NatureSerializer1(serializers.ModelSerializer):
+    class Meta:
+        model = Nature
+        fields = ('id', 'title', 'name')
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):
@@ -73,6 +69,27 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
             'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid', 'nature', 'supplier', 'packing')
 
+
+# Need to generate a fake request for our hyperlinked results
+from django.test.client import RequestFactory
+
+context = dict(request=RequestFactory().get('/'))
+
+
+class StockDataSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = StockData
+        fields = (
+            'url', 'id', 'rowid', 'stockid', 'prodid', 'quantitymin', 'quantitymax', 'quantitycur', 'quantityavail',
+            'location')
+
+    def to_representation(self, obj):
+        data = super(StockDataSerializer, self).to_representation(obj)
+        print(obj.prodid)
+        product = ProductSerializer(Product.objects.filter(id=obj.prodid)[0], context=context).data['nature']
+        data['nature'] = product
+        # data['prodid'] = NatureSerializer(Nature.objects.filter(id=obj.prodid)[0], context=context).data
+        return data
 
 class ProductPackingSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

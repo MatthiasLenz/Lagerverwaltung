@@ -263,7 +263,15 @@ class NatureViewSet(mixins.RetrieveModelMixin,
     queryset = Nature.objects.filter(pk__in = [nature.id for nature in nature_ids])
     serializer_class = NatureSerializer
     pagination_class = None
-    
+
+
+class StockDataFilter(filters.FilterSet):
+    # in_price = django_filters.NumberFilter(name="price", lookup_type='gte')
+    # max_price = django_filters.NumberFilter(name="price", lookup_type='lte')
+    class Meta:
+        model = StockData
+        fields = ['prodid__nature']
+
 class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
@@ -275,9 +283,10 @@ class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = StockDataSerializer
         
     pagination_class = LargeResultsSetPagination
-    
-    filter_backends = (CustomSearchFilter, filters.OrderingFilter,)
-    search_fields = ('id','prodid','stockid')
+
+    filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
+    filter_class = StockDataFilter
+    search_fields = ('id', 'prodid', 'stockid', 'prodid__resourcenatureid')
         
 class ProductViewSet(mixins.RetrieveModelMixin,
                      mixins.ListModelMixin,
@@ -294,7 +303,7 @@ class ProductViewSet(mixins.RetrieveModelMixin,
     pagination_class = LargeResultsSetPagination
     
     filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
-    filter_fields = ('resourcenatureid',)
+    filter_fields = ('resourcenatureid', 'resourcenatureid__name')
     #Suche in zu resourcenatureid gehörendem Namen, über das Related Field resourcenatureid__name
     search_fields = ('id','name1','resourcenatureid__name')
 
