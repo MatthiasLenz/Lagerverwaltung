@@ -191,7 +191,7 @@ class ProductSupplier(models.Model):
     class Meta:
         managed = False
         db_table = 'ProductSupplier'
-        app_label = 'hit_01_masterdata'
+        app_label = 'hit_0x_masterdata'
 
 
 from django.db import router
@@ -200,7 +200,7 @@ class PurchaseDoc(models.Model):
     responsible = models.CharField(db_column='Responsible', max_length=15, blank=True, null=True)
     doctype = models.SmallIntegerField(db_column='DocType', blank=True, null=True)
     module = models.SmallIntegerField(db_column='Module', blank=True, null=True)
-    supplierid = models.ForeignKey(Supplier, db_column='SupplierID', blank=True, null=True)
+    supplierid = models.ForeignKey(Supplier, db_column='SupplierID')  # app fails if this is empty
     status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
     def save(self, *args, **kwargs):

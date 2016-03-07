@@ -150,6 +150,8 @@ class HitRouter(object):
             return 'hit_01_bookkeeping'
         if model._meta.app_label == 'hit_01_masterdata':
             return 'hit_01_masterdata'
+        if model._meta.app_label == 'hit_0x_masterdata':
+            return 'hit_0x_masterdata'
         if model._meta.app_label == 'hit_01_purchase':
             return 'hit_01_purchase'
         if model._meta.app_label == 'hit_01_staff':
