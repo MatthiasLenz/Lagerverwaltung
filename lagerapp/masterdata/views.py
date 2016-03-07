@@ -270,7 +270,7 @@ class StockDataFilter(filters.FilterSet):
     # max_price = django_filters.NumberFilter(name="price", lookup_type='lte')
     class Meta:
         model = StockData
-        fields = ['prodid__nature']
+        fields = ['prodid__nature', 'stockid']
 
 class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     """

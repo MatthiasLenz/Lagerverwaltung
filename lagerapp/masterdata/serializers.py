@@ -77,6 +77,7 @@ context = dict(request=RequestFactory().get('/'))
 
 
 class StockDataSerializer(serializers.HyperlinkedModelSerializer):
+    prodid = ProductSerializer(read_only=True, allow_null=True)
     class Meta:
         model = StockData
         fields = (
