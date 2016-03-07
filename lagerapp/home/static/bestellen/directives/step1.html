@@ -37,17 +37,18 @@
 
     </thead>
     <tbody>
-    <tr ng-repeat="item in step1.items | filter:{title:false} track by item.id"
-        ng-class="{'text-muted': item.supplier.length==0}">
-        <td>{{ item.nature ? item.nature + ' /' : '' }} <b>{{ item.name1 }}</b></td>
-        <td><span ng-class="{hide:item.title}"><button ng-click="bestellen.selectprod(item)">auswählen</button></span>
+    <tr ng-repeat="stockitem in step1.items track by stockitem.id"
+        ng-class="{'text-muted': stockitem.prodid.supplier.length==0}">
+        <td>{{ stockitem.prodid.nature ? stockitem.prodid.nature + ' /' : '' }} <b>{{ stockitem.prodid.name1 }}</b></td>
+        <td><span ng-class="{hide:stockitem.prodid.title}">
+            <button ng-click="bestellen.selectprod(stockitem.prodid)">auswählen</button></span>
         </td>
-        <td>{{ item.id }}</td>
-        <td>{{ item.unit1 }}</td>
-        <td><span ng-class="{hide:item.title}">{{ item.stockcur }}</span></td>
-        <td><span ng-class="{hide:item.title}">{{ item.netpurchaseprice }}</span></td>
-        <td><span ng-class="{hide:item.title}">{{ item.defaultsupplier.namea }}</span></td>
-        <td><span ng-class="{hide:item.title}">{{ item.stockid }}</span></td>
+        <td>{{ stockitem.prodid.id }}</td>
+        <td>{{ stockitem.prodid.unit1 }}</td>
+        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.stockcur }}</span></td>
+        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.netpurchaseprice }}</span></td>
+        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.defaultsupplier.namea }}</span></td>
+        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.stockid }}</span></td>
     </tr>
     </tbody>
 </table>

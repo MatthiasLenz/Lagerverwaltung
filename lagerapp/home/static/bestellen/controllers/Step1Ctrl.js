@@ -5,7 +5,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
 
     // 2. requirements
     var natureService = $injector.get('natureService');
-    var productService = $injector.get('productService');
+    var stockService = $injector.get('stockService');
 
     // 3. Do scope stuff
     // 3a. Set up watchers on the scope.
@@ -19,15 +19,15 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     });
 
     // 3b. Expose methods or data on the scope
-    $scope.productModel = productService.model;
+    $scope.productModel = stockService.model;
     $scope.solid = "Solid S.A.";
 
     // 3c. Listen to events on the scope
 
     // 4. Expose methods and properties on the controller instance
-    for (var key in productService.model) {
+    for (var key in stockService.model) {
         if (!(key in controller)) {
-            controller[key] = productService.model[key];
+            controller[key] = stockService.model[key];
         }
     }
     this.resourcenatureids = natureService.nature_list;
@@ -50,7 +50,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     function updateList() {
         /*var query = controller.query+" in:title repo:angular/angular.js";*/
         var query = controller.query;
-        productService.query({
+        stockService.query({
             ordering: controller.ordering,
             page: controller.page,
             page_size: controller.perPage,
