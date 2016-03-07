@@ -34,6 +34,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     stockService.stockinfo({})
         .then(function (data) {
             controller.stockinfo = data.results;
+            controller.stockid = controller.stockinfo[0].id; //default
         });
     this.sortDirection = 'sort-caret desc';
     this.updateList = updateList;
@@ -42,7 +43,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     this.setPage = setPage;
     this.setOrder = setOrder;
     this.getOrder = getOrder;
-    this.stockid = 0; //default
+
     this.items = [];
     // 5. Clean up
     $scope.$on('$destroy', function () {
