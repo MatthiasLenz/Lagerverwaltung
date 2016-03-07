@@ -86,7 +86,6 @@ class StockDataSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, obj):
         data = super(StockDataSerializer, self).to_representation(obj)
-        print(obj.prodid)
         product = ProductSerializer(Product.objects.filter(id=obj.prodid)[0], context=context).data['nature']
         data['nature'] = product
         # data['prodid'] = NatureSerializer(Nature.objects.filter(id=obj.prodid)[0], context=context).data

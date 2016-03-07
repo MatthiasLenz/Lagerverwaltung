@@ -12,7 +12,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     $scope.$watch('[step1.page,step1.ordering]', function () {
         updateList(false);
     });
-    $scope.$watch('[step1.query,step1.resourcenatureid,step1.perPage]', function () {
+    $scope.$watch('[step1.query,step1.resourcenatureid,step1.perPage,step1.stockid]', function () {
         //search and filter operations change the resulting size
         resetPage();
         updateList();
@@ -31,6 +31,10 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
         }
     }
     this.resourcenatureids = natureService.nature_list;
+    stockService.stockinfo({})
+        .then(function (data) {
+            controller.stockinfo = data.results;
+        });
     this.sortDirection = 'sort-caret desc';
     this.updateList = updateList;
     this.nextPage = nextPage;
@@ -38,6 +42,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     this.setPage = setPage;
     this.setOrder = setOrder;
     this.getOrder = getOrder;
+    this.stockid = 0; //default
     this.items = [];
     // 5. Clean up
     $scope.$on('$destroy', function () {
@@ -50,12 +55,13 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     function updateList() {
         /*var query = controller.query+" in:title repo:angular/angular.js";*/
         var query = controller.query;
-        stockService.query({
+        stockService.articlelist({
             ordering: controller.ordering,
             page: controller.page,
             page_size: controller.perPage,
             search: query,
-            resourcenatureid: controller.resourcenatureid
+            prodid__nature: controller.resourcenatureid,
+            stockid: controller.stockid
         }).then(function (data) {
             controller.items = data.results;
             controller.lastPage = Math.ceil(data.count / controller.perPage);

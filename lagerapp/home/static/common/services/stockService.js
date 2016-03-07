@@ -1,12 +1,16 @@
 angular.module('baseApp.Services').
 factory("stockService", function ($resource, $cacheFactory) {
     var resourceCache = $cacheFactory('Stock');
-    var resource = $resource(
+    var stockdata = $resource(
         '/api/stockdata/:id',
         {},
         {query: {method: 'GET', cache: resourceCache, isArray: false}}
     );
-
+    var stock = $resource(
+        '/api/stock/:id',
+        {},
+        {query: {method: 'GET', cache: resourceCache, isArray: false}}
+    );
     var model = {
         "page": 1,
         "ordering": "id",
@@ -15,12 +19,16 @@ factory("stockService", function ($resource, $cacheFactory) {
         "resourcenatureid": null
     };
 
-    function query_prod(params) {
-        return resource.query(params).$promise
+    function stockdataQuery(params) {
+        return stockdata.query(params).$promise
     }
 
+    function stockinfoQuery(params) {
+        return stock.query(params).$promise
+    }
     return {
-        query: query_prod,
+        articlelist: stockdataQuery,
+        stockinfo: stockinfoQuery,
         model: model
     }
 });
