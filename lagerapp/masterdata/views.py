@@ -95,11 +95,13 @@ class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SupplierSerializer
 
 
+from django.conf import settings
+
 class StockViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    queryset = Stock.objects.filter(id__in=['0', '1', '40', '50'])
+    queryset = Stock.objects.filter(id__in=[settings.DEFAULTSTOCK])
     serializer_class = StockSerializer
 
 
@@ -279,7 +281,7 @@ class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_value_regex = '[-A-Za-z0-9.]+' 
     #queryset = StockData.objects.filter(stockid = 0).filter(prodid__name1 = u'Schlaufenanker für Konsolgerüst')
     #queryset = StockData.objects.filter(stockid = 0)
-    queryset = StockData.objects.all()
+    queryset = StockData.objects.filter(stockid=settings.DEFAULTSTOCK)
     serializer_class = StockDataSerializer
         
     pagination_class = LargeResultsSetPagination

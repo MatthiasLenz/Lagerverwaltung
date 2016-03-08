@@ -16,7 +16,7 @@ import json
 
 with open('settings.json') as settings_file:
     private_settings = json.load(settings_file)
-
+DEFAULTSTOCK = private_settings["defaultstock"]
 APPEND_SLASH = False
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -67,7 +67,7 @@ LOGGING = {
         },
     },
 }
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost"]
 
 # Application definition
 
