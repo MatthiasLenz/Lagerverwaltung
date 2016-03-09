@@ -1,7 +1,9 @@
 #encoding=UTF-8
 from django.db import models
-"""Wichtig, wenn man in serializer related fields benutzen möchte, dann muss man dafür hier im model ein field anlegen. In der rest framework beschreibung wird das nicht gemacht,
-   vielleicht macht es einen Unterschied, wenn man nicht managed = false einstellt.
+
+"""
+    Wichtig, wenn man in serializer related fields benutzen möchte, dann muss man dafür hier im model ein field anlegen. In der rest framework beschreibung wird das nicht gemacht,
+    vielleicht macht es einen Unterschied, wenn man nicht managed = false einstellt.
 """
 
 
@@ -195,7 +197,14 @@ class ProductSupplier(models.Model):
 
 
 from django.db import router
-class PurchaseDoc(models.Model):
+
+
+class PurchaseDocBase(models.Model):
+    class Meta:
+        # https://docs.djangoproject.com/es/1.9/topics/db/models/#meta-inheritance
+        abstract = True
+        managed = False
+        db_table = 'PurchaseDoc'
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)  # Field name made lowercase.
     responsible = models.CharField(db_column='Responsible', max_length=15, blank=True, null=True)
     doctype = models.SmallIntegerField(db_column='DocType', blank=True, null=True)
@@ -212,11 +221,15 @@ class PurchaseDoc(models.Model):
     def __unicode__(self):
         return self.id
 
-    class Meta:
-        managed = False
-        db_table = 'PurchaseDoc'
+
+class PurchaseDoc(PurchaseDocBase):
+    class Meta(PurchaseDocBase.Meta):
         app_label = 'hit_01_purchase'
 
+
+class PurchaseDoc05(PurchaseDocBase):
+    class Meta(PurchaseDocBase.Meta):
+        app_label = 'hit_05_purchase'
 
 class PurchaseDocuments(models.Model):
     # extends legacy database table PurchaseDoc
@@ -225,10 +238,13 @@ class PurchaseDocuments(models.Model):
     doc = models.CharField(max_length=128, blank=True, null=True)
     odt = models.CharField(max_length=128, blank=True, null=True)
 
-class PurchaseDocData(models.Model):
+
+class PurchaseDocDataBase(models.Model):
+    class Meta:
+        abstract = True
+        managed = False
+
     rowid = models.IntegerField(db_column='RowID', primary_key=True)
-    purchasedocid = models.ForeignKey(PurchaseDoc, db_column='PurchaseDocID', blank=True, null=True,
-                                      related_name='data')
     prodid = models.ForeignKey(Product, db_column='ProdID', blank=True, null=True)
     name = models.CharField(db_column='Name', max_length=255, blank=True, null=True)
     unit = models.CharField(db_column='Unit', max_length=5, blank=True, null=True)
@@ -261,11 +277,23 @@ class PurchaseDocData(models.Model):
     def __unicode__(self):
         return str(self.rowid)
 
-    class Meta:
-        managed = False
-        db_table = 'PurchaseDocData'
-        app_label = 'hit_01_purchase'
 
+class PurchaseDocData(PurchaseDocDataBase):
+    class Meta:
+        app_label = 'hit_01_purchase'
+        db_table = 'PurchaseDocData'
+
+    purchasedocid = models.ForeignKey(PurchaseDoc, db_column='PurchaseDocID', blank=True, null=True,
+                                      related_name='data')
+
+
+class PurchaseDocData05(PurchaseDocDataBase):
+    class Meta:
+        app_label = 'hit_05_purchase'
+        db_table = 'PurchaseDocData'
+
+    purchasedocid = models.ForeignKey(PurchaseDoc05, db_column='PurchaseDocID', blank=True, null=True,
+                                      related_name='pdata05')
 
 class DeliveryNote(models.Model):
     id = models.CharField(db_column='ID', primary_key=True, max_length=15)

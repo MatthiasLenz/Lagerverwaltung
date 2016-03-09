@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from masterdata.models import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, \
-    PurchaseDoc, PurchaseDocData, DeliveryNote, DeliveryNoteData, Staff, PurchaseDocuments
+    PurchaseDoc, PurchaseDoc05, PurchaseDocData, DeliveryNote, DeliveryNoteData, Staff, PurchaseDocuments
 from django.contrib.auth.models import User
 
 
@@ -185,7 +185,9 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         data = validated_data.pop('data')  # 'data' needs to be removed first
         deilverynotes = validated_data.pop('deliverynotes')
-        purchasedoc = PurchaseDoc.objects.create(**validated_data)
+
+        # reference model from Meta, so it is replaced in inherited serializers
+        purchasedoc = self.Meta.model.objects.create(**validated_data)
         # Wichtig: Im foreign key feld muss immer das Object selbst referenziert werden, nicht die ID des Objekts,
         # also 'prodid': <Product: N999> und nicht 'prodid': 'N999'
         # Die Feldbezeichnung purchasedocid ist in diesem Fall verwirrend: In purchasedoc umbenennen?
@@ -202,6 +204,10 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
+class PurchaseDocSerializer05(PurchaseDocSerializer):
+    class Meta(PurchaseDocSerializer.Meta):
+        model = PurchaseDoc05
 
 class PurchaseDocumentsSerializer(serializers.ModelSerializer):
     class Meta:
