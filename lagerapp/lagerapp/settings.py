@@ -154,11 +154,23 @@ class HitRouter(object):
             return 'hit_0x_masterdata'
         if model._meta.app_label == 'hit_01_purchase':
             return 'hit_01_purchase'
-        if model._meta.app_label == 'hit_05_purchase':
-            return 'hit_05_purchase'
         if model._meta.app_label == 'hit_01_staff':
             return 'hit_01_staff'
+        if model._meta.app_label == 'hit_05_purchase':
+            return 'hit_05_purchase'
+        if model._meta.app_label == 'hit_05_bookkeeping':
+            return 'hit_05_bookkeeping'
+        if model._meta.app_label == 'hit_05_staff':
+            return 'hit_05_staff'
+        if model._meta.app_label == 'hit_04_purchase':
+            return 'hit_04_purchase'
+        if model._meta.app_label == 'hit_04_bookkeeping':
+            return 'hit_04_bookkeeping'
+        if model._meta.app_label == 'hit_04_staff':
+            return 'hit_04_staff'
         # go to default
+        # go to default
+
         return None
 
     def db_for_write(self, model, **hints):

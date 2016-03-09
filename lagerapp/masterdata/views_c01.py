@@ -1,11 +1,12 @@
 # encoding=UTF-8
-from masterdata.models import Supplier05, PurchaseDoc05, PurchaseDocData05, DeliveryNote05, DeliveryNoteData05, Staff05
-from masterdata.serializers import SupplierSerializer05, PurchaseDocSerializer05, MinPurchaseDocSerializer, \
-    PurchaseDocDataSerializer05, DeliveryNoteSerializer05, DeliveryNoteDataSerializer05
+from masterdata.models import Supplier01, PurchaseDoc01, PurchaseDocData01, DeliveryNote01, DeliveryNoteData01, Staff01
+from masterdata.serializers import SupplierSerializer01, PurchaseDocSerializer01, MinPurchaseDocSerializer, \
+    PurchaseDocDataSerializer01, DeliveryNoteSerializer01, DeliveryNoteDataSerializer01
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, pagination, filters
 from rest_framework.response import Response
+
 
 class LargeResultsSetPagination(pagination.PageNumberPagination):
     page_size = 20
@@ -14,6 +15,7 @@ class LargeResultsSetPagination(pagination.PageNumberPagination):
 
 
 from django_filters import Filter
+
 
 class ListFilter(Filter):
     def filter(self, qs, value):
@@ -29,11 +31,13 @@ class StatusFilter(filters.FilterSet):
     status = ListFilter(name='status')
 
     class Meta:
-        model = PurchaseDoc05
+        model = PurchaseDoc01
         fields = ['status', 'supplierid']
+
 
 class CustomSearchFilter(filters.SearchFilter):
     """Possible duplicate items, when filtering by many-to-many fields, but no problems with text fields"""
+
     def filter_queryset(self, request, queryset, view):
         search_fields = getattr(view, 'search_fields', None)
         search_terms = self.get_search_terms(request)
@@ -62,16 +66,18 @@ class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
     This viewset automatically provides `list` and `detail` actions.
     """
     lookup_value_regex = '[-A-Za-z0-9.]*'
-    queryset = Supplier05.objects.all()
-    serializer_class = SupplierSerializer05
+    queryset = Supplier01.objects.all()
+    serializer_class = SupplierSerializer01
+
 
 from rest_framework import status
+
 
 class MinPurchaseDocViewSet(viewsets.GenericViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    queryset = PurchaseDoc05.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
+    queryset = PurchaseDoc01.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
     serializer_class = MinPurchaseDocSerializer
     pagination_class = LargeResultsSetPagination
 
@@ -79,10 +85,12 @@ class MinPurchaseDocViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         print(repr(serializer.is_valid(raise_exception=True)))
         serializer.is_valid(raise_exception=True)
+        print("test1")
         self.perform_create(serializer)
+        print("test2")
         headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.data, status=status.HTTP_205_CREATED, headers=headers)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
         serializer.save()
@@ -118,19 +126,21 @@ class MinPurchaseDocViewSet(viewsets.GenericViewSet):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
+
 class PurchaseDocViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = PurchaseDoc05.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
-    serializer_class = PurchaseDocSerializer05
+    queryset = PurchaseDoc01.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
+    serializer_class = PurchaseDocSerializer01
     pagination_class = None
 
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = StatusFilter
     filter_fields = ('status', 'supplierid')
+
 
 class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
@@ -138,19 +148,19 @@ class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = PurchaseDocData05.objects.all()
-    serializer_class = PurchaseDocDataSerializer05
+    queryset = PurchaseDocData01.objects.all()
+    serializer_class = PurchaseDocDataSerializer01
     pagination_class = LargeResultsSetPagination
 
 
 class PurchaseDocSupplierViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = PurchaseDoc05.objects.filter(module=5).filter(doctype=2)
+    queryset = PurchaseDoc01.objects.filter(module=5).filter(doctype=2)
     supplierids = [pd.supplierid for pd in queryset]
     # print(supplierids)
-    queryset = Supplier05.objects.filter(pk__in=supplierids)
-    serializer_class = SupplierSerializer05
+    queryset = Supplier01.objects.filter(pk__in=supplierids)
+    serializer_class = SupplierSerializer01
     pagination_class = None
 
 
@@ -160,8 +170,8 @@ class DeliveryNoteViewSet(viewsets.ModelViewSet):
     """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = DeliveryNote05.objects.filter(module=5).prefetch_related('data')
-    serializer_class = DeliveryNoteSerializer05
+    queryset = DeliveryNote01.objects.filter(module=5).prefetch_related('data')
+    serializer_class = DeliveryNoteSerializer01
     pagination_class = LargeResultsSetPagination
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('status',)
@@ -173,8 +183,8 @@ class DeliveryNoteDataViewSet(viewsets.ModelViewSet):
     """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = DeliveryNoteData05.objects.all()
-    serializer_class = DeliveryNoteDataSerializer05
+    queryset = DeliveryNoteData01.objects.all()
+    serializer_class = DeliveryNoteDataSerializer01
     pagination_class = LargeResultsSetPagination
 
 
@@ -185,6 +195,7 @@ import subprocess
 from django.utils.dateparse import parse_datetime
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from py3o.template import Template
+
 
 @api_view(['POST'])
 @authentication_classes((TokenAuthentication,))
@@ -226,13 +237,14 @@ def makepdf(request):
         PurchaseDocuments.objects.create(purchasedocid=data['id'], pdf=fileurl)
     return Response('')
 
+
 def renderdoc(data_input, outputfile):
     t = Template(os.path.abspath("masterdata/bestellung_template.odt"),
                  outputfile)
     t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
 
     supplier = data_input['supplier']
-    responsible = Staff05.objects.get(id=data_input['responsible'])
+    responsible = Staff01.objects.get(id=data_input['responsible'])
     items = []
     total = '%.2f' % sum(item['amount'] for item in data_input['data'])
     for item in data_input['data']:
