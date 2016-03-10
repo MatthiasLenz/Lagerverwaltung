@@ -7,6 +7,7 @@ factory("sessionService", function () {
     var getCompany = function () {
         return companyid;
     };
+    //Maybe add get Token and get User here
     return {
         setCompany: setCompany,
         getCompany: getCompany

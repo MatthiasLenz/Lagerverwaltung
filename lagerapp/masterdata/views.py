@@ -150,7 +150,7 @@ class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
 
     filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
     filter_class = StockDataFilter
-    search_fields = ('id', 'prodid', 'stockid', 'prodid__resourcenatureid')
+    search_fields = ('prodid__id', 'prodid__name1')
         
 class ProductViewSet(mixins.RetrieveModelMixin,
                      mixins.ListModelMixin,

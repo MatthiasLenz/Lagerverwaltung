@@ -6,18 +6,8 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     // 2. requirements
     var natureService = $injector.get('natureService');
     var stockService = $injector.get('stockService');
-
+    var sessionService = $injector.get('sessionService');
     // 3. Do scope stuff
-    // 3a. Set up watchers on the scope.
-    $scope.$watch('[step1.page,step1.ordering]', function () {
-        updateList(false);
-    });
-    $scope.$watch('[step1.query,step1.resourcenatureid,step1.perPage,step1.stockid]', function () {
-        //search and filter operations change the resulting size
-        resetPage();
-        updateList();
-    });
-
     // 3b. Expose methods or data on the scope
     $scope.productModel = stockService.model;
     $scope.solid = "Solid S.A.";
@@ -38,12 +28,16 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
         });
     this.sortDirection = 'sort-caret desc';
     this.updateList = updateList;
+    this.resetAndUpdate = function () {
+        resetPage();
+        updateList();
+    };
     this.nextPage = nextPage;
     this.previousPage = previousPage;
     this.setPage = setPage;
     this.setOrder = setOrder;
     this.getOrder = getOrder;
-
+    this.query = '';
     this.items = [];
     // 5. Clean up
     $scope.$on('$destroy', function () {
@@ -53,6 +47,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     });
 
     // 6. All the actual implementations go here.
+    updateList();
     function updateList() {
         /*var query = controller.query+" in:title repo:angular/angular.js";*/
         var query = controller.query;
@@ -101,6 +96,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
             controller.sortorder = 'asc';
         }
         sortDirection();
+        updateList();
     }
 
     function getOrder() {
