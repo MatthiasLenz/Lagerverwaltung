@@ -15,6 +15,8 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     // 3c. Listen to events on the scope
 
     // 4. Expose methods and properties on the controller instance
+    this.setStockID = sessionService.setStock;
+    this.setCompanyID = sessionService.setCompany;
     for (var key in stockService.model) {
         if (!(key in controller)) {
             controller[key] = stockService.model[key];
@@ -26,6 +28,8 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
             controller.stockinfo = data.results;
             controller.stockid = controller.stockinfo[0].id; //default
         });
+    this.companies = ['01', '04', '05']; //Todo: retrieve ID's dynamically
+    this.companyid = sessionService.getCompany();
     this.sortDirection = 'sort-caret desc';
     this.updateList = updateList;
     this.resetAndUpdate = function () {

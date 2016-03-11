@@ -1,37 +1,39 @@
 angular.module('baseApp.Services').
-factory("bestellungenService", function ($resource, $cacheFactory, tokenService, $q, $http) {
+factory("bestellungenService", function ($resource, $cacheFactory, tokenService, $q, $http, sessionService) {
     var purchasedocCache = $cacheFactory('PurchaseDoc');
     var token;
-
+    var companies = ['01', '04', '05']; //Todo: make it dynamic
+    var companyid = sessionService.getCompany; //initial default
     function getToken() {
         return "Token " + token;
     }
 
     var deliverynote = $resource(
-        "/api/deliverynote/:id", {id: "@id"}, {
+        "/api/" + companyid() + "/deliverynote/:id", {id: "@id"}, {
             create: {method: 'POST', headers: {"Authorization": getToken}},
             update: {method: 'PUT', headers: {"Authorization": getToken}},
             delete: {method: 'DELETE', headers: {"Authorization": getToken}}
         }
     );
-
-    var purchasedoc = $resource(
-        "/api/purchasedoc/:id", {id: "@id"}, {
+    var purchasedoc = {};
+    for (var i = 0; i < companies.length; i++) {
+        purchasedoc[companies[i]] = $resource(
+            "/api/" + companies[i] + "/purchasedoc/:id", {id: "@id"}, {
             create: {method: 'POST', headers: {"Authorization": getToken}},
             update: {method: 'PUT', headers: {"Authorization": getToken}},
             delete: {method: 'DELETE', headers: {"Authorization": getToken}}
-        }
-    );
+            });
+    }
 
     var purchasedocdata = $resource(
-        "/api/purchasedocdata/:id", {id: "@id"}, {
+        "/api/" + companyid() + "/purchasedocdata/:id", {id: "@id"}, {
             create: {method: 'POST', headers: {"Authorization": getToken}},
             update: {method: 'PUT', headers: {"Authorization": getToken}},
             delete: {method: 'DELETE', headers: {"Authorization": getToken}}
         }
     );
     var purchasedocsupplier = $resource(
-        "/api/purchasedocsupplier/:id", {id: "@id"}, {}
+        "/api/" + companyid() + "/purchasedocsupplier/:id", {id: "@id"}, {}
     );
     function clearCache() {
         purchasedocCache.removeAll();
@@ -57,10 +59,10 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     }
 
     function purchasedoc_get(id) {
-        return purchasedoc.get(id).$promise;
+        return purchasedoc[companyid()].get(id).$promise;
     }
     function purchasedoc_list(kwargs) {
-        return purchasedoc.query({'status': kwargs.status, 'supplierid': kwargs.supplierid}).$promise;
+        return purchasedoc[companyid()].query({'status': kwargs.status, 'supplierid': kwargs.supplierid}).$promise;
     }
 
     function purchasedoc_create(data) {
@@ -69,7 +71,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         }).then(function (tokendata) {
             token = tokendata.token;
             data.responsible = tokendata.user;
-            return purchasedoc.create(data).$promise;
+            return purchasedoc[companyid()].create(data).$promise;
         }).then(function (response) {
             clearCache();
         });
@@ -87,7 +89,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return $q.all(promises);
         }).then(function () {
             //after all the purchasedocdata entries for purchasedoc are deleted
-            return purchasedoc.delete({}, {"id": doc.id}).$promise;
+            return purchasedoc[companyid()].delete({}, {"id": doc.id}).$promise;
         }).then(function (response) {
             clearCache();
         });
@@ -98,7 +100,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return purchasedoc.update(id, data).$promise;
+            return purchasedoc['01'].update(id, data).$promise;
         }).then(function (response) {
             clearCache();
         });
