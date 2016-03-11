@@ -12,18 +12,6 @@
                 ng-options="nature.id as nature.name group by nature.title for nature in step1.resourcenatureids"
                 ng-change="step1.resetAndUpdate()"></select>
     </div>
-    <div class="form-group">
-        <label> Stock </label>
-        <select class="form-control" style="width:200px;" ng-model="step1.stockid"
-                ng-options="stock.id as stock.name for stock in step1.stockinfo"
-                ng-change="step1.resetAndUpdate();step1.setCompanyID(step1.stockid)"></select>
-    </div>
-    <div class="form-group">
-        <label> Firma </label>
-        <select class="form-control" style="width:200px;" ng-model="step1.companyid"
-                ng-options="id for id in step1.companies"
-                ng-change="step1.setCompanyID(step1.companyid)"></select>
-    </div>
 </form>
 <br/>
 <table class="table">

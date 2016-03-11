@@ -1,5 +1,6 @@
 angular.module('baseApp').
-controller('BaseCtrl', ['tokenService', 'loginService', function (tokenService, loginService) {
+controller('BaseCtrl', ['tokenService', 'loginService', 'sessionService', 'stockService', '$rootScope',
+    function (tokenService, loginService, sessionService, stockService, $rootScope) {
     var controller = this;
     controller.logininfo = loginService.data;
     controller.login = tokenService.getToken;
@@ -13,5 +14,17 @@ controller('BaseCtrl', ['tokenService', 'loginService', function (tokenService, 
 
     controller.dropdown = false;
     window.base = controller;
+        stockService.stockinfo({})
+            .then(function (data) {
+                controller.stockinfo = data.results;
+                controller.stockid = controller.stockinfo[0].id; //default
+            });
+        controller.setStockID = sessionService.setStock;
+        controller.setCompanyID = sessionService.setCompany;
+        controller.companies = ['01', '04', '05']; //Todo: retrieve ID's dynamically
+        controller.companyid = sessionService.getCompany();
 
+        controller.stockIDChanged = function () {
+            sessionService.publish();
+        }
 }]);

@@ -75,6 +75,21 @@
                                                           class="btn btn-default">{{ cc.logininfo.user }}</button></span>
         </div>
         <head-content></head-content>
+        <form role="form" class="form-inline">
+            <div class="form-group">
+                <label> Stock </label>
+                <select class="form-control" style="width:200px;" ng-model="cc.stockid"
+                        ng-options="stock.id as stock.name for stock in cc.stockinfo"
+                        ng-change="cc.setStockID(cc.stockid);cc.stockIDChanged()"></select>
+            </div>
+            <div class="form-group">
+                <label> Firma </label>
+                <select class="form-control" style="width:200px;" ng-model="cc.companyid"
+                        ng-options="id for id in cc.companies"
+                        ng-change="cc.setCompanyID(cc.companyid)"></select>
+            </div>
+        </form>
+        <br>
         <ul class="nav nav-tabs">
             <li ng-class="{active: cc.isActive('productlist_state')}">
                 <a href="" ng-click="cc.setState('productlist_state')">Bestellen</a></li>

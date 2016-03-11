@@ -15,21 +15,17 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     // 3c. Listen to events on the scope
 
     // 4. Expose methods and properties on the controller instance
-    this.setStockID = sessionService.setStock;
-    this.setCompanyID = sessionService.setCompany;
     for (var key in stockService.model) {
         if (!(key in controller)) {
             controller[key] = stockService.model[key];
         }
     }
+    this.stockid = sessionService.getStock();
+    sessionService.subscribeStockIDChange($scope, function () {
+        controller.resetAndUpdate();
+        console.log("sadfa");
+    });
     this.resourcenatureids = natureService.nature_list;
-    stockService.stockinfo({})
-        .then(function (data) {
-            controller.stockinfo = data.results;
-            controller.stockid = controller.stockinfo[0].id; //default
-        });
-    this.companies = ['01', '04', '05']; //Todo: retrieve ID's dynamically
-    this.companyid = sessionService.getCompany();
     this.sortDirection = 'sort-caret desc';
     this.updateList = updateList;
     this.resetAndUpdate = function () {
@@ -61,7 +57,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
             page_size: controller.perPage,
             search: query,
             prodid__nature: controller.resourcenatureid,
-            stockid: controller.stockid
+            stockid: sessionService.getStock()
         }).then(function (data) {
             controller.items = data.results;
             controller.lastPage = Math.ceil(data.count / controller.perPage);
