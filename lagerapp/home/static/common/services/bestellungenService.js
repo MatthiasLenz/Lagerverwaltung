@@ -8,14 +8,10 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         return "Token " + token;
     }
 
-    var deliverynote = $resource(
-        "/api/" + companyid() + "/deliverynote/:id", {id: "@id"}, {
-            create: {method: 'POST', headers: {"Authorization": getToken}},
-            update: {method: 'PUT', headers: {"Authorization": getToken}},
-            delete: {method: 'DELETE', headers: {"Authorization": getToken}}
-        }
-    );
+    var deliverynote = {};
     var purchasedoc = {};
+    var purchasedocdata = {};
+    var purchasedocsupplier = {};
     for (var i = 0; i < companies.length; i++) {
         purchasedoc[companies[i]] = $resource(
             "/api/" + companies[i] + "/purchasedoc/:id", {id: "@id"}, {
@@ -23,18 +19,23 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             update: {method: 'PUT', headers: {"Authorization": getToken}},
             delete: {method: 'DELETE', headers: {"Authorization": getToken}}
             });
+        deliverynote[companies[i]] = $resource(
+            "/api/" + companies[i] + "/deliverynote/:id", {id: "@id"}, {
+                create: {method: 'POST', headers: {"Authorization": getToken}},
+                update: {method: 'PUT', headers: {"Authorization": getToken}},
+                delete: {method: 'DELETE', headers: {"Authorization": getToken}}
+            });
+        purchasedocdata[companies[i]] = $resource(
+            "/api/" + companies[i] + "/purchasedocdata/:id", {id: "@id"}, {
+                create: {method: 'POST', headers: {"Authorization": getToken}},
+                update: {method: 'PUT', headers: {"Authorization": getToken}},
+                delete: {method: 'DELETE', headers: {"Authorization": getToken}}
+            });
+        purchasedocsupplier[companies[i]] = $resource(
+            "/api/" + companies[i] + "/purchasedocsupplier/:id", {id: "@id"}, {}
+        );
     }
 
-    var purchasedocdata = $resource(
-        "/api/" + companyid() + "/purchasedocdata/:id", {id: "@id"}, {
-            create: {method: 'POST', headers: {"Authorization": getToken}},
-            update: {method: 'PUT', headers: {"Authorization": getToken}},
-            delete: {method: 'DELETE', headers: {"Authorization": getToken}}
-        }
-    );
-    var purchasedocsupplier = $resource(
-        "/api/" + companyid() + "/purchasedocsupplier/:id", {id: "@id"}, {}
-    );
     function clearCache() {
         purchasedocCache.removeAll();
     }
@@ -54,7 +55,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return deliverynotedata.delete({}, {"id": rowid}).$promise;
+            return deliverynotedata[companyid()].delete({}, {"id": rowid}).$promise;
         });
     }
 
@@ -100,7 +101,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return purchasedoc['01'].update(id, data).$promise;
+            return purchasedoc[companyid()].update(id, data).$promise;
         }).then(function (response) {
             clearCache();
         });
@@ -111,7 +112,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return purchasedocdata.create(data).$promise;
+            return purchasedocdata[companyid()].create(data).$promise;
         }).then(function (response) {
             clearCache();
         });
@@ -122,7 +123,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return purchasedocdata.update({id: data.rowid}, data).$promise;
+            return purchasedocdata[companyid()].update({id: data.rowid}, data).$promise;
         }).then(function (response) {
             clearCache();
         });
@@ -136,7 +137,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             token = tokendata.token;
             data_array.forEach(function (docdata) {
                 docdata.amount = docdata.quantity * docdata.price;
-                update_promises.push(purchasedocdata.update({id: docdata.rowid}, docdata).$promise);
+                update_promises.push(purchasedocdata[companyid()].update({id: docdata.rowid}, docdata).$promise);
             });
             return $q.all(update_promises);
         }).then(function (response) {
@@ -150,7 +151,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return purchasedocdata.delete({}, {"id": rowid}).$promise;
+            return purchasedocdata[companyid()].delete({}, {"id": rowid}).$promise;
         }).then(function (response) {
             clearCache();
         });
@@ -195,7 +196,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     function getsuppliers(status) {
         return tokenService.getToken().then(function (tokendata) {
             token = tokendata.token;
-            return purchasedocsupplier.query({}).$promise;
+            return purchasedocsupplier[companyid()].query({}).$promise;
         });
     }
     return {

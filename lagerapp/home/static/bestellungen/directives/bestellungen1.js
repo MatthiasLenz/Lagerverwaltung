@@ -51,10 +51,12 @@ directive('bestellungen1', function () {
                     });
                     controller.edit_delnote = data;
                 };
+                controller.supplierByID = {};
                 function get_suppliers() {
                     bestellungenService.purchasedoc.suppliers().then(function (result) {
                         result.forEach(function (item) {
                             controller.suppliers.push(item);
+                            controller.supplierByID[item.id] = item;
                         });
                     });
                 }
@@ -111,7 +113,7 @@ directive('bestellungen1', function () {
                         'supplierid': controller.supplierid
                     }).then(function (result) {
                         result.forEach(function (item) {
-                            supplier = supplierService.resource.query({'id': item.supplierid});
+                            supplier = controller.supplierByID[item.supplierid];
                             item.supplier = supplier;
                             controller.list.push(item);
                             controller.showDetail[item.id] = false;

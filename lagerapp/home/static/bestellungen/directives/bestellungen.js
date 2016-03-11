@@ -67,8 +67,9 @@ directive('bestellungen', function () {
                 controller.list = [];
                 bestellungenService.purchasedoc.list({'status': 0}).then(function (result) {
                     result.forEach(function (item) {
-                        supplier = supplierService.resource.query({'id': item.supplierid});
-                        item.supplier = supplier;
+                        supplierService.get({id: item.supplierid}).then(function (response) {
+                            item.supplier = response;
+                        });
                         controller.list.push(item);
                     });
                 });

@@ -2,10 +2,13 @@ angular.module('baseApp').
 directive('deliverynote', function () {
     return {
         templateUrl: 'static/bestellungen/directives/deliverynote.html',
-        controller: ['$scope', 'bestellungenService', 'supplierService', '$filter', '$mdDialog',
-            function ($scope, bestellungenService, supplierService, $filter, $mdDialog) {
+        controller: ['$scope', 'bestellungenService', '$filter', '$mdDialog', 'sessionService',
+            function ($scope, bestellungenService, $filter, $mdDialog, sessionService) {
                 var controller = this;
                 //TODO remove controller.select
+                sessionService.subscribeStockIDChange($scope, function () {
+                    updateList();
+                });
                 controller.select = null; //purchasedoc
                 controller.list = [];
                 controller.articles = {};
@@ -115,10 +118,12 @@ directive('deliverynote', function () {
                     controller.articles = getEligibleArticles(controller.articles);
                 }
 
+                controller.supplierByID = {};
                 function get_suppliers() {
                     bestellungenService.purchasedoc.suppliers().then(function (result) {
                         result.forEach(function (item) {
                             controller.suppliers.push(item);
+                            controller.supplierByID[item.id] = item;
                         });
                     });
                 }
@@ -134,8 +139,7 @@ directive('deliverynote', function () {
                         'supplierid': controller.supplier.id
                     }).then(function (result) {
                         result.forEach(function (item) {
-                            supplier = supplierService.resource.query({'id': item.supplierid});
-                            item.supplier = supplier;
+                            item.supplier = controller.supplierByID[item.supplierid];
                             controller.list.push(item);
                             controller.showDetail[item.id] = false;
                         });
