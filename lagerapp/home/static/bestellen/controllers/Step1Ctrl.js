@@ -23,7 +23,6 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     this.stockid = sessionService.getStock();
     sessionService.subscribeStockIDChange($scope, function () {
         controller.resetAndUpdate();
-        console.log("sadfa");
     });
     this.resourcenatureids = natureService.nature_list;
     this.sortDirection = 'sort-caret desc';

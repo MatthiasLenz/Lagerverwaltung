@@ -29,6 +29,7 @@ factory("stockService", function ($resource, $cacheFactory) {
     return {
         articlelist: stockdataQuery,
         stockinfo: stockinfoQuery,
-        model: model
+        model: model,
+        byCompany: {'01': '0', '04': '40', '05': '50'}
     }
 });

@@ -19,8 +19,11 @@ controller('BaseCtrl', ['tokenService', 'loginService', 'sessionService', 'stock
                 controller.stockinfo = data.results;
                 controller.stockid = controller.stockinfo[0].id; //default
             });
-        controller.setStockID = sessionService.setStock;
-        controller.setCompanyID = sessionService.setCompany;
+        controller.setCompanyID = function (id) {
+            var stockid = stockService.byCompany[id];
+            sessionService.setCompany(id);
+            sessionService.setStock(stockid);
+        };
         controller.companies = ['01', '04', '05']; //Todo: retrieve ID's dynamically
         controller.companyid = sessionService.getCompany();
 
