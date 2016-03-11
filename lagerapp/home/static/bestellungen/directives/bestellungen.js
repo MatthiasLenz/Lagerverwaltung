@@ -2,15 +2,18 @@ angular.module('baseApp').
 directive('bestellungen', function () {
     return {
         templateUrl: 'static/bestellungen/directives/bestellungen.html',
-        controller: ['$scope', '$http', 'bestellungenService', 'supplierService', 'tokenService', function ($scope, $http, bestellungenService, supplierService) {
+        controller: ['$scope', '$http', 'bestellungenService', 'supplierService', 'tokenService', 'sessionService',
+            function ($scope, $http, bestellungenService, supplierService, tokenService, sessionService) {
             var controller = this;
             controller.list = [];
             updateList();
             controller.files = {};
-            window.scope1 = controller;
+                sessionService.subscribeStockIDChange($scope, function () {
+                    updateList();
+                });
             controller.delete_doc = function (doc) {
                 bestellungenService.purchasedoc.delete(doc).then(function () {
-                    updateList();
+                    //updateList();
                 });
             };
             controller.edit_doc = function (doc) {
