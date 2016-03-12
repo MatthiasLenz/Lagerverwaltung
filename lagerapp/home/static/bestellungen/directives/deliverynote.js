@@ -7,7 +7,7 @@ directive('deliverynote', function () {
                 var controller = this;
                 //TODO remove controller.select
                 sessionService.subscribeStockIDChange($scope, function () {
-                    updateList();
+                    get_suppliers();
                 });
                 controller.select = null; //purchasedoc
                 controller.list = [];
@@ -120,12 +120,14 @@ directive('deliverynote', function () {
 
                 controller.supplierByID = {};
                 function get_suppliers() {
+                    controller.suppliers = [];
                     bestellungenService.purchasedoc.suppliers().then(function (result) {
                         result.forEach(function (item) {
                             controller.suppliers.push(item);
                             controller.supplierByID[item.id] = item;
                         });
                     });
+
                 }
 
                 controller.mark = function (prodid) {
@@ -134,19 +136,23 @@ directive('deliverynote', function () {
 
                 function updateList() {
                     controller.list = [];
-                    bestellungenService.purchasedoc.list({
+                    if (controller.supplier) {
+                        bestellungenService.purchasedoc.list({
                         'status': "2,3",
                         'supplierid': controller.supplier.id
-                    }).then(function (result) {
-                        result.forEach(function (item) {
-                            item.supplier = controller.supplierByID[item.supplierid];
-                            controller.list.push(item);
-                            controller.showDetail[item.id] = false;
+                        }).then(function (result) {
+                            result.forEach(function (item) {
+                                item.supplier = controller.supplierByID[item.supplierid];
+                                controller.list.push(item);
+                                controller.showDetail[item.id] = false;
+                            });
+                        }).then(function (result) {
+                            getArticleList();
                         });
-                    }).then(function (result) {
+                    }
+                    else {
                         getArticleList();
-                    });
-
+                    }
                 }
 
                 controller.toggleDetail = function (id) {
