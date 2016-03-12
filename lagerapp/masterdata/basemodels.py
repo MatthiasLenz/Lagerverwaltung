@@ -351,7 +351,9 @@ class PurchaseDocBase(models.Model):
         """http://stackoverflow.com/questions/4616787/django-making-a-custom-pk-auto-increment"""
         if not self.id:
             self.id = str(int(self.__class__.objects.all().order_by('-id')[0].id) + 1)
-        super(self.__class__, self).save(*args, **kwargs)
+        # super(self.__class__, self).save(*args, **kwargs)
+        # #stopped working after making class abstract (recursion), should never use self.__class__ for this!
+        super(PurchaseDocBase, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.id
@@ -390,7 +392,7 @@ class PurchaseDocDataBase(models.Model):
         self.netprice = self.price
         if not self.rowid:
             self.rowid = self.__class__.objects.all().order_by('-rowid')[0].rowid + 1
-        super(self.__class__, self).save(*args, **kwargs)
+        super(PurchaseDocDataBase, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return str(self.rowid)
