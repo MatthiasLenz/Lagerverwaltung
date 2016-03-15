@@ -16,7 +16,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         purchasedoc[companies[i]] = $resource(
             "/api/" + companies[i] + "/purchasedoc/:id", {id: "@id"}, {
             create: {method: 'POST', headers: {"Authorization": getToken}},
-            update: {method: 'PUT', headers: {"Authorization": getToken}},
+                update: {method: 'PATCH', headers: {"Authorization": getToken}},
             delete: {method: 'DELETE', headers: {"Authorization": getToken}}
             });
         deliverynote[companies[i]] = $resource(
