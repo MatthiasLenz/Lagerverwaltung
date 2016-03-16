@@ -1,15 +1,16 @@
 #encoding=UTF-8
 from masterdata.basemodels import Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, UserData, \
-    PurchaseDocuments
+    PurchaseDocuments, StockMovement
 from masterdata.serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, \
-    ProductSerializer, \
+    StockMovementSerializer, ProductSerializer, \
     NatureSerializer, FastProductSerializer, ProductSupplierSerializer, ProductPackingSerializer, \
     PurchaseDocumentsSerializer
 from rest_framework import viewsets, mixins, pagination, filters, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
@@ -81,6 +82,12 @@ class StockViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Stock.objects.filter(id__in=['0', '40', '50'])
     serializer_class = StockSerializer
 
+
+class StockMovementViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    queryset = StockMovement.objects.all()
+    serializer_class = StockMovementSerializer
 
 class ProductPackingViewSet(viewsets.ReadOnlyModelViewSet):
     """

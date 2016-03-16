@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from masterdata.basemodels import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, \
-    ProductPacking, \
-    PurchaseDocuments
+    ProductPacking, StockMovement, PurchaseDocuments
 from masterdata.models import Supplier01, Supplier04, Supplier05, PurchaseDoc01, PurchaseDoc04, PurchaseDoc05, \
     PurchaseDocData01, PurchaseDocData04, PurchaseDocData05, DeliveryNoteData01, DeliveryNoteData04, DeliveryNoteData05, \
     DeliveryNote01, DeliveryNote04, DeliveryNote05, Staff01, Staff04, Staff05
@@ -52,6 +51,12 @@ class StockSerializer(serializers.HyperlinkedModelSerializer):
         model = Stock
         fields = ('url', 'id', 'name', 'stockkeeper', 'type', 'defaultlocationid', 'tstamp')
 
+
+class StockMovementSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = StockMovement
+        fields = ('movementid', 'datecreation', 'datemodification', 'stockid', 'locationid', 'prodid', 'quantitydelta',
+                  'moduleid', 'modulerecordtypeid', 'key1', 'userid', 'comment')
 
 class NatureSerializer(serializers.HyperlinkedModelSerializer):
     """def __init__(self, *args, **kwargs):
