@@ -10,7 +10,6 @@ directive('deliverynote', function () {
                     get_suppliers();
                 });
                 controller.select = null; //purchasedoc
-                controller.list = [];
                 controller.articles = {};
                 controller.supplier = null;
                 controller.suppliers = [];
@@ -24,27 +23,33 @@ directive('deliverynote', function () {
                 function getEligibleArticles(articles) {
                     var eligible = {};
                     for (key in articles) {
-                        eligible[key] = [];
+                        var temp = [];
                         articles[key].forEach(function (item) {
-                            if (item.delivered_quantity < item.article.quantity - 0.001) {
-                                eligible[key].push(item);
+                            if ((item.received == undefined && item.article.quantity != 0) ||
+                                item.received < item.article.quantity - 0.001) {
+                                temp.push(item);
                             }
                         });
+                        if (temp != []) {
+                            eligible[key] = temp;
+                        }
                     }
                     return eligible;
-                };
+                }
                 controller.update = function () {
                     updateList();
                 };
                 controller.delivery_complete = function (prodid, articles) {
                     complete = true;
                     articles.forEach(function (item) {
-                        if (item.delivered_quantity < item.article.quantity - 0.001) {
+                        if ((item.received == undefined && item.article.quantity != 0) ||
+                            item.received < item.article.quantity - 0.001) {
                             complete = false;
                         }
                     });
                     return complete;
                 };
+
                 controller.total = function (articles) {
                     var total = 0;
                     articles.forEach(function (item) {
@@ -80,42 +85,43 @@ directive('deliverynote', function () {
                 // ältesten.
                 // deliverynote.orderid               = purchasedoc.id
                 // deliverynotedata.purchasedocdataid = purchasedocdata.dataid
-                function getArticleList() {
+                function getArticleList(purchasedocs) {
                     // Digest related errors using this function in ng-repeat,
                     // it's better to use a property
                     // if the function creates a new object, the digest will recognize this as a change
                     // even if the return value is equal to the previous one
-                    controller.articles = {};
-                    controller.list.forEach(function (item) {
-                        item.data.forEach(function (article) {
-                            if (controller.articles[article.prodid] == undefined) {
-                                controller.articles[article.prodid] = [];
+                    var articles = {};
+                    purchasedocs.forEach(function (purchasedoc) {
+                        purchasedoc.data.forEach(function (article) {
+                            if (articles[article.prodid] == undefined) {
+                                articles[article.prodid] = [];
                             }
-                            controller.articles[article.prodid].push({
-                                purchasedocid: item.id,
-                                date: item.docdate,
-                                article: article
+                            articles[article.prodid].push({
+                                purchasedocid: purchasedoc.id,
+                                date: purchasedoc.docdate,
+                                article: article,
+                                received: 0
                             });
                         });
                         //item.id (purchasedocid)
-                        item.deliverynotes.forEach(function (delnote) {
+                        purchasedoc.deliverynotes.forEach(function (delnote) {
                             //all deliverynotes corresponding to the purchases in 'articles'
-                            delnote.data.forEach(function (data) {
+                            delnote.data.forEach(function (delnote_article) {
                                 //all articles of a specific deliverynote, has a purchasedocid
-                                if (controller.articles.hasOwnProperty(data.prodid)) {
-                                    controller.articles[data.prodid].forEach(function (article) {
-                                        if (article.purchasedocid == item.id) {
-                                            if (article.delivered_quantity === undefined) {
-                                                article.delivered_quantity = 0;
+                                if (articles.hasOwnProperty(delnote_article.prodid)) {
+                                    articles[delnote_article.prodid].forEach(function (article) {
+                                        if (article.purchasedocid == purchasedoc.id) {
+                                            if (article.received === undefined) {
+                                                article.received = 0;
                                             }
-                                            article.delivered_quantity = article.delivered_quantity + data.quantity;
+                                            article.received = article.received + delnote_article.quantity;
                                         }
                                     });
                                 }
                             });
                         });
                     });
-                    controller.articles = getEligibleArticles(controller.articles);
+                    controller.articles = getEligibleArticles(articles);
                 }
 
                 controller.supplierByID = {};
@@ -135,7 +141,7 @@ directive('deliverynote', function () {
                 };
 
                 function updateList() {
-                    controller.list = [];
+                    var purchasedocs = [];
                     if (controller.supplier) {
                         bestellungenService.purchasedoc.list({
                         'status': "2,3",
@@ -143,15 +149,12 @@ directive('deliverynote', function () {
                         }).then(function (result) {
                             result.forEach(function (item) {
                                 item.supplier = controller.supplierByID[item.supplierid];
-                                controller.list.push(item);
+                                purchasedocs.push(item);
                                 controller.showDetail[item.id] = false;
                             });
                         }).then(function (result) {
-                            getArticleList();
+                            getArticleList(purchasedocs);
                         });
-                    }
-                    else {
-                        getArticleList();
                     }
                 }
 
