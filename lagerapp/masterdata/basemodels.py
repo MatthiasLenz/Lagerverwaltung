@@ -76,7 +76,7 @@ class DeliveryNoteBase(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = str(int(self.__class__.objects.all().order_by('-id')[0].id) + 1)
-        super(self.__class__, self).save(*args, **kwargs)
+        super(DeliveryNoteBase, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.id
@@ -111,7 +111,7 @@ class DeliveryNoteDataBase(models.Model):
     def save(self, *args, **kwargs):
         if not self.rowid:
             self.rowid = self.__class__.objects.all().order_by('-rowid')[0].rowid + 1
-        super(self.__class__, self).save(*args, **kwargs)
+        super(DeliveryNoteDataBase, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return str(self.rowid)

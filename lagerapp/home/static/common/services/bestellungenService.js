@@ -46,7 +46,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         }).then(function (tokendata) {
             token = tokendata.token;
             data.responsible = tokendata.user;
-            return deliverynote.create(data).$promise;
+            return deliverynote[companyid()].create(data).$promise;
         });
     }
 

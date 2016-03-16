@@ -186,13 +186,14 @@ class DeliveryNoteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         data = validated_data.pop('data')  # 'data' needs to be removed first
         model = self.Meta.model
+        datamodel = self.Meta.datamodel
         deliverynote = model.objects.create(**validated_data)
         # Wichtig: Im foreign key feld muss immer das Object selbst referenziert werden, nicht die ID des Objekts,
         # also 'prodid': <Product: N999> und nicht 'prodid': 'N999'
         # Die Feldbezeichnung purchasedocid ist in diesem Fall verwirrend: In purchasedoc umbenennen?
         for entry in data:
             data_data = dict(entry)
-            model.objects.create(deliverynoteid=deliverynote, **data_data)
+            datamodel.objects.create(deliverynoteid=deliverynote, **data_data)
 
         return deliverynote
 
@@ -202,13 +203,14 @@ class DeliveryNoteSerializer01(DeliveryNoteSerializer):
 
     class Meta(DeliveryNoteSerializer.Meta):
         model = DeliveryNote01
-
+        datamodel = DeliveryNoteData01
 
 class DeliveryNoteSerializer04(DeliveryNoteSerializer):
     data = DeliveryNoteDataSerializer04(many=True, allow_null=True, required=False)
 
     class Meta(DeliveryNoteSerializer.Meta):
         model = DeliveryNote04
+        datamodel = DeliveryNoteData04
 
 
 class DeliveryNoteSerializer05(DeliveryNoteSerializer):
@@ -216,6 +218,7 @@ class DeliveryNoteSerializer05(DeliveryNoteSerializer):
 
     class Meta(DeliveryNoteSerializer.Meta):
         model = DeliveryNote05
+        datamodel = DeliveryNoteData05
 
 class PurchaseDocDataSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
