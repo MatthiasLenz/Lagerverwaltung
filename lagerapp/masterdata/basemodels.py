@@ -317,6 +317,44 @@ class StockData(models.Model):
         app_label = 'hit_01_masterdata'
 
 
+class Stocklocation(models.Model):
+    class Meta:
+        managed = False
+        db_table = 'StockLocation'
+        app_label = 'hit_01_masterdata'
+
+    stockid = models.ForeignKey(Stock, db_column='StockID', blank=True, null=True)
+    id = models.TextField(db_column='ID', primary_key=True)
+    description = models.TextField(db_column='Description', blank=True, null=True)
+
+
+class StockMovement(models.Model):
+    class Meta:
+        managed = False
+        db_table = 'StockMovement'
+        app_label = 'hit_01_masterdata'
+
+    movementid = models.IntegerField(db_column='MovementID', primary_key=True)
+    datecreation = models.DateTimeField(db_column='DateCreation', blank=True, null=True)
+    datemodification = models.DateTimeField(db_column='DateModification', blank=True, null=True)
+    stockid = models.ForeignKey(Stock, db_column='StockID', blank=True, null=True)
+    locationid = models.ForeignKey(Stocklocation, db_column='LocationID', blank=True, null=True)
+    prodid = models.ForeignKey(Product, db_column='ProdID', blank=True, null=True)
+    quantitydelta = models.FloatField(db_column='QuantityDelta', blank=True, null=True)
+    moduleid = models.IntegerField(db_column='ModuleID', blank=True, null=True)
+    modulerecordtypeid = models.IntegerField(db_column='ModuleRecordTypeID', blank=True, null=True)
+    # If modulerecordtypeid is '6000' key1 maps to DeliveryNote, '6010': key1=PurchaseDoc, '4010': manual entry
+    key1 = models.TextField(db_column='Key1', blank=True, null=True)
+    key2 = models.TextField(db_column='Key2', blank=True, null=True)
+    key3 = models.TextField(db_column='Key3', blank=True, null=True)
+    userid = models.TextField(db_column='UserID', blank=True, null=True)
+    comment = models.TextField(db_column='Comment', blank=True, null=True)
+    rsvmoduleid = models.IntegerField(db_column='RsvModuleID', blank=True, null=True)
+    rsvmodulerecordtypeid = models.IntegerField(db_column='RsvModuleRecordTypeID', blank=True, null=True)
+    rsvkey1 = models.TextField(db_column='RsvKey1', blank=True, null=True)
+    rsvkey2 = models.TextField(db_column='RsvKey2', blank=True, null=True)
+    rsvkey3 = models.TextField(db_column='RsvKey3', blank=True, null=True)   
+
 class ProductPacking(models.Model):
     rowid = models.IntegerField(db_column='RowID', primary_key=True)
     packingid = models.CharField(db_column='PackingID', max_length=10, blank=True, null=True)
