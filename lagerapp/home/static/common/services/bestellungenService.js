@@ -3,7 +3,8 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     var purchasedocCache = $cacheFactory('PurchaseDoc');
     var token;
     var companies = ['01', '04', '05']; //Todo: make it dynamic
-    var companyid = sessionService.getCompany; //initial default
+    var companyid = sessionService.getCompany;
+    var stockid = sessionService.getStock;
     function getToken() {
         return "Token " + token;
     }
@@ -46,6 +47,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         }).then(function (tokendata) {
             token = tokendata.token;
             data.responsible = tokendata.user;
+            data.stockid = stockid();
             return deliverynote[companyid()].create(data).$promise;
         });
     }

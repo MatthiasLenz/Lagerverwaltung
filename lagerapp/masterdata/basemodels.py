@@ -353,7 +353,13 @@ class StockMovement(models.Model):
     rsvmodulerecordtypeid = models.IntegerField(db_column='RsvModuleRecordTypeID', blank=True, null=True)
     rsvkey1 = models.TextField(db_column='RsvKey1', blank=True, null=True)
     rsvkey2 = models.TextField(db_column='RsvKey2', blank=True, null=True)
-    rsvkey3 = models.TextField(db_column='RsvKey3', blank=True, null=True)   
+    rsvkey3 = models.TextField(db_column='RsvKey3', blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.movementid:
+            self.movementid = StockMovement.objects.all().order_by('-movementid')[0].movementid + 1
+        super(StockMovement, self).save(*args, **kwargs)
+
 
 class ProductPacking(models.Model):
     rowid = models.IntegerField(db_column='RowID', primary_key=True)

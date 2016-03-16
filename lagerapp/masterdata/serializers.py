@@ -1,3 +1,4 @@
+from datetime import date
 from rest_framework import serializers
 from masterdata.basemodels import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, \
     ProductPacking, StockMovement, PurchaseDocuments
@@ -193,13 +194,21 @@ class DeliveryNoteSerializer(serializers.ModelSerializer):
         model = self.Meta.model
         datamodel = self.Meta.datamodel
         deliverynote = model.objects.create(**validated_data)
+        print(deliverynote)
+        print(type(deliverynote))
         # Wichtig: Im foreign key feld muss immer das Object selbst referenziert werden, nicht die ID des Objekts,
         # also 'prodid': <Product: N999> und nicht 'prodid': 'N999'
         # Die Feldbezeichnung purchasedocid ist in diesem Fall verwirrend: In purchasedoc umbenennen?
         for entry in data:
             data_data = dict(entry)
             datamodel.objects.create(deliverynoteid=deliverynote, **data_data)
-
+            # add stockmovement
+            datecreation = "%s-%s-%s" % (date.today().year, date.today().month, date.today().day)
+            stock = Stock.objects.get(id=deliverynote.stockid)
+            product = Product.objects.get(id=data_data["prodid"])
+            StockMovement.objects.create(datecreation=datecreation, datemodification=datecreation,
+                                         stockid=stock, prodid=product, quantitydelta=data_data["quantity"], moduleid=6,
+                                         modulerecordtypeid=6000, key1=deliverynote.id, userid=deliverynote.responsible)
         return deliverynote
 
 
