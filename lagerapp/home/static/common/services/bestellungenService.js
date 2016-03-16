@@ -166,7 +166,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             token = tokendata.token;
             return $http({
                 method: "POST",
-                url: "/api/makepdf",
+                url: "/api/" + companyid() + "/makepdf",
                 data: {"doc": doc, "type": type},
                 headers: {"Authorization": getToken}
             });

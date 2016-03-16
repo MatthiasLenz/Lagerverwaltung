@@ -154,7 +154,7 @@ class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = StockDataSerializer
         
     pagination_class = LargeResultsSetPagination
-
+    # Todo: sort by nested fields
     filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
     filter_class = StockDataFilter
     search_fields = ('prodid__id', 'prodid__name1')
