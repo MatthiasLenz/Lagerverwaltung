@@ -1,6 +1,6 @@
 <h1 ng-show="!bestellungen.list.length">Keine offenen Bestellungen</h1>
 <div class="row" ng-repeat="bestellung in bestellungen.list | orderBy: '-docdate'">
-    <div class="col-lg-8">
+    <div class="col-lg-12">
         <div class="panel" ng-class="{'panel-primary': !bestellung.edit, 'panel-edit' : bestellung.edit }">
             <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}
                 ({{ bestellung.docdate |date:'d. MMM yyyy' }})
@@ -26,6 +26,7 @@
                     <th class="col-md-1">Preis</th>
                     <th class="col-md-1">Kosten</th>
                     <th class="col-md-2">Verpackung</th>
+                    <th class="col-md-3">Bemerkung</th>
                     </thead>
                     <tbody>
                     <tr class="text-muted" ng-repeat="(key, item) in bestellung.data">
@@ -41,6 +42,10 @@
                         <td> {{ item.quantity*item.price |currency:""}} €</td>
                         <td> {{ item.packing }}</td>
                         <td><span ng-show="bestellung.edit">
+                            <textarea type="text" class="form-control" ng-model="item.comment"
+                                      placeholder="Bemerkung (optional)" ng-maxlength="255" maxlength="255"></textarea></span>
+                        </td>
+                        <td><span ng-show="bestellung.edit">
                             <li class="btn-group pull-right" uib-dropdown is-open="">
                                 <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
                                    ng-disabled="disabled">
@@ -55,7 +60,7 @@
                     </tr>
                     </tbody>
                 </table>
-
+                Kommentar:
 
                 <div class="well col-md-8 pull-left" ng-hide="bestellung.edit">
                     <span ng-show="bestellungen.files[bestellung.id].pdf">
