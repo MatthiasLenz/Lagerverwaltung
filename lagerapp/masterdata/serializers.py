@@ -237,7 +237,8 @@ class DeliveryNoteSerializer05(DeliveryNoteSerializer):
 class PurchaseDocDataSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
     class Meta:
-        fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'packing')
+        fields = (
+        'rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'packing', 'comment')
 
 
 class PurchaseDocDataSerializer01(PurchaseDocDataSerializer):

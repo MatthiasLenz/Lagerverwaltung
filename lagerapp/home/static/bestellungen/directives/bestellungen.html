@@ -44,6 +44,7 @@
                         <td><span ng-show="bestellung.edit">
                             <textarea type="text" class="form-control" ng-model="item.comment"
                                       placeholder="Bemerkung (optional)" ng-maxlength="255" maxlength="255"></textarea></span>
+                            <span ng-show="!bestellung.edit">{{ item.comment }}</span>
                         </td>
                         <td><span ng-show="bestellung.edit">
                             <li class="btn-group pull-right" uib-dropdown is-open="">
@@ -60,7 +61,6 @@
                     </tr>
                     </tbody>
                 </table>
-                Kommentar:
 
                 <div class="well col-md-8 pull-left" ng-hide="bestellung.edit">
                     <span ng-show="bestellungen.files[bestellung.id].pdf">
