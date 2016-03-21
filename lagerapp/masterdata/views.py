@@ -141,7 +141,7 @@ class StockDataFilter(filters.FilterSet):
     # max_price = django_filters.NumberFilter(name="price", lookup_type='lte')
     class Meta:
         model = StockData
-        fields = ['prodid__nature', 'stockid']
+        fields = ['prodid__nature', 'prodid__defaultsupplier', 'stockid']
 
 class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -157,7 +157,7 @@ class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     # Todo: sort by nested fields
     filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
     filter_class = StockDataFilter
-    search_fields = ('prodid__id', 'prodid__name1')
+    search_fields = ('prodid__id', 'prodid__name1', 'prodid__defaultsupplier__id')
         
 class ProductViewSet(mixins.RetrieveModelMixin,
                      mixins.ListModelMixin,

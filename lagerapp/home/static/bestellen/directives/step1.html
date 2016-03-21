@@ -2,7 +2,7 @@
 <form role="form" class="form-inline">
     <div class="form-group">
         <label>Suche: </label>
-        <input class="form-control" style="width:250px;" placeholder="ID, Bezeichnung oder Artikelgruppe"
+        <input class="form-control" style="width:250px;" placeholder="ID, Bezeichnung oder Lieferant"
                ng-model="step1.query" ng-model-options="{debounce: 500}"
                ng-change="step1.resetAndUpdate()">
     </div>
@@ -16,23 +16,26 @@
 <br/>
 <table class="table">
     <thead>
-    <th class="col-md-2" ng-click="step1.setOrder('name1')"
-        ng-class="{sort: step1.getOrder() == 'name1', sortable:true}">
+    <th class="col-md-2">
+        Artikelgruppe <b ng-class="step1.sortDirection"></b>
+    </th>
+    <th class="col-md-3">
         Bezeichnung <b ng-class="step1.sortDirection"></b>
     </th>
     <th class="col-md-1"></th>
-    <th class="col-md-1">ID</th>
+    <th class="col-md-1" ng-click="step1.setOrder('prodid')"
+        ng-class="{sort: step1.getOrder() == 'prodid', sortable:true}">
+        ID
+    </th>
     <th class="col-md-1">Einheit</th>
-    <th class="col-md-1" ng-click="step1.setOrder('stockcur')"
-        ng-class="{sort: step1.getOrder() == 'stockcur', sortable:true}">
+    <th class="col-md-1" ng-click="step1.setOrder('quantityavail')"
+        ng-class="{sort: step1.getOrder() == 'quantityavail', sortable:true}">
         Stock verfügbar <b ng-class="step1.sortDirection"></b>
     </th>
-    <th class="col-md-1" ng-click="step1.setOrder('netpurchaseprice')"
-        ng-class="{sort: step1.getOrder() == 'netpurchaseprice', sortable:true}">
+    <th class="col-md-1">
         Netto Preis <b ng-class="step1.sortDirection"></b>
     </th>
-    <th class="col-md-1" ng-click="step1.setOrder('defaultsupplier')"
-        ng-class="{sort: step1.getOrder() == 'defaultsupplier', sortable:true}">
+    <th class="col-md-1">
         Standard Lieferant <b ng-class="step1.sortDirection"></b>
     </th>
     <th class="col-md-1">StockID</th>
@@ -41,13 +44,14 @@
     <tbody>
     <tr ng-repeat="stockitem in step1.items track by stockitem.id"
         ng-class="{'text-muted': stockitem.prodid.supplier.length==0}">
-        <td>{{ stockitem.prodid.nature ? stockitem.prodid.nature + ' /' : '' }} <b>{{ stockitem.prodid.name1 }}</b></td>
+        <td>{{ stockitem.prodid.nature }} </td>
+        <td><b>{{ stockitem.prodid.name1 }}</b></td>
         <td><span ng-class="{hide:stockitem.prodid.title}">
             <button ng-click="bestellen.selectprod(stockitem.prodid)">auswählen</button></span>
         </td>
         <td>{{ stockitem.prodid.id }}</td>
         <td>{{ stockitem.prodid.unit1 }}</td>
-        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.stockcur }}</span></td>
+        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.quantityavail }}</span></td>
         <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.netpurchaseprice }}</span></td>
         <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.defaultsupplier.namea }}</span></td>
         <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.stockid }}</span></td>

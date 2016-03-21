@@ -50,7 +50,7 @@ directive('bestellungen', function () {
             };
 
             controller.set_status_sent = function (doc) {
-                bestellungenService.purchasedoc.update({id: doc.id}, {status: 1}).then(function (response) {
+                bestellungenService.purchasedoc.update({id: doc.id}, {status: 2}).then(function (response) {
                     updateList();
                 });
             };

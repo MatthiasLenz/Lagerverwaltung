@@ -109,7 +109,7 @@ directive('bestellungen1', function () {
                 function updateList() {
                     controller.list = [];
                     bestellungenService.purchasedoc.list({
-                        'status': controller.status,
+                        'status': "2,3",
                         'supplierid': controller.supplierid
                     }).then(function (result) {
                         result.forEach(function (item) {

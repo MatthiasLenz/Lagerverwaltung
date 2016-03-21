@@ -2,15 +2,10 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                              ng-options="supplier.id as supplier.namea for supplier in bestellungen1.suppliers | orderBy: 'namea'"
                              ng-change="bestellungen1.update()"></select>
 
-Bestellstatus: <select class="form-control" style="width:350px;" ng-model="bestellungen1.status"
-                       ng-options="option.id as option.descr for option in bestellungen1.status_options"
-                       ng-change="bestellungen1.update()"></select>
-
 
 Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
-                              ng-options="bestellung.supplier.namea+
-                              ' ('+(bestellung.docdate|date:'d. MMM yyyy')+')'
-                              for bestellung in bestellungen1.list | orderBy: 'status+supplier.namea' | filter: bestellung.status=bestellungen1.status"></select>
+                              ng-options="(bestellung.docdate|date:'dd. MMM yyyy')
+                              for bestellung in bestellungen1.list | orderBy: '-docdate'"></select>
 <br>
 <div class="row">
     <div class="col-lg-12">
