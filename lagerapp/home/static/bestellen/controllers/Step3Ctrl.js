@@ -5,11 +5,11 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
     controller.changeIn = changeIn;
     controller.toggleDetail = toggleDetail;
     controller.save = save;
-    controller.showDetail = false;
+        controller.showDetail = true;
     controller.showText = "Details ansehen »";
     controller.product = $scope.bestellen.selectedprod;
     controller.supplier = $scope.bestellen.selectedsupp;
-    controller.packings = {"base": {"name": controller.product.unit1, "quantity": 1, "orderAmount": 0}};
+        controller.packings = {"base": {"name": controller.product.unit1, "quantity": 1}};
         controller.selectedpacking = "";
     controller.product.packing.forEach(
         function (entry) {
@@ -19,7 +19,6 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
                 //Get productpacking data
                 packdata["name"] = response.data.name;
                 packdata["quantity"] = response.data.quantity;
-                packdata["orderAmount"] = 0;
                 packdata["changed"] = false;
                 id = response.data.packingid;
                 controller.packings[id] = packdata;
@@ -27,12 +26,16 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
         });
 
     function changeIn(key1) {
+        alert(controller.packings[key1].orderAmount);
         for (var key2 in controller.packings) {
-            if (key1 != key2 && controller.packings[key1].orderAmount != 0) {
+            if (key1 != key2) {
+                alert(parseFloat(((controller.packings[key1].orderAmount * controller.packings[key1].quantity)
+                / controller.packings[key2].quantity).toFixed(2)));
                 controller.packings[key2].orderAmount = parseFloat(((controller.packings[key1].orderAmount * controller.packings[key1].quantity)
                 / controller.packings[key2].quantity).toFixed(2));
             }
         }
+
         controller.selectedpacking = controller.packings[key1];
     }
 
