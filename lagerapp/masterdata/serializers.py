@@ -1,8 +1,8 @@
 from datetime import date
 from rest_framework import serializers
-from masterdata.basemodels import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, \
+from basemodels import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, \
     ProductPacking, StockMovement, PurchaseDocuments
-from masterdata.models import Supplier01, Supplier04, Supplier05, PurchaseDoc01, PurchaseDoc04, PurchaseDoc05, \
+from models import Supplier01, Supplier04, Supplier05, PurchaseDoc01, PurchaseDoc04, PurchaseDoc05, \
     PurchaseDocData01, PurchaseDocData04, PurchaseDocData05, DeliveryNoteData01, DeliveryNoteData04, DeliveryNoteData05, \
     DeliveryNote01, DeliveryNote04, DeliveryNote05, Staff01, Staff04, Staff05
 # from baseserializers import SupplierSerializer
