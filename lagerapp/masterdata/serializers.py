@@ -17,7 +17,7 @@ class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         fields = (
             'url', 'id', 'namea', 'nameb', 'address', 'zipcode', 'city', 'country', 'phone', 'fax', 'vatnum', 'active',
-            'numberorders', 'bookinid')
+            'numberorders')
 
 
 class SupplierSerializer01(SupplierSerializer):
