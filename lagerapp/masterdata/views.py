@@ -1,7 +1,7 @@
 #encoding=UTF-8
-from masterdata.basemodels import Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, UserData, \
+from basemodels import Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, UserData, \
     PurchaseDocuments, StockMovement
-from masterdata.serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, \
+from serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, \
     StockMovementSerializer, ProductSerializer, \
     NatureSerializer, FastProductSerializer, ProductSupplierSerializer, ProductPackingSerializer, \
     PurchaseDocumentsSerializer

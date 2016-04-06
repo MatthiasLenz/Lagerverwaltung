@@ -1,6 +1,6 @@
 # encoding=UTF-8
-from masterdata.models import Supplier05, PurchaseDoc05, PurchaseDocData05, DeliveryNote05, DeliveryNoteData05, Staff05
-from masterdata.serializers import SupplierSerializer05, PurchaseDocSerializer05, MinPurchaseDocSerializer, \
+from models import Supplier05, PurchaseDoc05, PurchaseDocData05, DeliveryNote05, DeliveryNoteData05, Staff05
+from serializers import SupplierSerializer05, PurchaseDocSerializer05, MinPurchaseDocSerializer, \
     PurchaseDocDataSerializer05, DeliveryNoteSerializer05, DeliveryNoteDataSerializer05
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
