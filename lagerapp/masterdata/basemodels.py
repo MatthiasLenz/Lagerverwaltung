@@ -20,7 +20,6 @@ class SupplierBase(models.Model):
     vatnum = models.CharField(db_column='VATNumber', max_length=20, blank=True)
     active = models.NullBooleanField(db_column='Active')
     numberorders = models.SmallIntegerField(db_column='NumberOrders', blank=True, null=True)
-    bookinid = models.CharField(db_column='FZ_BOOKINID', max_length=15, blank=True)
 
     def __unicode__(self):
         return self.id
