@@ -1,7 +1,8 @@
 angular.module('baseApp.bestellen', []);
+angular.module('baseApp.lagerausgang', []);
 angular.module('baseApp.Services', ['ngResource']);
 angular.module('baseApp', ['ui.bootstrap', 'ngResource', 'ngMaterial', 'baseApp.Services',
-    'docsTimeDirective', 'baseApp.bestellen', 'angular-loading-bar', 'ngAnimate']).
+    'docsTimeDirective', 'baseApp.bestellen', 'angular-loading-bar', 'ngAnimate', 'baseApp.lagerausgang']).
 
 config(["$locationProvider", function ($locationProvider) {
     //disable this, if the app is being used by html5 incompatible browsers.

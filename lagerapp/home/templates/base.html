@@ -46,7 +46,6 @@
 <script src="{% static "common/services/supplierService.js" %}"></script>
 <script src="{% static "common/filters/total.js" %}"></script>
 
-
 <script src="{% static "bestellen/controllers/BestellungCtrl.js" %}"></script>
 <script src="{% static "bestellen/controllers/Step1Ctrl.js" %}"></script>
 <script src="{% static "bestellen/controllers/Step2Ctrl.js" %}"></script>
@@ -57,6 +56,9 @@
 <script src="{% static "bestellungen/directives/bestellungen.js" %}"></script>
 <script src="{% static "bestellungen/directives/bestellungen1.js" %}"></script>
 <script src="{% static "bestellungen/directives/deliverynote.js" %}"></script>
+<script src="{% static "lagerausgang/directives/base.js" %}"></script>
+<script src="{% static "lagerausgang/controllers/LagerausgangCtrl.js" %}"></script>
+
 
 <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
@@ -104,6 +106,8 @@
                     <li><a ng-click="cc.setState('purchasedoc1_state')">Verschickte Bestellungen</a></li>
                     <li><a ng-click="cc.setState('purchasedoc2_state')">Lieferschein eintragen</a></li>
                 </ul>
+                <li ng-class="{active: cc.isActive('outbound_state')}">
+                <a href="" ng-click="cc.setState('outbound_state')">Lagerausgang</a></li>
             </li>
         </ul>
         <br/>
@@ -113,6 +117,7 @@
             <div ng-switch-when="purchasedoc0_state" bestellungen></div>
             <div ng-switch-when="purchasedoc1_state" bestellungen1></div>
             <div ng-switch-when="purchasedoc2_state" deliverynote></div>
+            <div ng-switch-when="outbound_state" lagerausgang></div>
         </div>
     </div>
 

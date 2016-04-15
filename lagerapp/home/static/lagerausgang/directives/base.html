@@ -1,0 +1,44 @@
+noch nicht verfügbar
+<button ng-click="lagerVm.swap_direction()">swap Layout</button>
+<div layout="{{ lagerVm.direction }}" class="zero">
+    <div flex="33" flex-md="{{ vm.box1Width }}" >
+        <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="lagerVm.noCache" md-selected-item="lagerVm.selectedItem"
+                         md-search-text-change="lagerVm.searchTextChange(lagerVm.searchText)" md-search-text="lagerVm.searchText"
+                         md-selected-item-change="lagerVm.selectedItemChange(item)" md-items="item in lagerVm.querySearch(lagerVm.searchText)"
+                         md-item-text="item.display" md-min-length="0" placeholder="Bitte wählen Sie einen Artikel aus." md-select-on-match="true">
+            <md-item-template>
+              <span md-highlight-text="lagerVm.searchText" md-highlight-flags="^i">{{item.display}}</span>
+            </md-item-template>
+            <md-not-found>
+              Keine Übereinstimmung mit "{{lagerVm.searchText}}" gefunden.
+            </md-not-found>
+        </md-autocomplete>
+    </div>
+    <div flex="33">
+        <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="lagerVm.noCache" md-selected-item="lagerVm.selectedItem"
+                         md-search-text-change="lagerVm.searchTextChange(lagerVm.searchText)" md-search-text="lagerVm.searchText"
+                         md-selected-item-change="lagerVm.selectedItemChange(item)" md-items="item in lagerVm.querySearch(lagerVm.searchText)"
+                         md-item-text="item.display" md-min-length="0" placeholder="Bitte wählen Sie eine Baustelle aus." md-select-on-match="true">
+            <md-item-template>
+              <span md-highlight-text="lagerVm.searchText" md-highlight-flags="^i">{{item.display}}</span>
+            </md-item-template>
+            <md-not-found>
+              Keine Übereinstimmung mit "{{lagerVm.searchText}}" gefunden.
+            </md-not-found>
+        </md-autocomplete>
+    </div>
+    <div flex>
+        <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="lagerVm.noCache" md-selected-item="lagerVm.selectedItem"
+                         md-search-text-change="lagerVm.searchTextChange(lagerVm.searchText)" md-search-text="lagerVm.searchText"
+                         md-selected-item-change="lagerVm.selectedItemChange(item)" md-items="item in lagerVm.querySearch(lagerVm.searchText)"
+                         md-item-text="item.display" md-min-length="0" placeholder="Menge" md-select-on-match="true">
+            <md-item-template>
+              <span md-highlight-text="lagerVm.searchText" md-highlight-flags="^i">{{item.display}}</span>
+            </md-item-template>
+            <md-not-found>
+              Keine Übereinstimmung mit "{{lagerVm.searchText}}" gefunden.
+            </md-not-found>
+        </md-autocomplete>
+    </div>
+</div>
+
