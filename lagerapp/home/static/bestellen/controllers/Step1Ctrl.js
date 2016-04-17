@@ -61,7 +61,6 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
             controller.items = data.results;
             controller.lastPage = Math.ceil(data.count / controller.perPage);
         });
-
     }
 
     function resetPage() {

@@ -1,15 +1,18 @@
-angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', [function ($timeout, $q) {
+angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout', '$q', '$scope', 'stockService','sessionService',
+    function ($timeout, $q, $scope, stockService, sessionService) {
     var vm = this;
+    this.stockid = sessionService.getStock();
+    sessionService.subscribeStockIDChange($scope, function () {
+        vm.resetAndUpdate();
+    });
+
     vm.simulateQuery = false;
     vm.isDisabled = false;
 
     // list of `state` value/display objects
-    vm.states = loadAll();
     vm.querySearch = querySearch;
     vm.selectedItemChange = selectedItemChange;
     vm.searchTextChange = searchTextChange;
-
-    vm.newState = newState;
 
     vm.direction = "row";
     vm.swap_direction = function () {
@@ -21,17 +24,18 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', [function 
         }
     };
     function querySearch(query) {
-        var results = query ? vm.states.filter(createFilterFor(query)) : vm.states,
-            deferred;
-        if (vm.simulateQuery) {
-            deferred = $q.defer();
-            $timeout(function () {
-                deferred.resolve(results);
-            }, Math.random() * 1000, false);
-            return deferred.promise;
-        } else {
-            return results;
-        }
+        return $q(function(resolve, reject){
+            stockService.articlelist({
+                ordering: vm.ordering,
+                page: vm.page,
+                page_size: vm.perPage,
+                search: query,
+                prodid__nature: vm.resourcenatureid,
+                stockid: sessionService.getStock()
+            }).then(function(response){
+                resolve(response.results);
+            });
+        })
     }
 
     function searchTextChange(text) {
@@ -42,24 +46,9 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', [function 
 
     }
 
-    function loadAll() {
-        var allStates = 'Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware,\
-            Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana,\
-            Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana,\
-            Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina,\
-            North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina,\
-            South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia,\
-            Wisconsin, Wyoming';
-
-        return allStates.split(/, +/g).map(function (state) {
-            return {
-                value: state.toLowerCase(),
-                display: state
-            };
-        });
-    }
 
     function createFilterFor(query) {
+        //offline filter for data set
         var lowercaseQuery = angular.lowercase(query);
 
         return function filterFn(state) {
