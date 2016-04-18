@@ -4,13 +4,30 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout
 
     vm.simulateQuery = false;
     vm.isDisabled = false;
-
+    //Datepicker
+    vm.dt = new Date();
+    vm.open_datepicker = function () {
+        vm.popup.opened = true;
+    };
+    vm.disabled = function (date, mode) {
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    };
+    vm.popup = {
+        opened: false
+    };
+    vm.dateOptions = {
+        formatYear: 'yy',
+        startingDay: 1
+    };
     // list of `state` value/display objects
     vm.queryStock = queryStock;
     vm.queryProject = queryProject;
     vm.selectedItemChange = selectedItemChange;
     vm.searchTextChange = searchTextChange;
-
+    vm.getTotal = getTotal;
+    vm.selectedProducts = [{id:0, quantity:null, article:null}];
+    vm.addRow = addRow;
+    vm.deleteRow = deleteRow;
     vm.direction = "row";
     vm.swap_direction = function () {
         if (vm.direction == "row") {
@@ -20,6 +37,19 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout
             vm.direction = "row";
         }
     };
+    function getTotal(){
+        var total = 0;
+        for (var i=0;i<vm.selectedProducts.length;i++){
+            var row=vm.selectedProducts[i];
+            if (row.quantity && row.article){
+                var quantity = row.quantity;
+                var price = row.article.prodid.netpurchaseprice;
+                var amount = quantity*price;
+                total+=amount;
+            }
+        }
+        return total;
+    }
     function queryStock(query) {
         return $q(function(resolve, reject){
             stockService.articlelist_noload({
@@ -46,8 +76,19 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout
     function selectedItemChange(item) {
 
     }
+    function addRow(){
+        var newRowID = vm.selectedProducts.length+1;
+        vm.selectedProducts.push({id: newRowID, quantity:null, article:null});
+    }
+    function deleteRow(rowid){
+        for (var i=0; i<vm.selectedProducts.length;i++){
+            if (rowid==vm.selectedProducts[i].id){
+                vm.selectedProducts.splice(i, 1);
+            }
+        }
 
-
+        vm.selectedProducts
+    }
     function createFilterFor(query) {
         //offline filter for data set
         var lowercaseQuery = angular.lowercase(query);

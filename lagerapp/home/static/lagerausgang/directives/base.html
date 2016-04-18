@@ -1,44 +1,128 @@
 <!--<button ng-click="lagerVm.swap_direction()">swap Layout</button>-->
-<div layout="{{ lagerVm.direction }}" class="zero">
-    <div flex="35">
-        <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-selected-item="lagerVm.selectedProject"
-                         md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)" md-search-text="lagerVm.searchProject"
-                         md-selected-item-change="lagerVm.selectedItemChange(item)" md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
-                         md-item-text="item.id+', '+item.description" md-min-length="0" placeholder="Baustelle" md-select-on-match="true">
-            <md-item-template>
-              <span md-highlight-text="lagerVm.searchProject" md-highlight-flags="^i">{{item.id+', '+item.description}}</span>
-            </md-item-template>
-            <md-not-found>
-              Keine Übereinstimmung mit "{{lagerVm.searchProject}}" gefunden.
-            </md-not-found>
-        </md-autocomplete>
-    </div></div>
 <div layout="row">
-        <div flex="5">
-            <md-button>
-                 <md-icon md-font-icon="icon-home" ng-style="{color: 'green', 'font-size':'36px', height:'36px'}">
-                 </md-icon>
-            </md-button>
-        </div>
-        <div flex="35" >
-        <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-selected-item="lagerVm.selectedProduct"
-                         md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProd)" md-search-text="lagerVm.searchProd"
-                         md-selected-item-change="lagerVm.selectedItemChange(item)" md-items="item in lagerVm.queryStock(lagerVm.searchProd)"
-                         md-item-text="item.prodid.id+', '+item.prodid.name1" md-min-length="0" placeholder="Bitte wählen Sie einen Artikel aus.">
-            <md-item-template>
-              <span md-highlight-text="lagerVm.searchProd" md-highlight-flags="^i">{{item.prodid.id+', '+item.prodid.name1}}</span>
-            </md-item-template>
-            <md-not-found>
-              Keine Übereinstimmung mit "{{lagerVm.searchProd}}" gefunden.
-            </md-not-found>
-        </md-autocomplete>
+    <div layout="column" layout-margin flex="50">
+        <md-toolbar layout="row" class="md-hue-3">
+            <div class="md-toolbar-tools">
+                <span>Lagerausgang eintragen</span>
+            </div>
+        </md-toolbar>
+        <md-content layout-margin>
+            <div layout="row">
+                <div flex="70">
+                    <p class="input-group">
+                        <input placeholder="Datum" type="text" class="form-control"
+                               uib-datepicker-popup="dd.MM.yyyy" ng-model="lagerVm.dt"
+                               is-open="lagerVm.popup.opened" datepicker-options="lagerVm.dateOptions"
+                               ng-required="true"
+                               date-disabled="lagerVm.disabled(date, mode)" current-text="Heute"
+                               clear-text="Leeren"
+                               close-text="Schließen"/>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="lagerVm.open_datepicker()">
+                    <i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+                    </p>
+                </div>
+            </div>
+            <div layout="row">
+                <div flex="70">
+                    <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="true"
+                                     md-selected-item="lagerVm.selectedProject"
+                                     md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
+                                     md-search-text="lagerVm.searchProject"
+                                     md-selected-item-change="lagerVm.selectedItemChange(item)"
+                                     md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
+                                     md-item-text="item.id+', '+item.description" md-min-length="0"
+                                     placeholder="Baustelle" md-select-on-match="true">
+                        <md-item-template>
+                            <span md-highlight-text="lagerVm.searchProject"
+                                  md-highlight-flags="^i">{{ item.id+', '+item.description }}</span>
+                        </md-item-template>
+                        <md-not-found>
+                            Keine Übereinstimmung mit "{{ lagerVm.searchProject }}" gefunden.
+                        </md-not-found>
+                    </md-autocomplete>
+                </div>
+            </div>
+            <div ng-repeat="row in lagerVm.selectedProducts" layout="row">
+                <div flex="5">
+                    <md-button class="md-icon-button" aria-label="Remove Row" ng-click="lagerVm.deleteRow(row.id)">
+                        <md-icon md-svg-src="static/img/icons/ic_clear_black_24px.svg"></md-icon>
+                    </md-button>
+                </div>
+                <div flex="70">
+                    <md-autocomplete md-no-cache="true" md-selected-item="row.article"
+                                     md-search-text-change="lagerVm.searchTextChange(row.searchProd)"
+                                     md-search-text="row.searchProd"
+                                     md-selected-item-change="lagerVm.selectedItemChange(item)"
+                                     md-items="item in lagerVm.queryStock(row.searchProd)"
+                                     md-item-text="item.prodid.id+', '+item.prodid.name1" md-min-length="0"
+                                     placeholder="Bitte wählen Sie einen Artikel aus.">
+                        <md-item-template>
+                            <span md-highlight-text="row.searchProd"
+                                  md-highlight-flags="^i">{{ item.prodid.id+', '+item.prodid.name1 }}</span>
+                        </md-item-template>
+                        <md-not-found>
+                            Keine Übereinstimmung mit "{{ lagerVm.searchProd }}" gefunden.
+                        </md-not-found>
+                    </md-autocomplete>
+                </div>
+                <div flex="20" flex-offset="5">
+                    <input type="number" step="0.01" class="form-control" placeholder="Menge" ng-model="row.quantity">
+                </div>
+                <div flex="5">
+                    {{ lagerVm.selectedProduct.prodid.unit1 }}
+                </div>
+            </div>
+            <div>
+                <md-button class="md-fab md-mini md-primary" aria-label="Add Row" ng-click="lagerVm.addRow()">
+                    <md-icon md-svg-src="static/img/icons/ic_add_white_24px.svg"></md-icon>
+                </md-button>
+            </div>
+        </md-content>
     </div>
-    <div flex-offset="5" flex="10">
-        <input type="number" step="0.01" class="form-control" placeholder="Menge">
-    </div>
-    <div flex="5">
-         {{ lagerVm.selectedProduct.prodid.unit1 }}
+    <md-divider layout-margin></md-divider>
+    <div flex="50" layout-margin>
+        <md-toolbar layout="row" class="md-hue-3">
+            <div class="md-toolbar-tools">
+                <span>Übersicht</span>
+            </div>
+        </md-toolbar>
+        <md-content>
+            <md-subheader class="md-no-sticky" space-between>
+                <div layout="row" space-between>
+                    <div flex="grow">{{ lagerVm.selectedProject.id }} {{ lagerVm.selectedProject.description }}</div>
+                    <div flex="none">{{ lagerVm.dt |date:'d. MMM yyyy' }}</div>
+                </div>
+            </md-subheader>
+            <table class="table">
+                <thead>
+                <th class="col-md-1">ID</th>
+                <th class="col-md-2">Bezeichnung</th>
+                <th class="col-md-1">Menge</th>
+                <th class="col-md-1">Einheit</th>
+                <th class="col-md-1">Preis</th>
+                <th class="col-md-1">Gesamt</th>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in lagerVm.selectedProducts">
+                    <td> {{ item.article.prodid.id }}</td>
+                    <td> {{ item.article.prodid.name1 }}</td>
+                    <td> {{ item.quantity }}</td>
+                    <td> {{ item.article.prodid.unit1 }}</td>
+                    <td> {{ item.article.prodid.netpurchaseprice |currency:""}} €</td>
+                    <td> {{ item.article.prodid.netpurchaseprice * item.quantity | currency:""}} €</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ lagerVm.getTotal() | currency:""}} €</td>
+                </tr>
+                </tbody>
+            </table>
+        </md-content>
     </div>
 </div>
-
-
