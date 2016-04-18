@@ -1,7 +1,7 @@
 # encoding=UTF-8
-from models import Supplier05, PurchaseDoc05, PurchaseDocData05, DeliveryNote05, DeliveryNoteData05, Staff05
+from models import Supplier05, PurchaseDoc05, PurchaseDocData05, DeliveryNote05, DeliveryNoteData05, Staff05, Project05
 from serializers import SupplierSerializer05, PurchaseDocSerializer05, MinPurchaseDocSerializer, \
-    PurchaseDocDataSerializer05, DeliveryNoteSerializer05, DeliveryNoteDataSerializer05
+    PurchaseDocDataSerializer05, DeliveryNoteSerializer05, DeliveryNoteDataSerializer05, ProjectSerializer05
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, pagination, filters
@@ -56,6 +56,11 @@ class CustomSearchFilter(filters.SearchFilter):
 
         return queryset
 
+class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Project05.objects.all()
+    serializer_class = ProjectSerializer05
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('id', 'description', 'manager', 'leader')
 
 class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
     """

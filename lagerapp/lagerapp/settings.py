@@ -156,19 +156,24 @@ class HitRouter(object):
             return 'hit_01_purchase'
         if model._meta.app_label == 'hit_01_staff':
             return 'hit_01_staff'
+        if model._meta.app_label == 'hit_01_project':
+            return 'hit_01_project'
         if model._meta.app_label == 'hit_05_purchase':
             return 'hit_05_purchase'
         if model._meta.app_label == 'hit_05_bookkeeping':
             return 'hit_05_bookkeeping'
         if model._meta.app_label == 'hit_05_staff':
             return 'hit_05_staff'
+        if model._meta.app_label == 'hit_05_project':
+            return 'hit_05_project'
         if model._meta.app_label == 'hit_04_purchase':
             return 'hit_04_purchase'
         if model._meta.app_label == 'hit_04_bookkeeping':
             return 'hit_04_bookkeeping'
         if model._meta.app_label == 'hit_04_staff':
             return 'hit_04_staff'
-        # go to default
+        if model._meta.app_label == 'hit_04_project':
+            return 'hit_04_project'
         # go to default
 
         return None

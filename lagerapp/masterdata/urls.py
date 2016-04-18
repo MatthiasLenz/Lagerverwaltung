@@ -1,5 +1,5 @@
 from django.conf.urls import url, include
-from masterdata import views, views_c01, views_c04, views_c05
+import views, views_c01, views_c04, views_c05
 from rest_framework.routers import DefaultRouter
 
 # Create a router and register our viewsets with it.
@@ -19,6 +19,7 @@ router.register(r'purchasedocdata', views_c01.PurchaseDocDataViewSet)
 router.register(r'purchasedocsupplier', views_c01.PurchaseDocSupplierViewSet)
 router.register(r'deliverynote', views_c01.DeliveryNoteViewSet)
 router.register(r'deliverynotedata', views_c01.DeliveryNoteDataViewSet)
+
 # router for company 01 api
 router01 = DefaultRouter(trailing_slash=False)
 router01.register(r'supplier', views_c01.SupplierViewSet, base_name='supplier01')
@@ -28,6 +29,7 @@ router01.register(r'purchasedocdata', views_c01.PurchaseDocDataViewSet)
 router01.register(r'purchasedocsupplier', views_c01.PurchaseDocSupplierViewSet)
 router01.register(r'deliverynote', views_c01.DeliveryNoteViewSet)
 router01.register(r'deliverynotedata', views_c01.DeliveryNoteDataViewSet)
+router01.register(r'projects', views_c01.ProjectViewSet)
 # router for company 04 api
 router04 = DefaultRouter(trailing_slash=False)
 router04.register(r'supplier', views_c04.SupplierViewSet, base_name='supplier04')
@@ -36,6 +38,7 @@ router04.register(r'purchasedocdata', views_c04.PurchaseDocDataViewSet)
 router04.register(r'purchasedocsupplier', views_c04.PurchaseDocSupplierViewSet)
 router04.register(r'deliverynote', views_c04.DeliveryNoteViewSet)
 router04.register(r'deliverynotedata', views_c04.DeliveryNoteDataViewSet)
+router04.register(r'projects', views_c04.ProjectViewSet)
 # router for company 05 api
 router05 = DefaultRouter(trailing_slash=False)
 router05.register(r'supplier', views_c05.SupplierViewSet, base_name='supplier05')
@@ -44,6 +47,7 @@ router05.register(r'purchasedocdata', views_c05.PurchaseDocDataViewSet)
 router05.register(r'purchasedocsupplier', views_c05.PurchaseDocSupplierViewSet)
 router05.register(r'deliverynote', views_c05.DeliveryNoteViewSet)
 router05.register(r'deliverynotedata', views_c05.DeliveryNoteDataViewSet)
+router05.register(r'projects', views_c05.ProjectViewSet)
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
 urlpatterns = [

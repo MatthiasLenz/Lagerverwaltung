@@ -5,7 +5,19 @@ from django.db import models
     Wichtig, wenn man in serializer related fields benutzen möchte, dann muss man dafür hier im model ein field anlegen. In der rest framework beschreibung wird das nicht gemacht,
     vielleicht macht es einen Unterschied, wenn man nicht managed = false einstellt.
 """
-
+class ProjectBase(models.Model):
+    id = models.CharField(db_column='ID', max_length=15, primary_key=True)
+    description = models.CharField(db_column='Description', max_length=255, blank=True)
+    customer = models.CharField(db_column='Customer', max_length=15, blank=True)
+    address = models.CharField(db_column='Address', max_length=255, blank=True)
+    zipcode = models.CharField(db_column='ZipCode', max_length=8, blank=True)
+    country = models.CharField(db_column='Country', max_length=3, blank=True)
+    city = models.CharField(db_column='City', max_length=30, blank=True)
+    manager = models.CharField(db_column='Manager', max_length=15, blank=True)
+    leader = models.CharField(db_column='Leader', max_length=15, blank=True)
+    class Meta:
+        abstract = True
+        managed = False
 
 class SupplierBase(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)

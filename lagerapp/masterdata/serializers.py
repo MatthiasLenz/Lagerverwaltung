@@ -4,10 +4,25 @@ from basemodels import UserData, Supplier, Stock, StockData, Product, Nature, Pr
     ProductPacking, StockMovement, PurchaseDocuments
 from models import Supplier01, Supplier04, Supplier05, PurchaseDoc01, PurchaseDoc04, PurchaseDoc05, \
     PurchaseDocData01, PurchaseDocData04, PurchaseDocData05, DeliveryNoteData01, DeliveryNoteData04, DeliveryNoteData05, \
-    DeliveryNote01, DeliveryNote04, DeliveryNote05, Staff01, Staff04, Staff05
+    DeliveryNote01, DeliveryNote04, DeliveryNote05, Staff01, Staff04, Staff05, Project01, Project04, Project05
 # from baseserializers import SupplierSerializer
 from django.contrib.auth.models import User
 
+class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        fields = ('id', 'description','customer','address','country','zipcode','city','manager','leader')
+
+class ProjectSerializer01(ProjectSerializer):
+    class Meta(ProjectSerializer.Meta):
+        model = Project01
+
+class ProjectSerializer04(ProjectSerializer):
+    class Meta(ProjectSerializer.Meta):
+        model = Project04
+
+class ProjectSerializer05(ProjectSerializer):
+    class Meta(ProjectSerializer.Meta):
+        model = Project05
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):
@@ -18,7 +33,6 @@ class SupplierSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'url', 'id', 'namea', 'nameb', 'address', 'zipcode', 'city', 'country', 'phone', 'fax', 'vatnum', 'active',
             'numberorders')
-
 
 class SupplierSerializer01(SupplierSerializer):
     class Meta(SupplierSerializer.Meta):

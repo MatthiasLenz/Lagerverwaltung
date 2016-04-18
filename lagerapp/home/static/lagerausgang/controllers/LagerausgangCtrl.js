@@ -1,5 +1,5 @@
-angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout', '$q', '$scope', 'stockService','sessionService',
-    function ($timeout, $q, $scope, stockService, sessionService) {
+angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout', '$q', '$scope', 'stockService',
+    'sessionService','projectService', function ($timeout, $q, $scope, stockService, sessionService,projectService) {
     var vm = this;
     this.stockid = sessionService.getStock();
     sessionService.subscribeStockIDChange($scope, function () {
@@ -10,7 +10,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout
     vm.isDisabled = false;
 
     // list of `state` value/display objects
-    vm.querySearch = querySearch;
+    vm.queryStock = queryStock;
+    vm.queryProject = queryProject;
     vm.selectedItemChange = selectedItemChange;
     vm.searchTextChange = searchTextChange;
 
@@ -23,7 +24,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout
             vm.direction = "row";
         }
     };
-    function querySearch(query) {
+    function queryStock(query) {
         return $q(function(resolve, reject){
             stockService.articlelist({
                 ordering: vm.ordering,
@@ -38,6 +39,15 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout
         })
     }
 
+    function queryProject(query) {
+        return $q(function(resolve, reject){
+            projectService.project_list({
+                search: query,
+            }).then(function(response){
+                resolve(response.results);
+            });
+        })
+    }
     function searchTextChange(text) {
 
     }

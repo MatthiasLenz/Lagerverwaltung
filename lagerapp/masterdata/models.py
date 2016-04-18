@@ -1,8 +1,22 @@
 #encoding=UTF-8
 from basemodels import SupplierBase, PurchaseDocBase, PurchaseDocDataBase, DeliveryNoteBase, DeliveryNoteDataBase, \
-    StaffBase
+    StaffBase, ProjectBase
 from django.db import models
 
+class Project01(ProjectBase):
+    class Meta(ProjectBase.Meta):
+        db_table = 'Project'
+        app_label = 'hit_01_project'
+
+class Project04(ProjectBase):
+    class Meta(ProjectBase.Meta):
+        db_table = 'Project'
+        app_label = 'hit_04_project'
+
+class Project05(ProjectBase):
+    class Meta(ProjectBase.Meta):
+        db_table = 'Project'
+        app_label = 'hit_05_project'
 
 class Supplier01(SupplierBase):
     class Meta(SupplierBase.Meta):
