@@ -1,28 +1,35 @@
 <!--<button ng-click="lagerVm.swap_direction()">swap Layout</button>-->
 <div layout="{{ lagerVm.direction }}" class="zero">
-    <div flex="25" flex-md="{{ vm.box1Width }}" >
-        <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="lagerVm.noCache" md-selected-item="lagerVm.selectedProduct"
-                         md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProd)" md-search-text="lagerVm.searchProd"
-                         md-selected-item-change="lagerVm.selectedItemChange(item)" md-items="item in lagerVm.queryStock(lagerVm.searchProd)"
-                         md-item-text="item.prodid.name1" md-min-length="0" placeholder="Bitte wählen Sie einen Artikel aus." md-select-on-match="true">
-            <md-item-template>
-              <span md-highlight-text="lagerVm.searchProd" md-highlight-flags="^i">{{item.prodid.name1}}</span>
-            </md-item-template>
-            <md-not-found>
-              Keine Übereinstimmung mit "{{lagerVm.searchProd}}" gefunden.
-            </md-not-found>
-        </md-autocomplete>
-    </div>
-    <div flex="10">
-        <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="lagerVm.noCache" md-selected-item="lagerVm.selectedProject"
+    <div flex="35">
+        <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-selected-item="lagerVm.selectedProject"
                          md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)" md-search-text="lagerVm.searchProject"
                          md-selected-item-change="lagerVm.selectedItemChange(item)" md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
-                         md-item-text="item.id" md-min-length="0" placeholder="Baustelle" md-select-on-match="true">
+                         md-item-text="item.id+', '+item.description" md-min-length="0" placeholder="Baustelle" md-select-on-match="true">
             <md-item-template>
-              <span md-highlight-text="lagerVm.searchProject" md-highlight-flags="^i">{{item.id}}</span>
+              <span md-highlight-text="lagerVm.searchProject" md-highlight-flags="^i">{{item.id+', '+item.description}}</span>
             </md-item-template>
             <md-not-found>
               Keine Übereinstimmung mit "{{lagerVm.searchProject}}" gefunden.
+            </md-not-found>
+        </md-autocomplete>
+    </div></div>
+<div layout="row">
+        <div flex="5">
+            <md-button>
+                 <md-icon md-font-icon="icon-home" ng-style="{color: 'green', 'font-size':'36px', height:'36px'}">
+                 </md-icon>
+            </md-button>
+        </div>
+        <div flex="35" >
+        <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-selected-item="lagerVm.selectedProduct"
+                         md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProd)" md-search-text="lagerVm.searchProd"
+                         md-selected-item-change="lagerVm.selectedItemChange(item)" md-items="item in lagerVm.queryStock(lagerVm.searchProd)"
+                         md-item-text="item.prodid.id+', '+item.prodid.name1" md-min-length="0" placeholder="Bitte wählen Sie einen Artikel aus.">
+            <md-item-template>
+              <span md-highlight-text="lagerVm.searchProd" md-highlight-flags="^i">{{item.prodid.id+', '+item.prodid.name1}}</span>
+            </md-item-template>
+            <md-not-found>
+              Keine Übereinstimmung mit "{{lagerVm.searchProd}}" gefunden.
             </md-not-found>
         </md-autocomplete>
     </div>
@@ -33,4 +40,5 @@
          {{ lagerVm.selectedProduct.prodid.unit1 }}
     </div>
 </div>
+
 

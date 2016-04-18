@@ -15,6 +15,7 @@ class ProjectBase(models.Model):
     city = models.CharField(db_column='City', max_length=30, blank=True)
     manager = models.CharField(db_column='Manager', max_length=15, blank=True)
     leader = models.CharField(db_column='Leader', max_length=15, blank=True)
+    projectsimulated = models.NullBooleanField(db_column='ProjectSimulated', default=0)
     class Meta:
         abstract = True
         managed = False

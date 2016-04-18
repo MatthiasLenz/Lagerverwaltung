@@ -6,7 +6,8 @@ factory("projectService", function ($resource, $cacheFactory, sessionService) {
     var projects = {};
     for (var i = 0; i < companies.length; i++) {
         projects[companies[i]] = $resource(
-            "/api/" + companies[i] + "/projects/:id", {id: "@id"}, {query: {method: 'GET', cache: projectCache}}
+            "/api/" + companies[i] + "/projects/:id", {id: "@id"}, {query: {method: 'GET', cache: projectCache,
+                isArray:false,ignoreLoadingBar: true}}
         );
     }
     function project_list(kwargs) {

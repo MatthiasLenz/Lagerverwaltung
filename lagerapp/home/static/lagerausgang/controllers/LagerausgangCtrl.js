@@ -1,10 +1,6 @@
 angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout', '$q', '$scope', 'stockService',
-    'sessionService','projectService', function ($timeout, $q, $scope, stockService, sessionService,projectService) {
+    'projectService', function ($timeout, $q, $scope, stockService, projectService) {
     var vm = this;
-    this.stockid = sessionService.getStock();
-    sessionService.subscribeStockIDChange($scope, function () {
-        vm.resetAndUpdate();
-    });
 
     vm.simulateQuery = false;
     vm.isDisabled = false;
@@ -26,13 +22,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout
     };
     function queryStock(query) {
         return $q(function(resolve, reject){
-            stockService.articlelist({
-                ordering: vm.ordering,
-                page: vm.page,
-                page_size: vm.perPage,
-                search: query,
-                prodid__nature: vm.resourcenatureid,
-                stockid: sessionService.getStock()
+            stockService.articlelist_noload({
+                search: query
             }).then(function(response){
                 resolve(response.results);
             });

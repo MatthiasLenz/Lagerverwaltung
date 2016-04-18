@@ -61,7 +61,7 @@ class CustomSearchFilter(filters.SearchFilter):
         return queryset
 
 class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Project04.objects.all()
+    queryset = Project04.objects.filter(projectsimulated=0)
     serializer_class = ProjectSerializer04
     filter_backends = (filters.SearchFilter,)
     search_fields = ('id', 'description', 'manager', 'leader')
