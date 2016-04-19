@@ -6,7 +6,6 @@
                 <span>Lagerausgang eintragen</span>
             </div>
         </md-toolbar>
-        <md-content layout-margin>
             <div layout="row">
                 <div flex="70">
                     <p class="input-group">
@@ -67,11 +66,14 @@
                         </md-not-found>
                     </md-autocomplete>
                 </div>
-                <div flex="20" flex-offset="5">
+                <div flex="15" flex-offset="5">
                     <input type="number" step="0.01" class="form-control" placeholder="Menge" ng-model="row.quantity">
                 </div>
                 <div flex="5">
                     {{ lagerVm.selectedProduct.prodid.unit1 }}
+                </div>
+                <div flex="5">
+                    <i ng-show="row.article && row.quantity" class="material-icons" style="color:darkgreen";>check</i>
                 </div>
             </div>
             <div>
@@ -79,7 +81,6 @@
                     <md-icon md-svg-src="static/img/icons/ic_add_white_24px.svg"></md-icon>
                 </md-button>
             </div>
-        </md-content>
     </div>
     <md-divider layout-margin></md-divider>
     <div flex="50" layout-margin>
@@ -91,9 +92,12 @@
         <md-content>
             <md-subheader class="md-no-sticky" space-between>
                 <div layout="row" space-between>
-                    <div flex="grow">{{ lagerVm.selectedProject.id }} {{ lagerVm.selectedProject.description }}</div>
+                    <div flex="grow">{{ lagerVm.selectedProject.description }}</div>
                     <div flex="none">{{ lagerVm.dt |date:'d. MMM yyyy' }}</div>
                 </div>
+                <div>Kostenstelle: {{ lagerVm.selectedProject.id }} </div>
+                <div>Bauleiter: {{ lagerVm.selectedProject.manager }}</div>
+                <div>Polier: {{ lagerVm.selectedProject.leader }}</div>
             </md-subheader>
             <table class="table">
                 <thead>
@@ -105,7 +109,7 @@
                 <th class="col-md-1">Gesamt</th>
                 </thead>
                 <tbody>
-                <tr ng-repeat="item in lagerVm.selectedProducts">
+                <tr ng-repeat="item in lagerVm.selectedProducts" ng-show="item.article && item.quantity">
                     <td> {{ item.article.prodid.id }}</td>
                     <td> {{ item.article.prodid.name1 }}</td>
                     <td> {{ item.quantity }}</td>
@@ -124,5 +128,10 @@
                 </tbody>
             </table>
         </md-content>
+        <div>
+             <md-button class="md-icon-button md-primary" aria-label="Save" ng-click="lagerVm.save()">
+                  <md-icon md-svg-icon="static/img/icons/ic_save_black_48px.svg"></md-icon>
+             </md-button><md-button class="md-raised" ng-click="lagerVm.save()">Speichern</md-button>
+        </div>
     </div>
 </div>
