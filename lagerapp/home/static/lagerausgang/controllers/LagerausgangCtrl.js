@@ -1,5 +1,5 @@
-angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout', '$q', '$scope', 'stockService',
-    'projectService', function ($timeout, $q, $scope, stockService, projectService) {
+angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','$timeout', '$q', '$scope', 'stockService',
+    'projectService', function ($http, $timeout, $q, $scope, stockService, projectService) {
     var vm = this;
 
     vm.simulateQuery = false;
@@ -19,12 +19,17 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout
         formatYear: 'yy',
         startingDay: 1
     };
+    stockService.currentStock({})
+        .then(function (data) {
+            vm.stock = data;
+        });
     // list of `state` value/display objects
     vm.queryStock = queryStock;
     vm.queryProject = queryProject;
     vm.selectedItemChange = selectedItemChange;
     vm.searchTextChange = searchTextChange;
     vm.getTotal = getTotal;
+    vm.save = save;
     vm.selectedProducts = [{id:0, quantity:null, article:null}];
     vm.addRow = addRow;
     vm.deleteRow = deleteRow;
@@ -37,6 +42,19 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$timeout
             vm.direction = "row";
         }
     };
+    function save(){
+        $http({
+         method: 'POST',
+         url: '/api/01/lagerausgangmakepdf',
+         data: { type: "pdf", docdate: vm.dt, project: vm.selectedProject, items:vm.selectedProducts, stock: vm.stock.name}
+        }).then(function successCallback(response) {
+            // this callback will be called asynchronously
+            // when the response is available
+          }, function errorCallback(response) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+          });
+    }
     function getTotal(){
         var total = 0;
         for (var i=0;i<vm.selectedProducts.length;i++){

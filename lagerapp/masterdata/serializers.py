@@ -64,7 +64,7 @@ class UserDataSerializer(serializers.ModelSerializer):
 class StockSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Stock
-        fields = ('url', 'id', 'name', 'stockkeeper', 'type', 'defaultlocationid', 'tstamp')
+        fields = ('url', 'id', 'name', 'stockkeeper', 'type', 'defaultlocationid')
 
 
 class StockMovementSerializer(serializers.HyperlinkedModelSerializer):

@@ -37,10 +37,14 @@ factory("stockService", function ($resource, $cacheFactory, sessionService) {
     function stockinfoQuery(params) {
         return stock.query(params).$promise
     }
+    function currentStock(){
+        return stock.query({id: byCompany[companyid()]}).$promise;
+    }
     return {
         articlelist_noload: stockdataQuery_noload,
         articlelist: stockdataQuery,
         stockinfo: stockinfoQuery,
+        currentStock: currentStock,
         model: model,
         byCompany: byCompany
     }

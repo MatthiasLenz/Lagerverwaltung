@@ -214,12 +214,13 @@ def makepdf(request):
         settings = json.load(settings_file)
         ftpsettings = settings["ftp"]
         purchase = settings["purchase"]
+        document_folder = settings["document_folder"]
     data = dict(request.data['doc'])
     dt = parse_datetime(data['docdate'])
     data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
     data.update(purchase)
     renderdoc(data, os.path.abspath("masterdata/bestellung.odt"))
-    document_folder = data['folder'] + data['supplier']['id'] + '/'
+    document_folder = document_folder+"bestellungen/" + data['supplier']['id'] + '/'
     doctype = request.data['type']
     subprocess.call(os.path.abspath(
         'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to ' + doctype + ' ' +
@@ -233,7 +234,7 @@ def makepdf(request):
     os.rename(document_folder + 'bestellung.' + doctype, document_folder + docname)
     # with open(document_folder+"bestellung.pdf", 'rb') as f:
     #    url = ftpupload(ftpsettings, f, "bestellung.pdf")
-    fileurl = 'http://%s/static/%s/%s' % (settings['server'], data['supplier']['id'], docname)
+    fileurl = 'http://%s/static/bestellungen/%s/%s' % (settings['server'], data['supplier']['id'], docname)
     try:
         obj = PurchaseDocuments.objects.get(purchasedocid=data['id'])
         setattr(obj, doctype, fileurl)
@@ -242,6 +243,45 @@ def makepdf(request):
         PurchaseDocuments.objects.create(purchasedocid=data['id'], pdf=fileurl)
     return Response('')
 
+@api_view(['POST'])
+def lagerausgangmakepdf(request):
+    """ Build a data dictionary and use py3o.template to render an odt file from an odt template.
+        Use the libreoffice odt to pdf converter with a subprocess call.
+        Upload the generated pdf document to a webserver via FTP.
+        Return the url to the generated file."""
+    with open('settings.json') as settings_file:
+        settings = json.load(settings_file)
+        ftpsettings = settings["ftp"]
+        lagerausgang = settings["lagerausgang"]
+        document_folder = settings["document_folder"]
+    data = dict(request.data)
+    data.update(lagerausgang)
+    dt = parse_datetime(data['docdate'])
+    data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
+
+    renderdoc1(data, os.path.abspath("masterdata/lagerausgang.odt"))
+    document_folder = document_folder +"lagerausgang/" + data['project']['id'] + '/'
+    doctype = request.data['type']
+    subprocess.call(os.path.abspath(
+        'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to ' + doctype + ' ' +
+                    os.path.abspath('masterdata/lagerausgang.odt') + ' --outdir ' + document_folder,
+                    shell=True)
+    docname = 'Lagerausgang-%s.%s' % (data['docdate'].replace('.', '-'), doctype)
+    try:
+        os.remove(document_folder + docname)
+    except WindowsError:
+        pass
+    os.rename(document_folder + 'lagerausgang.' + doctype, document_folder + docname)
+    # with open(document_folder+"bestellung.pdf", 'rb') as f:
+    #    url = ftpupload(ftpsettings, f, "bestellung.pdf")
+    fileurl = 'http://%s/static/lagerausgang/%s/%s' % (settings['server'], data['project']['id'], docname)
+    #try:
+    #    obj = PurchaseDocuments.objects.get(purchasedocid=data['id'])
+    #    setattr(obj, doctype, fileurl)
+    #    obj.save()
+    #except PurchaseDocuments.DoesNotExist:
+    #    PurchaseDocuments.objects.create(purchasedocid=data['id'], pdf=fileurl)
+    return Response(fileurl)
 
 def renderdoc(data_input, outputfile):
     t = Template(os.path.abspath("masterdata/bestellung_template.odt"),
@@ -271,4 +311,26 @@ def renderdoc(data_input, outputfile):
             'polier': '', 'lieferadresse': data_input['adr_lang'],
             'infotext': format_py3o_context_value(unicode(data_input['infotext']))}
     data = dict(items=items, recipient=recipient, sender=sender, info=info, total=total)
+    t.render(data)
+
+
+
+def renderdoc1(data_input, outputfile):
+    t = Template(os.path.abspath("masterdata/lagerausgang_template.odt"),
+                 outputfile)
+    t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
+
+    #responsible = Staff01.objects.get(id=data_input['responsible'])
+    items = []
+    #total = '%.2f' % sum(item['amount'] for item in data_input['data'])
+    for item in data_input['items']:
+        article = item["article"]["prodid"]
+        items.append(
+            {'id': article['id'], 'name': article['name1'], 'unit': article['unit1'], 'quantity': '%.3f' % item['quantity'],
+             'price': '%.2f' % article['netpurchaseprice']})
+    # company specific
+    info = {'kostenstelle': data_input['project']['id'], 'stock': data_input["stock"],
+            'bez_kostenstelle': data_input['project']['description'],
+            'date': data_input['docdate'], 'recipient':data_input['project']['manager']}
+    data = dict(items=items, info=info)
     t.render(data)
