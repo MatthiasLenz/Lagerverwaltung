@@ -144,8 +144,20 @@ class PurchaseDocViewSet(viewsets.ModelViewSet):
 
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = StatusFilter
-    filter_fields = ('status', 'supplierid')
+    filter_fields = ('status', 'supplierid', 'module', 'doctype')
 
+class InternalPurchaseDocViewSet(viewsets.ModelViewSet):
+    # Error if result has more than 2000 rows
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    queryset = PurchaseDoc01.objects.filter(module=9).filter(doctype=3).prefetch_related('data')
+    serializer_class = PurchaseDocSerializer01
+    pagination_class = None
+
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = StatusFilter
+
+    filter_fields = ('status', 'supplierid')
 
 class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
@@ -331,6 +343,7 @@ def renderdoc1(data_input, outputfile):
     # company specific
     info = {'kostenstelle': data_input['project']['id'], 'stock': data_input["stock"],
             'bez_kostenstelle': data_input['project']['description'],
-            'date': data_input['docdate'], 'recipient':data_input['project']['manager']}
+            'date': data_input['docdate'], 'recipient':'%s %s'%(data_input['project']['manager']['firstname'],
+            data_input['project']['manager']['lastname'])}
     data = dict(items=items, info=info)
     t.render(data)
