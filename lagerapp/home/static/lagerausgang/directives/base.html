@@ -97,7 +97,7 @@
                 </div>
                 <div>Kostenstelle: {{ lagerVm.selectedProject.id }} </div>
                 <div>Bauleiter: {{ lagerVm.selectedProject.manager.firstname }} {{ lagerVm.selectedProject.manager.lastname }}</div>
-                <div>Polier: {{ lagerVm.selectedProject.leader }}</div>
+                <div>Polier: {{ lagerVm.selectedProject.leader.firstname }} {{ lagerVm.selectedProject.leader.lastname }}</div>
             </md-subheader>
             <table class="table">
                 <thead>
@@ -135,4 +135,4 @@
         </div>
     </div>
 </div>
-<pre> {{ lagerVm.selectedProducts |json }}</pre>
+<pre> {{ lagerVm.test |json }}</pre>

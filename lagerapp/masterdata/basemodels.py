@@ -395,9 +395,12 @@ class PurchaseDocBase(models.Model):
         db_table = 'PurchaseDoc'
 
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)  # Field name made lowercase.
+    subject = models.CharField(db_column='Subject', max_length=255, blank=True)
+    leader = models.CharField(db_column='ContactOnSiteID', max_length=15, blank=True)
     responsible = models.CharField(db_column='Responsible', max_length=15, blank=True, null=True)
     doctype = models.SmallIntegerField(db_column='DocType', blank=True, null=True)
     module = models.SmallIntegerField(db_column='Module', blank=True, null=True)
+    modulerefid= models.CharField(db_column='ModuleRefID', max_length=15, blank=True)
     status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
 

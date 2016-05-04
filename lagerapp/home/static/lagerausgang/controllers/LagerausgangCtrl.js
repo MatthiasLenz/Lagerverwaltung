@@ -1,5 +1,6 @@
 angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','$timeout', '$q', '$scope', 'stockService',
-    'projectService', 'bestellungenService', function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService) {
+    'projectService','bestellungenService','$window',
+    function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService, $window) {
     var vm = this;
 
     vm.simulateQuery = false;
@@ -56,17 +57,20 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
                 "quantity": article.quantity, "price": article.article.prodid.netpurchaseprice,
                 "amount": article.quantity * article.article.prodid.netpurchaseprice});
         }
+        var manager = vm.selectedProject.manager ? vm.selectedProject.manager.id : '';
+        var leader =  vm.selectedProject.leader ? vm.selectedProject.leader.id : '';
         data = {
-            "doctype": 3, "module": 9, "status": 0,
+            "doctype": 3, "module": 9, "status": 4,
             "subject": vm.selectedProject.description,
-            "responsible": vm.selectedProject.manager.id,
-            "contactonsiteid": vm.leader,
+            "responsible": manager,
+            "leader": leader,
             "supplierid": "SOLID-SCHIEREN", // ToDo: variabel
+            "modulerefid": vm.selectedProject.id,
             "docdate": vm.dt,
             "data": articles,
             "deliverynotes": []
         };
-        bestellungenService.purchasedoc.create(data).then(function (response) {
+        bestellungenService.internalpurchasedoc.create(data).then(function (response) {
             alert(response);
             //$scope.bestellen.finish();
         });
@@ -75,11 +79,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
          url: '/api/01/lagerausgangmakepdf',
          data: { type: "pdf", docdate: vm.dt, project: vm.selectedProject, items:vm.selectedProducts, stock: vm.stock.name}
         }).then(function successCallback(response) {
-            // this callback will be called asynchronously
-            // when the response is available
+             $window.open(response.data, '_blank');
           }, function errorCallback(response) {
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
           });
     }
     function getTotal(){
