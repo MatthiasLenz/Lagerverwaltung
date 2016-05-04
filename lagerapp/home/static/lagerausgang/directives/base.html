@@ -86,22 +86,29 @@
     <div flex="50" layout-margin>
         <md-toolbar layout="row" class="md-hue-3">
             <div class="md-toolbar-tools">
-                <span>Übersicht</span>
+                <span>Vorschau</span>
             </div>
         </md-toolbar>
         <md-content>
             <md-subheader class="md-no-sticky" space-between>
-                <div layout="row" space-between>
-                    <div flex="grow">{{ lagerVm.selectedProject.description }}</div>
-                    <div flex="none">{{ lagerVm.dt |date:'d. MMM yyyy' }}</div>
+                <div layout="row">
+                    <div flex="60">
+                        <div>Empfänger : {{ lagerVm.selectedProject.manager.firstname }} {{ lagerVm.selectedProject.manager.lastname }}</div>
+                        <div>Baustelle : {{ lagerVm.selectedProject.id }} -
+                            {{ lagerVm.selectedProject.description | limitTo: 30}}{{ lagerVm.selectedProject.description.length>30 ? '...' : '' }}
+                        </div>
+                        <div>Lager     : {{ lagerVm.stock.name }}</div>
+                    </div>
+                    <div flex="40">
+                        <div>Erfasst:</div>
+                        <div>Lagerausgang Nr.:</div>
+                        <div>Datum: {{ lagerVm.dt |date:'d. MMM yyyy' }}</div>
+                    </div>
                 </div>
-                <div>Kostenstelle: {{ lagerVm.selectedProject.id }} </div>
-                <div>Bauleiter: {{ lagerVm.selectedProject.manager.firstname }} {{ lagerVm.selectedProject.manager.lastname }}</div>
-                <div>Polier: {{ lagerVm.selectedProject.leader.firstname }} {{ lagerVm.selectedProject.leader.lastname }}</div>
             </md-subheader>
             <table class="table">
                 <thead>
-                <th class="col-md-1">ID</th>
+                <th class="col-md-1">Artikelnr.</th>
                 <th class="col-md-2">Bezeichnung</th>
                 <th class="col-md-1">Menge</th>
                 <th class="col-md-1">Einheit</th>
@@ -135,4 +142,3 @@
         </div>
     </div>
 </div>
-<pre> {{ lagerVm.test |json }}</pre>

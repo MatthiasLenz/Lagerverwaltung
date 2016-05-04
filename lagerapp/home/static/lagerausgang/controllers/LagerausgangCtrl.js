@@ -1,6 +1,6 @@
 angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','$timeout', '$q', '$scope', 'stockService',
-    'projectService','bestellungenService','$window',
-    function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService, $window) {
+    'projectService','bestellungenService','$window', '$mdDialog',
+    function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService, $window, $mdDialog) {
     var vm = this;
 
     vm.simulateQuery = false;
@@ -71,18 +71,20 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
             "deliverynotes": []
         };
         bestellungenService.internalpurchasedoc.create(data).then(function (response) {
-            alert(response);
-            //$scope.bestellen.finish();
+            showAlert('Lagerausgang erfolgreich eingetragen.');
+            $http({
+                method: 'POST',
+                url: '/api/01/lagerausgangmakepdf',
+                data: { type: "pdf", docdate: vm.dt, project: vm.selectedProject, items:vm.selectedProducts, stock: vm.stock.name}
+                }).then(function successCallback(response) {
+                 $window.open(response.data, '_blank');
+                }, function errorCallback(response) {
+            });
+        }, function(error){
+            showAlert('Ein Fehler ist aufgetreten.');
         });
-        $http({
-         method: 'POST',
-         url: '/api/01/lagerausgangmakepdf',
-         data: { type: "pdf", docdate: vm.dt, project: vm.selectedProject, items:vm.selectedProducts, stock: vm.stock.name}
-        }).then(function successCallback(response) {
-             $window.open(response.data, '_blank');
-          }, function errorCallback(response) {
-          });
     }
+
     function getTotal(){
         var total = 0;
         for (var i=0;i<vm.selectedProducts.length;i++){
@@ -146,4 +148,15 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
     function newState(state) {
         alert("Sorry! You'll need to create a Constituion for " + state + " first!");
     }
+    function showAlert(text) {
+        $mdDialog.show(
+            $mdDialog.alert()
+                .parent(angular.element(document.querySelector('#popupContainer')))
+                .clickOutsideToClose(true)
+                .title(text)
+                .textContent('')
+                .ariaLabel('Benachrichtigung')
+                .ok('OK')
+        );
+    };
 }]);
