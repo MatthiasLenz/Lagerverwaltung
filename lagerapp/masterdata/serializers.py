@@ -8,19 +8,38 @@ from models import Supplier01, Supplier04, Supplier05, PurchaseDoc01, PurchaseDo
 # from baseserializers import SupplierSerializer
 from django.contrib.auth.models import User
 
-class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+class StaffSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id', 'description','customer','address','country','zipcode','city','manager','leader')
+        fields = ('id', 'firstname', 'lastname', 'phone', 'mobile', 'mail', 'gender')
+
+class StaffSerializer01(StaffSerializer):
+    class Meta(StaffSerializer.Meta):
+        model = Staff01
+
+class StaffSerializer04(StaffSerializer):
+    class Meta(StaffSerializer.Meta):
+        model = Staff04
+
+class StaffSerializer05(StaffSerializer):
+    class Meta(StaffSerializer.Meta):
+        model = Staff05
+
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('id','description','customer','address','country','zipcode','city','manager','leader')
 
 class ProjectSerializer01(ProjectSerializer):
+    manager = StaffSerializer01(read_only=True, allow_null=True)
     class Meta(ProjectSerializer.Meta):
         model = Project01
 
 class ProjectSerializer04(ProjectSerializer):
+    manager = StaffSerializer04(read_only=True, allow_null=True)
     class Meta(ProjectSerializer.Meta):
         model = Project04
 
 class ProjectSerializer05(ProjectSerializer):
+    manager = StaffSerializer05(read_only=True, allow_null=True)
     class Meta(ProjectSerializer.Meta):
         model = Project05
 
@@ -333,8 +352,5 @@ class MinPurchaseDocSerializer(serializers.ModelSerializer):
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'status', 'docdate')
 
 
-class StaffSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Staff01
-        fields = ('id', 'firstname', 'lastname', 'phone', 'mobile', 'mail', 'gender')
+
 

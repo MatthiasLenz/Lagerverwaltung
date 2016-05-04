@@ -3,10 +3,28 @@ from basemodels import SupplierBase, PurchaseDocBase, PurchaseDocDataBase, Deliv
     StaffBase, ProjectBase
 from django.db import models
 
+class Staff01(StaffBase):
+    class Meta(StaffBase.Meta):
+        db_table = 'Staff'
+        app_label = 'hit_01_staff'
+
+
+class Staff04(StaffBase):
+    class Meta(StaffBase.Meta):
+        db_table = 'Staff'
+        app_label = 'hit_04_staff'
+
+
+class Staff05(StaffBase):
+    class Meta(StaffBase.Meta):
+        db_table = 'Staff'
+        app_label = 'hit_05_staff'
+
 class Project01(ProjectBase):
     class Meta(ProjectBase.Meta):
         db_table = 'Project'
         app_label = 'hit_01_project'
+    manager = models.ForeignKey(Staff01, db_column='Manager', blank=True, null=True)
 
 class Project04(ProjectBase):
     class Meta(ProjectBase.Meta):
@@ -134,21 +152,3 @@ class DeliveryNoteData05(DeliveryNoteDataBase):
 
     deliverynoteid = models.ForeignKey(DeliveryNote05, db_column='DeliveryNoteID', blank=True, null=True,
                                        related_name='data')
-
-
-class Staff01(StaffBase):
-    class Meta(StaffBase.Meta):
-        db_table = 'Staff'
-        app_label = 'hit_01_staff'
-
-
-class Staff04(StaffBase):
-    class Meta(StaffBase.Meta):
-        db_table = 'Staff'
-        app_label = 'hit_04_staff'
-
-
-class Staff05(StaffBase):
-    class Meta(StaffBase.Meta):
-        db_table = 'Staff'
-        app_label = 'hit_05_staff'
