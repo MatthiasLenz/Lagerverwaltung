@@ -13,7 +13,6 @@ class ProjectBase(models.Model):
     zipcode = models.CharField(db_column='ZipCode', max_length=8, blank=True)
     country = models.CharField(db_column='Country', max_length=3, blank=True)
     city = models.CharField(db_column='City', max_length=30, blank=True)
-    leader = models.CharField(db_column='Leader', max_length=15, blank=True)
     projectsimulated = models.NullBooleanField(db_column='ProjectSimulated', default=0)
     class Meta:
         abstract = True

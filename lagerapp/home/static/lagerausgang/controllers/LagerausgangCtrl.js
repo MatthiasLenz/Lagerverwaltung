@@ -1,5 +1,5 @@
 angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','$timeout', '$q', '$scope', 'stockService',
-    'projectService', function ($http, $timeout, $q, $scope, stockService, projectService) {
+    'projectService', 'bestellungenService', function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService) {
     var vm = this;
 
     vm.simulateQuery = false;
@@ -19,6 +19,10 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
         formatYear: 'yy',
         startingDay: 1
     };
+    vm.internalpurchasedocs = [];
+    bestellungenService.internalpurchasedoc.list({status:0}).then(function(data){
+        vm.internalpurchasedocs = data;
+    })
     stockService.currentStock({})
         .then(function (data) {
             vm.stock = data;
@@ -43,6 +47,29 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
         }
     };
     function save(){
+        var articles = [];
+        for(var i=0;i<vm.selectedProducts.length;i++){
+            article = vm.selectedProducts[i];
+            articles.push({ "rowid": null,
+                "prodid": article.article.prodid.id, "name": article.article.prodid.name1,
+                "unit": article.article.prodid.unit1,
+                "quantity": article.quantity, "price": article.article.prodid.netpurchaseprice,
+                "amount": article.quantity * article.article.prodid.netpurchaseprice});
+        }
+        data = {
+            "doctype": 3, "module": 9, "status": 0,
+            "subject": vm.selectedProject.description,
+            "responsible": vm.selectedProject.manager.id,
+            "contactonsiteid": vm.leader,
+            "supplierid": "SOLID-SCHIEREN", // ToDo: variabel
+            "docdate": vm.dt,
+            "data": articles,
+            "deliverynotes": []
+        };
+        bestellungenService.purchasedoc.create(data).then(function (response) {
+            alert(response);
+            //$scope.bestellen.finish();
+        });
         $http({
          method: 'POST',
          url: '/api/01/lagerausgangmakepdf',

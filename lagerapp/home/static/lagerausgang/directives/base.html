@@ -96,7 +96,7 @@
                     <div flex="none">{{ lagerVm.dt |date:'d. MMM yyyy' }}</div>
                 </div>
                 <div>Kostenstelle: {{ lagerVm.selectedProject.id }} </div>
-                <div>Bauleiter: {{ lagerVm.selectedProject.manager }}</div>
+                <div>Bauleiter: {{ lagerVm.selectedProject.manager.firstname }} {{ lagerVm.selectedProject.manager.lastname }}</div>
                 <div>Polier: {{ lagerVm.selectedProject.leader }}</div>
             </md-subheader>
             <table class="table">
@@ -135,4 +135,4 @@
         </div>
     </div>
 </div>
-<pre> {{ lagerVm.stock |json }}</pre>
+<pre> {{ lagerVm.selectedProducts |json }}</pre>

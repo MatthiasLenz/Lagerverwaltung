@@ -26,20 +26,24 @@ class StaffSerializer05(StaffSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id','description','customer','address','country','zipcode','city','manager','leader')
+        fields = ('id','description','customer','address','country','zipcode','city','manager','leader',
+                  'leaderid','managerid')
 
 class ProjectSerializer01(ProjectSerializer):
     manager = StaffSerializer01(read_only=True, allow_null=True)
+    leader = StaffSerializer01(read_only=True, allow_null=True)
     class Meta(ProjectSerializer.Meta):
         model = Project01
 
 class ProjectSerializer04(ProjectSerializer):
     manager = StaffSerializer04(read_only=True, allow_null=True)
+    leader = StaffSerializer01(read_only=True, allow_null=True)
     class Meta(ProjectSerializer.Meta):
         model = Project04
 
 class ProjectSerializer05(ProjectSerializer):
     manager = StaffSerializer05(read_only=True, allow_null=True)
+    leader = StaffSerializer01(read_only=True, allow_null=True)
     class Meta(ProjectSerializer.Meta):
         model = Project05
 

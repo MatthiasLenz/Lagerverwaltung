@@ -12,12 +12,19 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     var deliverynote = {};
     var purchasedoc = {};
     var purchasedocdata = {};
+    var internalpurchasedoc = {};
     var purchasedocsupplier = {};
     for (var i = 0; i < companies.length; i++) {
         purchasedoc[companies[i]] = $resource(
             "/api/" + companies[i] + "/purchasedoc/:id", {id: "@id"}, {
             create: {method: 'POST', headers: {"Authorization": getToken}},
-                update: {method: 'PATCH', headers: {"Authorization": getToken}},
+            update: {method: 'PATCH', headers: {"Authorization": getToken}},
+            delete: {method: 'DELETE', headers: {"Authorization": getToken}}
+            });
+        internalpurchasedoc[companies[i]] = $resource(
+            "/api/" + companies[i] + "/internalpurchasedoc/:id", {id: "@id"}, {
+            create: {method: 'POST', headers: {"Authorization": getToken}},
+            update: {method: 'PATCH', headers: {"Authorization": getToken}},
             delete: {method: 'DELETE', headers: {"Authorization": getToken}}
             });
         deliverynote[companies[i]] = $resource(
@@ -64,10 +71,15 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     function purchasedoc_get(id) {
         return purchasedoc[companyid()].get(id).$promise;
     }
+    function internalpurchasedoc_get(id) {
+        return internalpurchasedoc[companyid()].get(id).$promise;
+    }
     function purchasedoc_list(kwargs) {
         return purchasedoc[companyid()].query({'status': kwargs.status, 'supplierid': kwargs.supplierid}).$promise;
     }
-
+    function internalpurchasedoc_list(kwargs) {
+        return internalpurchasedoc[companyid()].query({'status': kwargs.status, 'supplierid': kwargs.supplierid}).$promise;
+    }
     function purchasedoc_create(data) {
         return tokenService.getToken().then(function (response) {
             return response;
@@ -79,7 +91,16 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             clearCache();
         });
     }
-
+    function internalpurchasedoc_create(data) {
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return internalpurchasedoc[companyid()].create(data).$promise;
+        }).then(function (response) {
+            clearCache();
+        });
+    }
     function purchasedoc_delete(doc) {
         return tokenService.getToken().then(function (response) {
             return response;
@@ -97,7 +118,23 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             clearCache();
         });
     }
-
+    function internalpurchasedoc_delete(doc) {
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            promises = [];
+            doc.data.forEach(function (item) {
+                promises.push(purchasedocdata_delete(item.rowid));
+            });
+            return $q.all(promises);
+        }).then(function () {
+            //after all the purchasedocdata entries for purchasedoc are deleted
+            return internalpurchasedoc[companyid()].delete({}, {"id": doc.id}).$promise;
+        }).then(function (response) {
+            clearCache();
+        });
+    }
     function purchasedoc_update(id, data) {
         return tokenService.getToken().then(function (response) {
             return response;
@@ -108,6 +145,27 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             clearCache();
         });
     }
+    function internalpurchasedoc_update(id, data) {
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return internalpurchasedoc[companyid()].update(id, data).$promise;
+        }).then(function (response) {
+            clearCache();
+        });
+    }
+    /* ToDo: generalise
+    function update(resource, args){
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return resource.update(args.id, args.data).$promise;
+        }).then(function (response) {
+            clearCache();
+        });
+    }*/
 
     function purchasedocdata_create(purchasedocid, data) {
         return tokenService.getToken().then(function (response) {
@@ -202,6 +260,13 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
     return {
+        internalpurchasedoc: {
+            get: internalpurchasedoc_get,
+            list: internalpurchasedoc_list,
+            create: internalpurchasedoc_create,
+            update: internalpurchasedoc_update,
+            delete: internalpurchasedoc_delete
+        },
         purchasedoc: {
             get: purchasedoc_get,
             list: purchasedoc_list,

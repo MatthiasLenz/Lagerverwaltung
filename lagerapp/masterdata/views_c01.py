@@ -64,7 +64,7 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Project01.objects.filter(projectsimulated=0)
     serializer_class = ProjectSerializer01
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('id', 'description', 'manager', 'leader')
+    search_fields = ('id','description','managerid','leaderid')
 
 class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -133,9 +133,6 @@ class MinPurchaseDocViewSet(viewsets.GenericViewSet):
 
 
 class PurchaseDocViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list` and `detail` actions.
-    """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = PurchaseDoc01.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
@@ -144,7 +141,8 @@ class PurchaseDocViewSet(viewsets.ModelViewSet):
 
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = StatusFilter
-    filter_fields = ('status', 'supplierid', 'module', 'doctype')
+    filter_fields = ('status', 'supplierid')
+
 
 class InternalPurchaseDocViewSet(viewsets.ModelViewSet):
     # Error if result has more than 2000 rows

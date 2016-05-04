@@ -24,17 +24,28 @@ class Project01(ProjectBase):
     class Meta(ProjectBase.Meta):
         db_table = 'Project'
         app_label = 'hit_01_project'
-    manager = models.ForeignKey(Staff01, db_column='Manager', blank=True, null=True)
+    manager = models.ForeignKey(Staff01, db_column='Manager',  max_length=15, blank=True)
+    managerid = models.CharField(db_column='Manager')
+    leader = models.ForeignKey(Staff01, db_column='Leader', blank=True, null=True)
+    leaderid = models.CharField(db_column='Leader', max_length=15, blank=True)
 
 class Project04(ProjectBase):
     class Meta(ProjectBase.Meta):
         db_table = 'Project'
         app_label = 'hit_04_project'
+    manager = models.ForeignKey(Staff04, db_column='Manager', max_length=15, blank=True)
+    managerid = models.CharField(db_column='Manager')
+    leader = models.ForeignKey(Staff04, db_column='Leader', blank=True, null=True)
+    leaderid = models.CharField(db_column='Leader', max_length=15, blank=True)
 
 class Project05(ProjectBase):
     class Meta(ProjectBase.Meta):
         db_table = 'Project'
         app_label = 'hit_05_project'
+    manager = models.ForeignKey(Staff05, db_column='Manager',  max_length=15, blank=True)
+    managerid = models.CharField(db_column='Manager')
+    leader = models.ForeignKey(Staff05, db_column='Leader', blank=True, null=True)
+    leaderid = models.CharField(db_column='Leader', max_length=15, blank=True)
 
 class Supplier01(SupplierBase):
     class Meta(SupplierBase.Meta):
