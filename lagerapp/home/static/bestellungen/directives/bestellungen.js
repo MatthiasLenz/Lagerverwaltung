@@ -8,9 +8,9 @@ directive('bestellungen', function () {
             controller.list = [];
             updateList();
             controller.files = {};
-                sessionService.subscribeStockIDChange($scope, function () {
-                    updateList();
-                });
+            sessionService.subscribeStockIDChange($scope, function () {
+                updateList();
+            });
             controller.delete_doc = function (doc) {
                 bestellungenService.purchasedoc.delete(doc).then(function () {
                     //updateList();
@@ -38,7 +38,6 @@ directive('bestellungen', function () {
                 files.results.forEach(function (item) {
                     controller.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
                 });
-
             });
 
             controller.make = function (doc, type) {

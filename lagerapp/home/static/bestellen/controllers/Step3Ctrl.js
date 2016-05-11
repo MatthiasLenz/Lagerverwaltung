@@ -26,16 +26,12 @@ controller('Step3Ctrl', ['$http', '$scope', 'bestellungenService', 'tokenService
         });
 
     function changeIn(key1) {
-        alert(controller.packings[key1].orderAmount);
         for (var key2 in controller.packings) {
             if (key1 != key2) {
-                alert(parseFloat(((controller.packings[key1].orderAmount * controller.packings[key1].quantity)
-                / controller.packings[key2].quantity).toFixed(2)));
                 controller.packings[key2].orderAmount = parseFloat(((controller.packings[key1].orderAmount * controller.packings[key1].quantity)
                 / controller.packings[key2].quantity).toFixed(2));
             }
         }
-
         controller.selectedpacking = controller.packings[key1];
     }
 

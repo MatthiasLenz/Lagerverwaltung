@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from rest_framework import viewsets, pagination, filters
 from rest_framework.response import Response
 
-
 class LargeResultsSetPagination(pagination.PageNumberPagination):
     page_size = 20
     page_size_query_param = 'page_size'
@@ -32,7 +31,7 @@ class StatusFilter(filters.FilterSet):
 
     class Meta:
         model = PurchaseDoc01
-        fields = ['status', 'supplierid']
+        fields = ['status', 'supplierid', 'modulerefid']
 
 
 class CustomSearchFilter(filters.SearchFilter):
@@ -155,7 +154,7 @@ class InternalPurchaseDocViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = StatusFilter
 
-    filter_fields = ('status', 'supplierid')
+    filter_fields = ('status', 'supplierid', 'modulerefid')
 
 class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
@@ -264,13 +263,13 @@ def lagerausgangmakepdf(request):
         ftpsettings = settings["ftp"]
         lagerausgang = settings["lagerausgang"]
         document_folder = settings["document_folder"]
-    data = dict(request.data)
+    data = dict(request.data['doc'])
     data.update(lagerausgang)
     dt = parse_datetime(data['docdate'])
     data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
 
     renderdoc1(data, os.path.abspath("masterdata/lagerausgang.odt"))
-    document_folder = document_folder +"lagerausgang/" + data['project']['id'] + '/'
+    document_folder = document_folder +"lagerausgang/" + data['modulerefid'] + '/'
     doctype = request.data['type']
     subprocess.call(os.path.abspath(
         'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to ' + doctype + ' ' +
@@ -299,7 +298,10 @@ def renderdoc(data_input, outputfile):
     t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
 
     supplier = data_input['supplier']
-    responsible = Staff01.objects.get(id=data_input['responsible'])
+    try:
+        responsible = Staff01.objects.get(id=data_input['responsible'])
+    except Staff01.DoesNotExist:
+        responsible = {'firstname':'','lastname':'', 'mobile':''}
     items = []
     total = '%.2f' % sum(item['amount'] for item in data_input['data'])
     for item in data_input['data']:
@@ -316,8 +318,8 @@ def renderdoc(data_input, outputfile):
     info = {'kostenstelle': data_input['kostenstelle'],
             'bez_kostenstelle': data_input['bez_kostenstelle'],
             'id': data_input['id'], 'date': data_input['docdate'],
-            'bauleiter': '%s %s' % (responsible.firstname, responsible.lastname),
-            'bauleitertel': responsible.mobile,
+            'bauleiter': '%s %s' % (responsible['firstname'], responsible['lastname']),
+            'bauleitertel': responsible['mobile'],
             'polier': '', 'lieferadresse': data_input['adr_lang'],
             'infotext': format_py3o_context_value(unicode(data_input['infotext']))}
     data = dict(items=items, recipient=recipient, sender=sender, info=info, total=total)
@@ -333,15 +335,13 @@ def renderdoc1(data_input, outputfile):
     #responsible = Staff01.objects.get(id=data_input['responsible'])
     items = []
     #total = '%.2f' % sum(item['amount'] for item in data_input['data'])
-    for item in data_input['items']:
-        article = item["article"]["prodid"]
+    for item in data_input['data']:
         items.append(
-            {'id': article['id'], 'name': article['name1'], 'unit': article['unit1'], 'quantity': '%.3f' % item['quantity'],
-             'price': '%.2f' % article['netpurchaseprice']})
+            {'id': item['prodid'], 'name': item['name'], 'unit': item['unit'], 'quantity': '%.3f' % item['quantity'],
+             'price': '%.2f' % item['price']})
     # company specific
-    info = {'kostenstelle': data_input['project']['id'], 'stock': data_input["stock"],
-            'bez_kostenstelle': data_input['project']['description'],
-            'date': data_input['docdate'], 'recipient':'%s %s'%(data_input['project']['manager']['firstname'],
-            data_input['project']['manager']['lastname'])}
+    info = {'kostenstelle': data_input['modulerefid'], 'stock': data_input["stock"],
+            'bez_kostenstelle': data_input['subject'],
+            'date': data_input['docdate'], 'recipient':'%s'%(data_input['responsible'])}
     data = dict(items=items, info=info)
     t.render(data)

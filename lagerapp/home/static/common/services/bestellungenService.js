@@ -78,7 +78,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         return purchasedoc[companyid()].query({'status': kwargs.status, 'supplierid': kwargs.supplierid}).$promise;
     }
     function internalpurchasedoc_list(kwargs) {
-        return internalpurchasedoc[companyid()].query({'status': kwargs.status, 'supplierid': kwargs.supplierid}).$promise;
+        return internalpurchasedoc[companyid()].query(kwargs).$promise;
     }
     function purchasedoc_create(data) {
         return tokenService.getToken().then(function (response) {
@@ -230,7 +230,19 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             });
         });
     }
-
+    function makeinternal(doc,type){
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return $http({
+                method: "POST",
+                url: "/api/" + companyid() + "/lagerausgangmakepdf",
+                data: {"doc": doc, "type": type},
+                headers: {"Authorization": getToken}
+            });
+        });
+    }
     var documents = $resource(
         "/api/purchasedocuments/:id", {id: "@purchasedocid"}, {
             delete: {method: 'DELETE', headers: {"Authorization": getToken}},
@@ -288,6 +300,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             create: deliverynote_create,
             delete: deliverynote_delete
         },
-        make: make
+        make: make,
+        makeinternal: makeinternal
     };
 });

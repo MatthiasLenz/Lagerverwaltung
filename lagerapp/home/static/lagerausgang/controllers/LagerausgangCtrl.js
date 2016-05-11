@@ -2,7 +2,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
     'projectService','bestellungenService','$window', '$mdDialog',
     function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService, $window, $mdDialog) {
     var vm = this;
-
+    vm.files = {};
     vm.simulateQuery = false;
     vm.isDisabled = false;
     //Datepicker
@@ -21,9 +21,6 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
         startingDay: 1
     };
     vm.internalpurchasedocs = [];
-    bestellungenService.internalpurchasedoc.list({status:0}).then(function(data){
-        vm.internalpurchasedocs = data;
-    })
     stockService.currentStock({})
         .then(function (data) {
             vm.stock = data;
@@ -31,10 +28,12 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
     // list of `state` value/display objects
     vm.queryStock = queryStock;
     vm.queryProject = queryProject;
+    vm.projectDocs = [];
     vm.selectedItemChange = selectedItemChange;
     vm.searchTextChange = searchTextChange;
     vm.getTotal = getTotal;
     vm.save = save;
+    vm.make = make;
     vm.selectedProducts = [{id:0, quantity:null, article:null}];
     vm.addRow = addRow;
     vm.deleteRow = deleteRow;
@@ -77,7 +76,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
                 url: '/api/01/lagerausgangmakepdf',
                 data: { type: "pdf", docdate: vm.dt, project: vm.selectedProject, items:vm.selectedProducts, stock: vm.stock.name}
                 }).then(function successCallback(response) {
-                 $window.open(response.data, '_blank');
+                    refreshDocs();
+                    $window.open(response.data, '_blank');
                 }, function errorCallback(response) {
             });
         }, function(error){
@@ -118,11 +118,10 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
         })
     }
     function searchTextChange(text) {
-
     }
 
     function selectedItemChange(item) {
-
+        refreshDocs();
     }
     function addRow(){
         var newRowID = vm.selectedProducts.length+1;
@@ -159,4 +158,22 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
                 .ok('OK')
         );
     };
+    function refreshDocs(){
+        bestellungenService.internalpurchasedoc.list({status:4, modulerefid:vm.selectedProject.id}).then(function(data){
+            vm.projectDocs = data;
+        })
+    }
+    function make(doc, type) {
+        bestellungenService.makeinternal(doc, type).then(function (docurl) {
+            bestellungenService.purchasedoc.file(doc.id).then(function (item) {
+                    vm.files[item.purchasedocid] = {pdf: item.pdf};
+            });
+        });
+    };
+    bestellungenService.purchasedoc.files().then(function (files) {
+        //build a dictionary
+        files.results.forEach(function (item) {
+            vm.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
+        });
+    });
 }]);
