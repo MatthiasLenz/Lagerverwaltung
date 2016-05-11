@@ -403,6 +403,7 @@ class PurchaseDocBase(models.Model):
     modulerefid= models.CharField(db_column='ModuleRefID', max_length=15, blank=True)
     status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     docdate = models.DateTimeField(db_column='DocDate', blank=True, null=True)
+    stockid = models.CharField(db_column='StockID', blank=True, max_length=15)
     def save(self, *args, **kwargs):
         """http://stackoverflow.com/questions/4616787/django-making-a-custom-pk-auto-increment"""
         if not self.id:

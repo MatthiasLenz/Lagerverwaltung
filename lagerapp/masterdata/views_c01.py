@@ -283,13 +283,13 @@ def lagerausgangmakepdf(request):
     os.rename(document_folder + 'lagerausgang.' + doctype, document_folder + docname)
     # with open(document_folder+"bestellung.pdf", 'rb') as f:
     #    url = ftpupload(ftpsettings, f, "bestellung.pdf")
-    fileurl = 'http://%s/static/lagerausgang/%s/%s' % (settings['server'], data['project']['id'], docname)
-    #try:
-    #    obj = PurchaseDocuments.objects.get(purchasedocid=data['id'])
-    #    setattr(obj, doctype, fileurl)
-    #    obj.save()
-    #except PurchaseDocuments.DoesNotExist:
-    #    PurchaseDocuments.objects.create(purchasedocid=data['id'], pdf=fileurl)
+    fileurl = 'http://%s/static/lagerausgang/%s/%s' % (settings['server'], data['modulerefid'], docname)
+    try:
+        obj = PurchaseDocuments.objects.get(purchasedocid=data['id'])
+        setattr(obj, doctype, fileurl)
+        obj.save()
+    except PurchaseDocuments.DoesNotExist:
+        PurchaseDocuments.objects.create(purchasedocid=data['id'], pdf=fileurl)
     return Response(fileurl)
 
 def renderdoc(data_input, outputfile):
@@ -340,7 +340,7 @@ def renderdoc1(data_input, outputfile):
             {'id': item['prodid'], 'name': item['name'], 'unit': item['unit'], 'quantity': '%.3f' % item['quantity'],
              'price': '%.2f' % item['price']})
     # company specific
-    info = {'kostenstelle': data_input['modulerefid'], 'stock': data_input["stock"],
+    info = {'kostenstelle': data_input['modulerefid'], 'stock': data_input["stockid"],
             'bez_kostenstelle': data_input['subject'],
             'date': data_input['docdate'], 'recipient':'%s'%(data_input['responsible'])}
     data = dict(items=items, info=info)
