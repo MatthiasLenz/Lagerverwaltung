@@ -46,6 +46,49 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
             vm.direction = "row";
         }
     };
+    vm.delete_doc = function (doc) {
+        bestellungenService.internalpurchasedoc.delete(doc).then(function () {
+            refreshDocs();
+        });
+    };
+    vm.edit_doc = function (doc) {
+        var temp = doc.edit;
+        vm.internalpurchasedocs.forEach(function (item) {
+            item.edit = false;
+        });
+        doc.edit = !temp;
+    };
+    vm.save_doc = function (doc) {
+        doc.edit = false;
+        //if all updates are started at the same time, the tokenService might not have a token yet (if the
+        //user did not log in) and it will prompt the login view for each update
+        bestellungenService.purchasedocdata.batch_update(doc.data).then(function () {
+            vm.refresh_documents(doc);
+        });
+    };
+    vm.delete_docdata = function (doc, rowid) {
+        bestellungenService.purchasedocdata.delete(rowid).then(function () {
+            var data = [];
+            for (var i=0;i<doc.data.length;i++){
+                if (doc.data[i].rowid!=rowid){
+                    data.push(doc.data[i]);
+                }
+            }
+            doc.data = data;
+            vm.refresh_documents(doc);
+        });
+    };
+    vm.refresh_documents = function (doc) {
+        bestellungenService.purchasedoc.delete_documents(doc.id).then(function(){
+            make(doc, 'pdf').then(function(){
+                refreshDocs();
+            });
+        }, function(error){
+            make(doc, 'pdf').then(function(){
+                refreshDocs();
+            });
+        });
+    };
     function save(){
         var articles = [];
         for(var i=0;i<vm.selectedProducts.length;i++){

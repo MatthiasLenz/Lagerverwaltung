@@ -436,7 +436,7 @@ class PurchaseDocDataBase(models.Model):
     posid = models.CharField(db_column='PosID', max_length=15, blank=True)
     weight = models.FloatField(db_column='Weight', default=0)
     volume = models.FloatField(db_column='Volume', default=0)
-    comment = models.CharField(db_column='Comment', max_length=255, default='')
+    comment = models.CharField(db_column='Comment', max_length=255, default='', blank=True)
     calclineexpression = models.CharField(db_column='CalcLineExpression', max_length=60, default='')
     discount = models.FloatField(db_column='Discount', default=1)
     discountcalclineexpression = models.CharField(db_column='DiscountCalcLineExpression', max_length=60, default='')
