@@ -214,3 +214,42 @@ def ftpupload(ftpsettings, file, filename):
     ftp.cwd('%s/%s' % (ftpsettings["folder"], dirname))
     ftp.storbinary('STOR %s' % filename, file)
     return '%s/%s/%s' % (ftpsettings['uploads'], dirname, filename)
+
+import pyodbc
+from rest_framework.decorators import api_view
+
+@api_view(['GET','POST'])
+def get_project_data(request):
+    def max_consumedproductid(connection):
+        cursor = connection.cursor()
+        cursor.execute("SELECT MAX(ID) FROM ConsumedProduct")
+        id = str(int(cursor.fetchall()[0][0]) + 1)
+        return '0' * (5 - len(id)) + id
+    def max_consumedproductdatarowid(connection):
+        cursor = connection.cursor()
+        cursor.execute("SELECT MAX(ROWID) FROM ConsumedProductData")
+        return cursor.fetchall()[0][0] + 1
+
+    if request.method == 'GET':
+        pass
+
+    elif request.method =='POST':
+        data = request.data
+        project_id = data['projectid']
+        docdate = data['docdate']
+        articles = data['articles']
+        cn = pyodbc.connect(
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_01_pro_%s;UID=hitoffice;PWD=Hf#379' % project_id)
+        consumedproductid = max_consumedproductid(cn)
+        datarowid = max_consumedproductdatarowid(cn)
+        print(consumedproductid, datarowid)
+        cursor = cn.cursor()
+        cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)", consumedproductid, docdate, 'test')
+        cn.commit()
+        for a in articles:
+            cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
+                           ProductType, Margin, GrossPrice, GrossAmount, SupplierID, PurchaseRef) Values \
+                           (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", a['prodid'], a['name1'])
+        return Response('')
+    elif request.method == 'DELETE':
+        pass

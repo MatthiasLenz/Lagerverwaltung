@@ -62,5 +62,6 @@ urlpatterns = [
     url(r'^api/userdata/$', views.UserDataList.as_view()),
     url(r'^api/userdata/(?P<pk>[0-9]+)/$', views.UserDataDetail.as_view()),
     url(r'^api/01/makepdf', views_c01.makepdf, name='makepdf'),
-    url(r'^api/01/lagerausgangmakepdf', views_c01.lagerausgangmakepdf, name='lagerausgangmakepdf')
+    url(r'^api/01/lagerausgangmakepdf', views_c01.lagerausgangmakepdf, name='lagerausgangmakepdf'),
+    url(r'^api/getpr', views.get_project_data, name='get_project'),
 ]

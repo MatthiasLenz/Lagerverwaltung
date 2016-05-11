@@ -18,6 +18,7 @@ class ProjectBase(models.Model):
         abstract = True
         managed = False
 
+
 class SupplierBase(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)
     namea = models.CharField(db_column='NameA', max_length=30, blank=True)
