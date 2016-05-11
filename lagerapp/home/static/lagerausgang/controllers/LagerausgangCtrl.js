@@ -70,7 +70,6 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
             "deliverynotes": []
         };
         bestellungenService.internalpurchasedoc.create(data).then(function (purchasedoc) {
-            alert(purchasedoc);
             make(purchasedoc, 'pdf').then(function (response){
                 refreshDocs();
                 showAlert('Lagerausgang erfolgreich eingetragen.').then(function(){
@@ -176,7 +175,6 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
         });
     };
     bestellungenService.purchasedoc.files().then(function (files) {
-        //build a dictionary
         files.results.forEach(function (item) {
             vm.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
         });

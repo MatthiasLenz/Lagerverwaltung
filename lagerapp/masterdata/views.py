@@ -194,8 +194,9 @@ class CompleteProductView(APIView):
 
 
 class PurchaseDocumentsView(viewsets.ModelViewSet):
-    queryset = PurchaseDocuments.objects.all()
+    queryset = PurchaseDocuments.objects.all().order_by('-purchasedocid')
     serializer_class = PurchaseDocumentsSerializer
+    pagination_class = LargeResultsSetPagination
 
 from genshi.core import Markup
 def format_py3o_context_value(value):

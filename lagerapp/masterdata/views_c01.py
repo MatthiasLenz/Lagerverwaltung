@@ -272,7 +272,7 @@ def lagerausgangmakepdf(request):
         'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to ' + doctype + ' ' +
                     os.path.abspath('masterdata/lagerausgang.odt') + ' --outdir ' + document_folder,
                     shell=True)
-    docname = 'Lagerausgang-%s.%s' % (data['id'].replace('.', '-'), doctype)
+    docname = 'Lagerausgang-%s.%s' % (data['id'], doctype)
     try:
         os.remove(document_folder + docname)
     except WindowsError:
@@ -338,7 +338,7 @@ def renderdoc1(data_input, outputfile):
              'price': '%.2f' % item['price']})
     # company specific
     info = {'kostenstelle': data_input['modulerefid'], 'stock': data_input["stockid"],
-            'bez_kostenstelle': data_input['subject'],
+            'bez_kostenstelle': data_input['subject'], 'id':data_input['id'],
             'date': data_input['docdate'], 'recipient':'%s'%(data_input['responsible'])}
     data = dict(items=items, info=info)
     t.render(data)
