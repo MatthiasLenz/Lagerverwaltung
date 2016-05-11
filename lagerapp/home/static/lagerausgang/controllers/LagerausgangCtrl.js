@@ -69,19 +69,19 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
             "data": articles,
             "deliverynotes": []
         };
-        bestellungenService.internalpurchasedoc.create(data).then(function (response) {
-            showAlert('Lagerausgang erfolgreich eingetragen.');
-            $http({
-                method: 'POST',
-                url: '/api/01/lagerausgangmakepdf',
-                data: { type: "pdf", docdate: vm.dt, project: vm.selectedProject, items:vm.selectedProducts, stock: vm.stock.name}
-                }).then(function successCallback(response) {
-                    refreshDocs();
+        bestellungenService.internalpurchasedoc.create(data).then(function (purchasedoc) {
+            alert(purchasedoc);
+            make(purchasedoc, 'pdf').then(function (response){
+                refreshDocs();
+                showAlert('Lagerausgang erfolgreich eingetragen.').then(function(){
                     $window.open(response.data, '_blank');
-                }, function errorCallback(response) {
+                });
+            }, function(error){
+                refreshDocs();
+                showAlert('Lagerausgang eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
             });
-        }, function(error){
-            showAlert('Ein Fehler ist aufgetreten.');
+            }, function(error){
+                showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler ist aufgetreten.');
         });
     }
 
@@ -148,7 +148,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
         alert("Sorry! You'll need to create a Constituion for " + state + " first!");
     }
     function showAlert(text) {
-        $mdDialog.show(
+        return $mdDialog.show(
             $mdDialog.alert()
                 .parent(angular.element(document.querySelector('#popupContainer')))
                 .clickOutsideToClose(true)
@@ -159,15 +159,20 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
         );
     };
     function refreshDocs(){
-        bestellungenService.internalpurchasedoc.list({status:4, modulerefid:vm.selectedProject.id}).then(function(data){
+        var dt = new Date();
+        dt.setMonth(dt.getMonth() - 1);
+        dt = dt.toISOString().slice(0, 10);
+        bestellungenService.internalpurchasedoc.list({status:4, modulerefid: vm.selectedProject.id,
+            min_date: dt}).then(function(data){
             vm.projectDocs = data;
         })
     }
     function make(doc, type) {
-        bestellungenService.makeinternal(doc, type).then(function (docurl) {
+        return bestellungenService.makeinternal(doc, type).then(function (docurl) {
             bestellungenService.purchasedoc.file(doc.id).then(function (item) {
-                    vm.files[item.purchasedocid] = {pdf: item.pdf};
+                vm.files[item.purchasedocid] = {pdf: item.pdf};
             });
+            return docurl;
         });
     };
     bestellungenService.purchasedoc.files().then(function (files) {

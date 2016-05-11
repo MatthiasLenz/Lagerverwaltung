@@ -6,17 +6,14 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, pagination, filters
 from rest_framework.response import Response
+import django_filters
 
 class LargeResultsSetPagination(pagination.PageNumberPagination):
     page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
-
-from django_filters import Filter
-
-
-class ListFilter(Filter):
+class ListFilter(django_filters.Filter):
     def filter(self, qs, value):
         if not value:
             return qs
@@ -28,10 +25,10 @@ class ListFilter(Filter):
 
 class StatusFilter(filters.FilterSet):
     status = ListFilter(name='status')
-
+    min_date = django_filters.DateFilter(name="docdate", lookup_type='gte')
     class Meta:
         model = PurchaseDoc01
-        fields = ['status', 'supplierid', 'modulerefid']
+        fields = ['status', 'supplierid', 'modulerefid', 'min_date']
 
 
 class CustomSearchFilter(filters.SearchFilter):
@@ -154,7 +151,7 @@ class InternalPurchaseDocViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = StatusFilter
 
-    filter_fields = ('status', 'supplierid', 'modulerefid')
+    filter_fields = ('status', 'supplierid', 'modulerefid', )
 
 class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
@@ -275,7 +272,7 @@ def lagerausgangmakepdf(request):
         'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to ' + doctype + ' ' +
                     os.path.abspath('masterdata/lagerausgang.odt') + ' --outdir ' + document_folder,
                     shell=True)
-    docname = 'Lagerausgang-%s.%s' % (data['docdate'].replace('.', '-'), doctype)
+    docname = 'Lagerausgang-%s.%s' % (data['id'].replace('.', '-'), doctype)
     try:
         os.remove(document_folder + docname)
     except WindowsError:

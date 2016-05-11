@@ -148,7 +148,7 @@
 <div class="row" ng-repeat="bestellung in lagerVm.projectDocs | orderBy: '-docdate'">
         <div class="col-lg-12">
         <div class="panel" ng-class="{'panel-primary': !bestellung.edit, 'panel-edit' : bestellung.edit }">
-            <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}
+            <div class="panel-heading">Baustelle: {{ bestellung.modulerefid+' '+bestellung.subject }} Lagerausgang Nr.: {{ bestellung.id }}
                 ({{ bestellung.docdate |date:'d. MMM yyyy' }})
                 <li class="btn-group pull-right" uib-dropdown is-open="">
                     <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
@@ -211,15 +211,7 @@
                 <div class="well col-md-8 pull-left" ng-hide="bestellung.edit">
                     <span ng-show="lagerVm.files[bestellung.id].pdf">
                         <a target="_blank" href="{{ lagerVm.files[bestellung.id].pdf }}">
-                            <img ng-src="static/pdficon.png" width="32">Bestellung.pdf</a>
-                    </span>
-                    <span ng-show="lagerVm.files[bestellung.id].doc">
-                        <a target="_blank" href="{{ lagerVm.files[bestellung.id].doc }}">
-                            <img ng-src="static/wordicon.png" width="32">Bestellung.doc</a>
-                    </span>
-                    <span ng-show="lagerVm.files[bestellung.id].odt">
-                        <a target="_blank" href="{{ lagerVm.files[bestellung.id].odt }}">
-                            <img ng-src="static/odticon.png" width="32">Bestellung.odt</a>
+                            <img ng-src="static/pdficon.png" width="32">Lagerausgang.pdf</a>
                     </span>
                 </div>
 

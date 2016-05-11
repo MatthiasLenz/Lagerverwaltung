@@ -99,6 +99,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return internalpurchasedoc[companyid()].create(data).$promise;
         }).then(function (response) {
             clearCache();
+            return response;
         });
     }
     function purchasedoc_delete(doc) {
@@ -230,7 +231,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             });
         });
     }
-    function makeinternal(doc,type){
+    function makeinternal(doc, type){
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
