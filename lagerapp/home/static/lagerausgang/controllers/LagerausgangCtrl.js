@@ -1,6 +1,6 @@
-angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','$timeout', '$q', '$scope', 'stockService',
-    'projectService','bestellungenService','$window', '$mdDialog',
-    function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService, $window, $mdDialog) {
+angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','$timeout', '$q', '$scope',
+    'stockService', 'projectService','bestellungenService','$window', '$mdDialog',
+        function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService, $window, $mdDialog) {
     var vm = this;
     vm.files = {};
     vm.simulateQuery = false;
@@ -125,6 +125,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
             }, function(error){
                 showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler ist aufgetreten.');
         });
+        //enter consumed product data
+
     }
 
     function getTotal(){

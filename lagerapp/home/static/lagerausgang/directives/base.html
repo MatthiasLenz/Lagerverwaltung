@@ -10,7 +10,7 @@
                      placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
         <md-item-template>
                 <span md-highlight-text="lagerVm.searchProject"
-                      md-highlight-flags="^i">{{ item.id+', '+item.description }}</span>
+                      md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.responsible }}</span>
         </md-item-template>
         <md-not-found>
             Keine Übereinstimmung mit "{{ lagerVm.searchProject }}" gefunden.
