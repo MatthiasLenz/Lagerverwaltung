@@ -1,7 +1,7 @@
 # encoding=UTF-8
 from models import Supplier01, PurchaseDoc01, PurchaseDocData01, DeliveryNote01, DeliveryNoteData01, Staff01, Project01
 from serializers import SupplierSerializer, PurchaseDocSerializer01, MinPurchaseDocSerializer, \
-    PurchaseDocDataSerializer01, DeliveryNoteSerializer01, DeliveryNoteDataSerializer01, ProjectSerializer, StaffSerializer
+    PurchaseDocDataSerializer01, DeliveryNoteSerializer, DeliveryNoteDataSerializer,DeliveryNoteDataSerializer, ProjectSerializer, StaffSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, pagination, filters
@@ -185,7 +185,7 @@ class DeliveryNoteViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = DeliveryNote01.objects.filter(module=5).prefetch_related('data')
-    serializer_class = DeliveryNoteSerializer01
+    serializer_class = DeliveryNoteSerializer
     pagination_class = LargeResultsSetPagination
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('status',)
@@ -198,7 +198,7 @@ class DeliveryNoteDataViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = DeliveryNoteData01.objects.all()
-    serializer_class = DeliveryNoteDataSerializer01
+    serializer_class = DeliveryNoteDataSerializer
     pagination_class = LargeResultsSetPagination
 
 

@@ -68,6 +68,7 @@ class NatureSerializer(serializers.HyperlinkedModelSerializer):
         model = Nature
         fields = ('url', 'id', 'title', 'name')
 
+
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):
     #    #Only used for debugging. Extend init to print repr of Serializer instance.
@@ -153,7 +154,6 @@ class FastProductSerializer(serializers.ModelSerializer):
                   'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
                   'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')
 
-
 class DeliveryNoteDataSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
     class Meta:
@@ -162,25 +162,13 @@ class DeliveryNoteDataSerializer(serializers.ModelSerializer):
         'comment', 'dataid', 'packing', 'calclineexpression', 'quantityrejected', 'stockmovementid')
         model = DeliveryNoteData01
 
-class DeliveryNoteDataSerializer01(DeliveryNoteDataSerializer):
-    class Meta(DeliveryNoteDataSerializer.Meta):
-        model = DeliveryNoteData01
-
-
-class DeliveryNoteDataSerializer04(DeliveryNoteDataSerializer):
-    class Meta(DeliveryNoteDataSerializer.Meta):
-        model = DeliveryNoteData04
-
-
-class DeliveryNoteDataSerializer05(DeliveryNoteDataSerializer):
-    class Meta(DeliveryNoteDataSerializer.Meta):
-        model = DeliveryNoteData05
-
 class DeliveryNoteSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)
+    data = DeliveryNoteDataSerializer(many=True, allow_null=True, required=False)
     class Meta:
         fields = ('id', 'orderid', 'extdocno', 'subject', 'responsible', 'doctype', 'module', 'supplierid', 'status',
                   'docdate', 'stockid', 'supplierinvoicenumber', 'data')
+        model = DeliveryNote01
 
     def create(self, validated_data):
         data = validated_data.pop('data')  # 'data' needs to be removed first
@@ -203,29 +191,6 @@ class DeliveryNoteSerializer(serializers.ModelSerializer):
                                          stockid=stock, prodid=product, quantitydelta=data_data["quantity"], moduleid=6,
                                          modulerecordtypeid=6000, key1=deliverynote.id, userid=deliverynote.responsible)
         return deliverynote
-
-
-class DeliveryNoteSerializer01(DeliveryNoteSerializer):
-    data = DeliveryNoteDataSerializer01(many=True, allow_null=True, required=False)
-
-    class Meta(DeliveryNoteSerializer.Meta):
-        model = DeliveryNote01
-        datamodel = DeliveryNoteData01
-
-class DeliveryNoteSerializer04(DeliveryNoteSerializer):
-    data = DeliveryNoteDataSerializer04(many=True, allow_null=True, required=False)
-
-    class Meta(DeliveryNoteSerializer.Meta):
-        model = DeliveryNote04
-        datamodel = DeliveryNoteData04
-
-
-class DeliveryNoteSerializer05(DeliveryNoteSerializer):
-    data = DeliveryNoteDataSerializer05(many=True, allow_null=True, required=False)
-
-    class Meta(DeliveryNoteSerializer.Meta):
-        model = DeliveryNote05
-        datamodel = DeliveryNoteData05
 
 class PurchaseDocDataSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
@@ -279,7 +244,7 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
 
 class PurchaseDocSerializer01(PurchaseDocSerializer):
     data = PurchaseDocDataSerializer01(many=True, allow_null=True, required=False)
-    deliverynotes = DeliveryNoteSerializer01(many=True, allow_null=True, required=False)
+    deliverynotes = DeliveryNoteSerializer(many=True, allow_null=True, required=False)
 
     class Meta(PurchaseDocSerializer.Meta):
         model = PurchaseDoc01
@@ -288,7 +253,7 @@ class PurchaseDocSerializer01(PurchaseDocSerializer):
 
 class PurchaseDocSerializer04(PurchaseDocSerializer):
     data = PurchaseDocDataSerializer04(many=True, allow_null=True, required=False)
-    deliverynotes = DeliveryNoteSerializer04(many=True, allow_null=True, required=False)
+    deliverynotes = DeliveryNoteSerializer(many=True, allow_null=True, required=False)
     class Meta(PurchaseDocSerializer.Meta):
         model = PurchaseDoc04
         datamodel = PurchaseDocData04
@@ -296,7 +261,7 @@ class PurchaseDocSerializer04(PurchaseDocSerializer):
 
 class PurchaseDocSerializer05(PurchaseDocSerializer):
     data = PurchaseDocDataSerializer05(many=True, allow_null=True, required=False)
-    deliverynotes = DeliveryNoteSerializer05(many=True, allow_null=True, required=False)
+    deliverynotes = DeliveryNoteSerializer(many=True, allow_null=True, required=False)
 
     class Meta(PurchaseDocSerializer.Meta):
         model = PurchaseDoc05
