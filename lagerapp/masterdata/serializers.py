@@ -4,48 +4,22 @@ from basemodels import UserData, Supplier, Stock, StockData, Product, Nature, Pr
     ProductPacking, StockMovement, PurchaseDocuments
 from models import Supplier01, Supplier04, Supplier05, PurchaseDoc01, PurchaseDoc04, PurchaseDoc05, \
     PurchaseDocData01, PurchaseDocData04, PurchaseDocData05, DeliveryNoteData01, DeliveryNoteData04, DeliveryNoteData05, \
-    DeliveryNote01, DeliveryNote04, DeliveryNote05, Staff01, Staff04, Staff05, Project01, Project04, Project05
-# from baseserializers import SupplierSerializer
+    DeliveryNote01, DeliveryNote04, DeliveryNote05, Staff,  Project01
+
 from django.contrib.auth.models import User
 
 class StaffSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('id', 'firstname', 'lastname', 'phone', 'mobile', 'mail', 'gender')
-
-class StaffSerializer01(StaffSerializer):
-    class Meta(StaffSerializer.Meta):
-        model = Staff01
-
-class StaffSerializer04(StaffSerializer):
-    class Meta(StaffSerializer.Meta):
-        model = Staff04
-
-class StaffSerializer05(StaffSerializer):
-    class Meta(StaffSerializer.Meta):
-        model = Staff05
+        model = Staff
 
 class ProjectSerializer(serializers.ModelSerializer):
+    manager = StaffSerializer(read_only=True, allow_null=True)
+    leader = StaffSerializer(read_only=True, allow_null=True)
     class Meta:
         fields = ('id','description','customer','address','country','zipcode','city','manager','leader',
                   'leaderid','managerid')
-
-class ProjectSerializer01(ProjectSerializer):
-    manager = StaffSerializer01(read_only=True, allow_null=True)
-    leader = StaffSerializer01(read_only=True, allow_null=True)
-    class Meta(ProjectSerializer.Meta):
         model = Project01
-
-class ProjectSerializer04(ProjectSerializer):
-    manager = StaffSerializer04(read_only=True, allow_null=True)
-    leader = StaffSerializer01(read_only=True, allow_null=True)
-    class Meta(ProjectSerializer.Meta):
-        model = Project04
-
-class ProjectSerializer05(ProjectSerializer):
-    manager = StaffSerializer05(read_only=True, allow_null=True)
-    leader = StaffSerializer01(read_only=True, allow_null=True)
-    class Meta(ProjectSerializer.Meta):
-        model = Project05
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):
@@ -56,20 +30,8 @@ class SupplierSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'url', 'id', 'namea', 'nameb', 'address', 'zipcode', 'city', 'country', 'phone', 'fax', 'vatnum', 'active',
             'numberorders')
-
-class SupplierSerializer01(SupplierSerializer):
-    class Meta(SupplierSerializer.Meta):
         model = Supplier01
 
-
-class SupplierSerializer04(SupplierSerializer):
-    class Meta(SupplierSerializer.Meta):
-        model = Supplier04
-
-
-class SupplierSerializer05(SupplierSerializer):
-    class Meta(SupplierSerializer.Meta):
-        model = Supplier05
 
 class UserSerializer(serializers.ModelSerializer):
     userdata = serializers.SlugRelatedField(many=True, read_only=True, slug_field='prodid')
@@ -106,12 +68,6 @@ class NatureSerializer(serializers.HyperlinkedModelSerializer):
         model = Nature
         fields = ('url', 'id', 'title', 'name')
 
-
-class NatureSerializer1(serializers.ModelSerializer):
-    class Meta:
-        model = Nature
-        fields = ('id', 'title', 'name')
-
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):
     #    #Only used for debugging. Extend init to print repr of Serializer instance.
@@ -122,7 +78,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     supplier = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productsupplier-detail")
     packing = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productpacking-detail")
     # defaultsupplier = serializers.SlugRelatedField(read_only=True, allow_null=True, slug_field='namea')
-    defaultsupplier = SupplierSerializer01(read_only=True, allow_null=True)
+    defaultsupplier = SupplierSerializer(read_only=True, allow_null=True)
     class Meta:
         model = Product
         fields = (
@@ -158,7 +114,7 @@ class ProductPackingSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'rowid', 'packingid', 'prodid', 'name', 'quantity')
 
 class ProductSupplierSerializer(serializers.HyperlinkedModelSerializer):
-    supplierid = SupplierSerializer01(read_only=True, allow_null=True)
+    supplierid = SupplierSerializer(read_only=True, allow_null=True)
     class Meta:
         model = ProductSupplier
         fields = ('url', 'prodid', 'supplierid', 'purchaseprice', 'comment', 'unit', 'id')
@@ -204,7 +160,7 @@ class DeliveryNoteDataSerializer(serializers.ModelSerializer):
         fields = (
         'linetype', 'rowid', 'deliverynoteid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'projectid',
         'comment', 'dataid', 'packing', 'calclineexpression', 'quantityrejected', 'stockmovementid')
-
+        model = DeliveryNoteData01
 
 class DeliveryNoteDataSerializer01(DeliveryNoteDataSerializer):
     class Meta(DeliveryNoteDataSerializer.Meta):

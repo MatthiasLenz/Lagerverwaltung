@@ -1,7 +1,7 @@
 # encoding=UTF-8
 from models import Supplier04, PurchaseDoc04, PurchaseDocData04, DeliveryNote04, DeliveryNoteData04, Staff04, Project04
-from serializers import SupplierSerializer04, PurchaseDocSerializer04, MinPurchaseDocSerializer, \
-    PurchaseDocDataSerializer04, DeliveryNoteSerializer04, DeliveryNoteDataSerializer04, ProjectSerializer04
+from serializers import SupplierSerializer, PurchaseDocSerializer04, MinPurchaseDocSerializer, \
+    PurchaseDocDataSerializer04, DeliveryNoteSerializer04, DeliveryNoteDataSerializer04, ProjectSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, pagination, filters
@@ -62,7 +62,7 @@ class CustomSearchFilter(filters.SearchFilter):
 
 class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Project04.objects.filter(projectsimulated=0)
-    serializer_class = ProjectSerializer04
+    serializer_class = ProjectSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('id', 'description', 'manager', 'leader')
 
@@ -72,7 +72,7 @@ class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
     """
     lookup_value_regex = '[-A-Za-z0-9.]*'
     queryset = Supplier04.objects.all()
-    serializer_class = SupplierSerializer04
+    serializer_class = SupplierSerializer
 
 
 from rest_framework import status
@@ -164,7 +164,7 @@ class PurchaseDocSupplierViewSet(viewsets.ModelViewSet):
     queryset = PurchaseDoc04.objects.filter(module=5).filter(doctype=2)
     supplierids = [pd.supplierid for pd in queryset]
     queryset = Supplier04.objects.filter(pk__in=supplierids)
-    serializer_class = SupplierSerializer04
+    serializer_class = SupplierSerializer
     pagination_class = None
 
 

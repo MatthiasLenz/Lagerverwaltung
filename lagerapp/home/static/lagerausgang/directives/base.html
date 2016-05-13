@@ -10,7 +10,8 @@
                      placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
         <md-item-template>
                 <span md-highlight-text="lagerVm.searchProject"
-                      md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.responsible }}</span>
+                      md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
+                        + ' ' +item.manager.lastname }}</span>
         </md-item-template>
         <md-not-found>
             Keine Übereinstimmung mit "{{ lagerVm.searchProject }}" gefunden.
@@ -34,11 +35,12 @@
                            date-disabled="lagerVm.disabled(date, mode)" current-text="Heute"
                            clear-text="Leeren"
                            close-text="Schließen"/>
-            <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="lagerVm.open_datepicker()">
-                    <i class="glyphicon glyphicon-calendar"></i></button>
-            </span>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="lagerVm.open_datepicker()">
+                            <i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
                 </p>
+
             </div>
         </div>
 
@@ -92,8 +94,12 @@
             <md-subheader class="md-no-sticky" space-between>
                 <div layout="row">
                     <div flex="60">
-                        <div>Empfänger
+                        <div>Bauleiter:
                             : {{ lagerVm.selectedProject.manager.firstname }} {{ lagerVm.selectedProject.manager.lastname }}</div>
+                        <div>Polier:
+                            : {{ lagerVm.selectedProject.leader.firstname }} {{ lagerVm.selectedProject.leader.lastname }}</div>
+                        <div>Abholer:
+                            : {{ lagerVm.collector }}</div>
                         <div>Baustelle : {{ lagerVm.selectedProject.id }} -
                             {{ lagerVm.selectedProject.description | limitTo: 30}}{{ lagerVm.selectedProject.description.length>30 ? '...' : '' }}
                         </div>

@@ -3,6 +3,10 @@ from basemodels import SupplierBase, PurchaseDocBase, PurchaseDocDataBase, Deliv
     StaffBase, ProjectBase
 from django.db import models
 
+class Staff(StaffBase):
+    class Meta(StaffBase.Meta):
+        db_table = 'Staff'
+
 class Staff01(StaffBase):
     class Meta(StaffBase.Meta):
         db_table = 'Staff'
