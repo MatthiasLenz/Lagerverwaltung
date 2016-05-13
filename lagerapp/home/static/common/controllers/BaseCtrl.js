@@ -4,7 +4,7 @@ controller('BaseCtrl', ['tokenService', 'loginService', 'sessionService', 'stock
     var controller = this;
     controller.logininfo = loginService.data;
     controller.login = tokenService.getToken;
-    controller.state = 'productlist_state';
+    controller.state = 'lagerausgang_state';
     controller.setState = function (state) {
         controller.state = state;
     };
