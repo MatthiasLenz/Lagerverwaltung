@@ -4,7 +4,7 @@ from basemodels import Stock, StockData, Product, Nature, ProductSupplier, Produ
 from serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, \
     StockMovementSerializer, ProductSerializer, NatureSerializer, FastProductSerializer, ProductSupplierSerializer, \
     ProductPackingSerializer, PurchaseDocumentsSerializer, getStaffSerializer, getDeliveryNoteSerializer, \
-    getDeliveryNoteDataSerializer, getPurchaseDocDataSerializer, getPurchaseDocSerializer
+    getDeliveryNoteDataSerializer, getPurchaseDocDataSerializer, getPurchaseDocSerializer, getProjectSerializer
 from rest_framework import viewsets, mixins, pagination, filters, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -116,7 +116,18 @@ def getInternalPurchaseDocViewSet(model, datamodel, deliverynote_model, delivery
     return type('Internal'+model.__name__+'ViewSet', (InternalPurchaseDocViewSet,), dict(
             queryset=model.objects.filter(module=9).filter(doctype=3).prefetch_related('data'),
             serializer_class=getPurchaseDocSerializer(model, datamodel, deliverynote_model, deliverynote_datamodel),
-            filter_class=getStatusFilter(model)))
+            filter_class=getStatusFilter(model)
+    ))
+
+class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('id','description','managerid','leaderid')
+
+def getProjectViewSet(model, staffmodel):
+    return type(model.__name__+'ViewSet', (ProjectViewSet,), dict(
+        queryset=model.objects.filter(projectsimulated=0),
+        serializer_class=getProjectSerializer(model, staffmodel)
+    ))
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()

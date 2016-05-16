@@ -16,12 +16,15 @@ def getStaffSerializer(model):
           {'fields' : fields, 'model': model})))
 
 class ProjectSerializer(serializers.ModelSerializer):
-    manager = StaffSerializer(read_only=True, allow_null=True)
-    leader = StaffSerializer(read_only=True, allow_null=True)
-    class Meta:
-        fields = ('id','description','customer','address','country','zipcode','city','manager','leader',
-                  'leaderid','managerid')
-        model = Project01
+    Meta = None
+
+def getProjectSerializer(model, staffmodel):
+    fields = ('id', 'description', 'customer', 'address', 'country', 'zipcode', 'city', 'manager', 'leader',
+              'leaderid', 'managerid')
+    return type(model.__name__ + 'Serializer', (ProjectSerializer,), dict(
+            Meta=type("Meta", (),{'fields': fields, 'model': model}),
+            manager=getStaffSerializer(staffmodel)(read_only=True, allow_null=True),
+            leader=getStaffSerializer(staffmodel)(read_only=True, allow_null=True)))
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):

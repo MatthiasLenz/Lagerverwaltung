@@ -27,7 +27,7 @@ router01.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.Pur
 router01.register(r'purchasedocsupplier', views_c01.PurchaseDocSupplierViewSet)
 router01.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote01,models.DeliveryNoteData01))
 router01.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData01))
-router01.register(r'projects', views_c01.ProjectViewSet)
+router01.register(r'projects', views.getProjectViewSet(models.Project01, models.Staff01))
 router01.register(r'staff', views.getStaffViewSet(models.Staff01))
 # router for company 04 api
 router04 = DefaultRouter(trailing_slash=False)
@@ -40,7 +40,7 @@ router04.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.Pur
 router04.register(r'purchasedocsupplier', views_c04.PurchaseDocSupplierViewSet)
 router04.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote04,models.DeliveryNoteData04))
 router04.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData04))
-router04.register(r'projects', views_c04.ProjectViewSet)
+router04.register(r'projects', views.getProjectViewSet(models.Project04, models.Staff04))
 router04.register(r'staff', views.getStaffViewSet(models.Staff04))
 # router for company 05 api
 router05 = DefaultRouter(trailing_slash=False)
@@ -53,7 +53,7 @@ router05.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.Pur
 router05.register(r'purchasedocsupplier', views_c05.PurchaseDocSupplierViewSet)
 router05.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote05,models.DeliveryNoteData05))
 router05.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData05))
-router05.register(r'projects', views_c05.ProjectViewSet)
+router05.register(r'projects', views.getProjectViewSet(models.Project05, models.Staff05))
 router05.register(r'staff', views.getStaffViewSet(models.Staff05))
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
