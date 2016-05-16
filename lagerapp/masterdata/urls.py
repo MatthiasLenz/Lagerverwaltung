@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 import views, views_c01, views_c04, views_c05
 from rest_framework.routers import DefaultRouter
-
+import models
 # Create a router and register our viewsets with it.
 router = DefaultRouter(trailing_slash=False)
 router.register(r'supplier', views_c01.SupplierViewSet, base_name='supplier')
@@ -14,42 +14,47 @@ router.register(r'productpacking', views.ProductPackingViewSet, base_name='produ
 router.register(r'productsupplier', views.ProductSupplierViewSet, base_name='productsupplier')
 router.register(r'purchasedocuments', views.PurchaseDocumentsView)
 router.register(r'minpurchasedoc', views_c01.MinPurchaseDocViewSet, base_name='minpurchasedoc')
-router.register(r'purchasedoc', views_c01.PurchaseDocViewSet)
-router.register(r'purchasedocdata', views_c01.PurchaseDocDataViewSet)
 router.register(r'purchasedocsupplier', views_c01.PurchaseDocSupplierViewSet)
-router.register(r'deliverynote', views_c01.DeliveryNoteViewSet)
-router.register(r'deliverynotedata', views_c01.DeliveryNoteDataViewSet)
-
 # router for company 01 api
 router01 = DefaultRouter(trailing_slash=False)
 router01.register(r'supplier', views_c01.SupplierViewSet, base_name='supplier01')
 router01.register(r'minpurchasedoc', views_c01.MinPurchaseDocViewSet, base_name='minpurchasedoc')
-router01.register(r'purchasedoc', views_c01.PurchaseDocViewSet)
-router01.register(r'internalpurchasedoc', views_c01.InternalPurchaseDocViewSet)
-router01.register(r'purchasedocdata', views_c01.PurchaseDocDataViewSet)
+router01.register(r'internalpurchasedoc', views.getInternalPurchaseDocViewSet(
+    models.PurchaseDoc01, models.PurchaseDocData01, models.DeliveryNote01, models.DeliveryNoteData01), base_name='internalpurchasedoc')
+router01.register(r'purchasedoc', views.getPurchaseDocViewSet(models.PurchaseDoc01,models.PurchaseDocData01,
+    models.DeliveryNote01, models.DeliveryNoteData01))
+router01.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.PurchaseDocData01))
 router01.register(r'purchasedocsupplier', views_c01.PurchaseDocSupplierViewSet)
-router01.register(r'deliverynote', views_c01.DeliveryNoteViewSet)
-router01.register(r'deliverynotedata', views_c01.DeliveryNoteDataViewSet)
+router01.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote01,models.DeliveryNoteData01))
+router01.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData01))
 router01.register(r'projects', views_c01.ProjectViewSet)
-router01.register(r'staff', views_c01.StaffViewSet)
+router01.register(r'staff', views.getStaffViewSet(models.Staff01))
 # router for company 04 api
 router04 = DefaultRouter(trailing_slash=False)
 router04.register(r'supplier', views_c04.SupplierViewSet, base_name='supplier04')
-router04.register(r'purchasedoc', views_c04.PurchaseDocViewSet)
-router04.register(r'purchasedocdata', views_c04.PurchaseDocDataViewSet)
+router04.register(r'internalpurchasedoc', views.getInternalPurchaseDocViewSet(
+    models.PurchaseDoc04, models.PurchaseDocData04, models.DeliveryNote04, models.DeliveryNoteData04), base_name='internalpurchasedoc')
+router04.register(r'purchasedoc', views.getPurchaseDocViewSet(models.PurchaseDoc04,models.PurchaseDocData04,
+    models.DeliveryNote04, models.DeliveryNoteData04))
+router04.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.PurchaseDocData04))
 router04.register(r'purchasedocsupplier', views_c04.PurchaseDocSupplierViewSet)
-router04.register(r'deliverynote', views_c04.DeliveryNoteViewSet)
-router04.register(r'deliverynotedata', views_c04.DeliveryNoteDataViewSet)
+router04.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote04,models.DeliveryNoteData04))
+router04.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData04))
 router04.register(r'projects', views_c04.ProjectViewSet)
+router04.register(r'staff', views.getStaffViewSet(models.Staff04))
 # router for company 05 api
 router05 = DefaultRouter(trailing_slash=False)
 router05.register(r'supplier', views_c05.SupplierViewSet, base_name='supplier05')
-router05.register(r'purchasedoc', views_c05.PurchaseDocViewSet)
-router05.register(r'purchasedocdata', views_c05.PurchaseDocDataViewSet)
+router05.register(r'internalpurchasedoc', views.getInternalPurchaseDocViewSet(
+    models.PurchaseDoc05, models.PurchaseDocData05, models.DeliveryNote05, models.DeliveryNoteData05), base_name='internalpurchasedoc')
+router05.register(r'purchasedoc', views.getPurchaseDocViewSet(models.PurchaseDoc05,models.PurchaseDocData05,
+                                                              models.DeliveryNote05, models.DeliveryNoteData05))
+router05.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.PurchaseDocData05))
 router05.register(r'purchasedocsupplier', views_c05.PurchaseDocSupplierViewSet)
-router05.register(r'deliverynote', views_c05.DeliveryNoteViewSet)
-router05.register(r'deliverynotedata', views_c05.DeliveryNoteDataViewSet)
+router05.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote05,models.DeliveryNoteData05))
+router05.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData05))
 router05.register(r'projects', views_c05.ProjectViewSet)
+router05.register(r'staff', views.getStaffViewSet(models.Staff05))
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
 urlpatterns = [

@@ -179,10 +179,8 @@ class HitRouter(object):
         return None
 
     def db_for_write(self, model, **hints):
-        if model._meta.app_label == 'hit_01_purchase':
-            return 'hit_01_purchase'
-        if model._meta.app_label == 'hit_01_masterdata':
-            return 'hit_01_masterdata'
+        if model._meta.app_label in ['hit_01_purchase','hit_04_purchase','hit_05_purchase', 'hit_01_masterdata', 'hit_01_staff', 'hit_04_staff']:
+            return model._meta.app_label
         return None
 
     def allow_relation(self, obj1, obj2, **hints):

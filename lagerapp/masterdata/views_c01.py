@@ -1,35 +1,16 @@
 # encoding=UTF-8
-from models import Supplier01, PurchaseDoc01, PurchaseDocData01, DeliveryNote01, DeliveryNoteData01, Staff01, Project01
-from serializers import SupplierSerializer, PurchaseDocSerializer01, MinPurchaseDocSerializer, \
-    PurchaseDocDataSerializer01, DeliveryNoteSerializer, DeliveryNoteDataSerializer,DeliveryNoteDataSerializer, ProjectSerializer, StaffSerializer
+from models import Supplier01, PurchaseDoc01, PurchaseDocData01, DeliveryNote01, DeliveryNoteData01, Staff01, Staff04, Project01
+from serializers import SupplierSerializer, MinPurchaseDocSerializer, \
+     DeliveryNoteSerializer, DeliveryNoteDataSerializer,DeliveryNoteDataSerializer, ProjectSerializer, getStaffSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import viewsets, pagination, filters
 from rest_framework.response import Response
-import django_filters
-
+from django.db.models.query import QuerySet
 class LargeResultsSetPagination(pagination.PageNumberPagination):
     page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 1000
-
-class ListFilter(django_filters.Filter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-
-        self.lookup_type = 'in'
-        values = value.split(',')
-        return super(ListFilter, self).filter(qs, values)
-
-
-class StatusFilter(filters.FilterSet):
-    status = ListFilter(name='status')
-    min_date = django_filters.DateFilter(name="docdate", lookup_type='gte')
-    class Meta:
-        model = PurchaseDoc01
-        fields = ['status', 'supplierid', 'modulerefid', 'min_date']
-
 
 class CustomSearchFilter(filters.SearchFilter):
     """Possible duplicate items, when filtering by many-to-many fields, but no problems with text fields"""
@@ -69,10 +50,6 @@ class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_value_regex = '[-A-Za-z0-9.]*'
     queryset = Supplier01.objects.all()
     serializer_class = SupplierSerializer
-
-class StaffViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Staff01.objects.all()
-    serializer_class = StaffSerializer
 
 from rest_framework import status
 
@@ -130,43 +107,6 @@ class MinPurchaseDocViewSet(viewsets.GenericViewSet):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
-
-class PurchaseDocViewSet(viewsets.ModelViewSet):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = PurchaseDoc01.objects.filter(module=5).filter(doctype=2).prefetch_related('data')
-    serializer_class = PurchaseDocSerializer01
-    pagination_class = None
-
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = StatusFilter
-    filter_fields = ('status', 'supplierid')
-
-
-class InternalPurchaseDocViewSet(viewsets.ModelViewSet):
-    # Error if result has more than 2000 rows
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = PurchaseDoc01.objects.filter(module=9).filter(doctype=3).prefetch_related('data')
-    serializer_class = PurchaseDocSerializer01
-    pagination_class = None
-
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = StatusFilter
-
-    filter_fields = ('status', 'supplierid', 'modulerefid', )
-
-class PurchaseDocDataViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list` and `detail` actions.
-    """
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = PurchaseDocData01.objects.all()
-    serializer_class = PurchaseDocDataSerializer01
-    pagination_class = LargeResultsSetPagination
-
-
 class PurchaseDocSupplierViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -176,31 +116,6 @@ class PurchaseDocSupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier01.objects.filter(pk__in=supplierids)
     serializer_class = SupplierSerializer
     pagination_class = None
-
-
-class DeliveryNoteViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list` and `detail` actions.
-    """
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = DeliveryNote01.objects.filter(module=5).prefetch_related('data')
-    serializer_class = DeliveryNoteSerializer
-    pagination_class = LargeResultsSetPagination
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('status',)
-
-
-class DeliveryNoteDataViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list` and `detail` actions.
-    """
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = DeliveryNoteData01.objects.all()
-    serializer_class = DeliveryNoteDataSerializer
-    pagination_class = LargeResultsSetPagination
-
 
 from views import PurchaseDocuments, format_py3o_context_value
 import json

@@ -1,17 +1,19 @@
 from datetime import date
 from rest_framework import serializers
-from basemodels import UserData, Supplier, Stock, StockData, Product, Nature, ProductSupplier, \
+from basemodels import UserData, Stock, StockData, Product, Nature, ProductSupplier, \
     ProductPacking, StockMovement, PurchaseDocuments
-from models import Supplier01, Supplier04, Supplier05, PurchaseDoc01, PurchaseDoc04, PurchaseDoc05, \
-    PurchaseDocData01, PurchaseDocData04, PurchaseDocData05, DeliveryNoteData01, DeliveryNoteData04, DeliveryNoteData05, \
-    DeliveryNote01, DeliveryNote04, DeliveryNote05, Staff,  Project01
+from models import Supplier01, PurchaseDoc01,  Project01
 
 from django.contrib.auth.models import User
 
 class StaffSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ('id', 'firstname', 'lastname', 'phone', 'mobile', 'mail', 'gender')
-        model = Staff
+    Meta = None
+
+def getStaffSerializer(model):
+    #Serializer generator
+    fields = ('id', 'firstname', 'lastname', 'phone', 'mobile', 'mail', 'gender')
+    return type(model.__name__+'Serializer', (StaffSerializer,), dict(Meta = type("Meta", (),
+          {'fields' : fields, 'model': model})))
 
 class ProjectSerializer(serializers.ModelSerializer):
     manager = StaffSerializer(read_only=True, allow_null=True)
@@ -154,29 +156,25 @@ class FastProductSerializer(serializers.ModelSerializer):
                   'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
                   'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid')
 
+
 class DeliveryNoteDataSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
-    class Meta:
-        fields = (
-        'linetype', 'rowid', 'deliverynoteid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'projectid',
+    Meta = None
+
+def getDeliveryNoteDataSerializer(model):
+    fields = ('linetype', 'rowid', 'deliverynoteid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'projectid',
         'comment', 'dataid', 'packing', 'calclineexpression', 'quantityrejected', 'stockmovementid')
-        model = DeliveryNoteData01
+    return type(model.__name__+"Serializer", (DeliveryNoteDataSerializer,), dict(Meta=type("Meta",(),{'fields' : fields, 'model': model})))
 
 class DeliveryNoteSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)
-    data = DeliveryNoteDataSerializer(many=True, allow_null=True, required=False)
-    class Meta:
-        fields = ('id', 'orderid', 'extdocno', 'subject', 'responsible', 'doctype', 'module', 'supplierid', 'status',
-                  'docdate', 'stockid', 'supplierinvoicenumber', 'data')
-        model = DeliveryNote01
-
+    #data = DeliveryNoteDataSerializer(many=True, allow_null=True, required=False)
+    Meta = None
     def create(self, validated_data):
         data = validated_data.pop('data')  # 'data' needs to be removed first
         model = self.Meta.model
         datamodel = self.Meta.datamodel
         deliverynote = model.objects.create(**validated_data)
-        print(deliverynote)
-        print(type(deliverynote))
         # Wichtig: Im foreign key feld muss immer das Object selbst referenziert werden, nicht die ID des Objekts,
         # also 'prodid': <Product: N999> und nicht 'prodid': 'N999'
         # Die Feldbezeichnung purchasedocid ist in diesem Fall verwirrend: In purchasedoc umbenennen?
@@ -192,26 +190,20 @@ class DeliveryNoteSerializer(serializers.ModelSerializer):
                                          modulerecordtypeid=6000, key1=deliverynote.id, userid=deliverynote.responsible)
         return deliverynote
 
+def getDeliveryNoteSerializer(model, datamodel):
+    fields = ('id', 'orderid','extdocno', 'subject', 'responsible', 'doctype', 'module', 'supplierid', 'status',
+              'docdate', 'stockid', 'supplierinvoicenumber', 'data')
+    return type(model.__name__+"Serializer", (DeliveryNoteSerializer,), dict(
+        Meta=type("Meta",(),{'fields' : fields, 'model': model,'datamodel':datamodel}),
+        data=getDeliveryNoteDataSerializer(datamodel)(many=True, allow_null=True, required=False)))
+
 class PurchaseDocDataSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
-    class Meta:
-        fields = (
-        'rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'packing', 'comment')
+    Meta = None
 
-
-class PurchaseDocDataSerializer01(PurchaseDocDataSerializer):
-    class Meta(PurchaseDocDataSerializer.Meta):
-        model = PurchaseDocData01
-
-
-class PurchaseDocDataSerializer04(PurchaseDocDataSerializer):
-    class Meta(PurchaseDocDataSerializer.Meta):
-        model = PurchaseDocData04
-
-
-class PurchaseDocDataSerializer05(PurchaseDocDataSerializer):
-    class Meta(PurchaseDocDataSerializer.Meta):
-        model = PurchaseDocData05
+def getPurchaseDocDataSerializer(model):
+    fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'packing', 'comment')
+    return type(model.__name__+"Serializer", (PurchaseDocDataSerializer,), dict(Meta=type("Meta",(),{'fields' : fields, 'model': model})))
 
 class PurchaseDocSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)
@@ -241,31 +233,14 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+def getPurchaseDocSerializer(model, datamodel, delno_model, delno_datamodel):
+    fields = ('url', 'id','subject','responsible','leader','doctype', 'module','modulerefid', 'supplierid', 'status',
+            'docdate', 'data', 'deliverynotes','stockid')
+    return type(model.__name__+"Serializer", (PurchaseDocSerializer,), dict(
+        Meta=type("Meta",(),{'fields' : fields, 'model': model,'datamodel':datamodel}),
+        data=getPurchaseDocDataSerializer(datamodel)(many=True, allow_null=True, required=False),
+        deliverynotes=getDeliveryNoteSerializer(delno_model, delno_datamodel)(many=True, allow_null=True, required=False)))
 
-class PurchaseDocSerializer01(PurchaseDocSerializer):
-    data = PurchaseDocDataSerializer01(many=True, allow_null=True, required=False)
-    deliverynotes = DeliveryNoteSerializer(many=True, allow_null=True, required=False)
-
-    class Meta(PurchaseDocSerializer.Meta):
-        model = PurchaseDoc01
-        datamodel = PurchaseDocData01
-
-
-class PurchaseDocSerializer04(PurchaseDocSerializer):
-    data = PurchaseDocDataSerializer04(many=True, allow_null=True, required=False)
-    deliverynotes = DeliveryNoteSerializer(many=True, allow_null=True, required=False)
-    class Meta(PurchaseDocSerializer.Meta):
-        model = PurchaseDoc04
-        datamodel = PurchaseDocData04
-
-
-class PurchaseDocSerializer05(PurchaseDocSerializer):
-    data = PurchaseDocDataSerializer05(many=True, allow_null=True, required=False)
-    deliverynotes = DeliveryNoteSerializer(many=True, allow_null=True, required=False)
-
-    class Meta(PurchaseDocSerializer.Meta):
-        model = PurchaseDoc05
-        datamodel = PurchaseDocData05
 
 class PurchaseDocumentsSerializer(serializers.ModelSerializer):
     class Meta:

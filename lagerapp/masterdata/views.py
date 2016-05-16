@@ -2,15 +2,121 @@
 from basemodels import Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, UserData, \
     PurchaseDocuments, StockMovement
 from serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, \
-    StockMovementSerializer, ProductSerializer, \
-    NatureSerializer, FastProductSerializer, ProductSupplierSerializer, ProductPackingSerializer, \
-    PurchaseDocumentsSerializer
+    StockMovementSerializer, ProductSerializer, NatureSerializer, FastProductSerializer, ProductSupplierSerializer, \
+    ProductPackingSerializer, PurchaseDocumentsSerializer, getStaffSerializer, getDeliveryNoteSerializer, \
+    getDeliveryNoteDataSerializer, getPurchaseDocDataSerializer, getPurchaseDocSerializer
 from rest_framework import viewsets, mixins, pagination, filters, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from django_filters import Filter, DateFilter
+from django_filters.fields import Lookup
+
+class ListFilter1(Filter):
+    def filter(self, qs, value):
+        if not value:
+            return qs
+        self.lookup_type = 'in'
+        values = value.split(',')
+        return super(ListFilter1, self).filter(qs, values)
+
+class ListFilter(Filter):
+    def filter(self, qs, value):
+        value_list = value.split(u',')
+        return super(ListFilter, self).filter(qs, Lookup(value_list, 'in'))
+
+class StatusFilter(filters.FilterSet):
+    status = ListFilter(name='status')
+    min_date = DateFilter(name="docdate", lookup_type='gte')
+    Meta = None
+
+def getStatusFilter(model):
+    fields = ['status', 'supplierid', 'modulerefid', 'min_date']
+    return type("StatusFilter", (StatusFilter,), dict(Meta=type("Meta",(),{'fields' : fields, 'model': model})))
+
+class LargeResultsSetPagination(pagination.PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
+class StaffViewSet(viewsets.ModelViewSet):
+    #queryset and serializer_class defined dynamically
+    pass
+
+def getStaffViewSet(model):
+    #Class Generator, returns a StaffViewSet class with dynamically defined queryset
+    return type(model.__name__+'ViewSet', (StaffViewSet,), dict(queryset = model.objects.all(),
+                                                                serializer_class = getStaffSerializer(model)))
+
+class DeliveryNoteViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    pagination_class = LargeResultsSetPagination
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('status',)
+
+def getDeliveryNoteViewSet(model, datamodel):
+    return type(model.__name__ + 'ViewSet', (DeliveryNoteViewSet,), dict(queryset=model.objects.filter(module=5).prefetch_related('data'),
+                                                                  serializer_class=getDeliveryNoteSerializer(model, datamodel)))
+
+class DeliveryNoteDataViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    pagination_class = LargeResultsSetPagination
+
+def getDeliveryNoteDataViewSet(model):
+    return type(model.__name__ + 'ViewSet', (DeliveryNoteDataViewSet,), dict(queryset=model.objects.all(),
+        serializer_class=getDeliveryNoteDataSerializer(model)))
+
+
+class PurchaseDocViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    pagination_class = None
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('status', 'supplierid')
+
+def getPurchaseDocViewSet(model, datamodel, deliverynote_model, deliverynote_datamodel):
+    return type(model.__name__ + 'ViewSet', (PurchaseDocViewSet,), dict(
+            queryset=model.objects.filter(module=5).filter(doctype=2).prefetch_related('data'),
+            serializer_class=getPurchaseDocSerializer(model, datamodel, deliverynote_model, deliverynote_datamodel),
+            filter_class=getStatusFilter(model)))
+
+class PurchaseDocDataViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    pagination_class = LargeResultsSetPagination
+
+def getPurchaseDocDataViewSet(model):
+    return type(model.__name__ + 'ViewSet', (PurchaseDocDataViewSet,), dict(queryset=model.objects.all(),
+        serializer_class=getPurchaseDocDataSerializer(model)))
+
+class InternalPurchaseDocViewSet(viewsets.ModelViewSet):
+    # Error if result has more than 2000 rows
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    pagination_class = None
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('status', 'supplierid', 'modulerefid', )
+
+def getInternalPurchaseDocViewSet(model, datamodel, deliverynote_model, deliverynote_datamodel):
+    return type('Internal'+model.__name__+'ViewSet', (InternalPurchaseDocViewSet,), dict(
+            queryset=model.objects.filter(module=9).filter(doctype=3).prefetch_related('data'),
+            serializer_class=getPurchaseDocSerializer(model, datamodel, deliverynote_model, deliverynote_datamodel),
+            filter_class=getStatusFilter(model)))
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
@@ -30,23 +136,6 @@ class UserDataList(generics.ListAPIView, generics.UpdateAPIView, generics.Create
 class UserDataDetail(generics.RetrieveAPIView, generics.UpdateAPIView, ):
     queryset = UserData.objects.all()
     serializer_class = UserDataSerializer
-
-class LargeResultsSetPagination(pagination.PageNumberPagination):
-    page_size = 20
-    page_size_query_param = 'page_size'
-    max_page_size = 1000
-
-
-from django_filters import Filter
-
-class ListFilter(Filter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-
-        self.lookup_type = 'in'
-        values = value.split(',')
-        return super(ListFilter, self).filter(qs, values)
 
 
 class CustomSearchFilter(filters.SearchFilter):
