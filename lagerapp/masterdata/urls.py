@@ -4,7 +4,6 @@ from rest_framework.routers import DefaultRouter
 import models
 # Create a router and register our viewsets with it.
 router = DefaultRouter(trailing_slash=False)
-router.register(r'supplier', views_c01.SupplierViewSet, base_name='supplier')
 router.register(r'stock', views.StockViewSet)
 router.register(r'stockdata', views.StockDataViewSet)
 router.register(r'stockmovement', views.StockMovementViewSet)
@@ -13,44 +12,41 @@ router.register(r'product', views.ProductViewSet, base_name='product')
 router.register(r'productpacking', views.ProductPackingViewSet, base_name='productpacking')
 router.register(r'productsupplier', views.ProductSupplierViewSet, base_name='productsupplier')
 router.register(r'purchasedocuments', views.PurchaseDocumentsView)
-router.register(r'minpurchasedoc', views_c01.MinPurchaseDocViewSet, base_name='minpurchasedoc')
-router.register(r'purchasedocsupplier', views_c01.PurchaseDocSupplierViewSet)
 # router for company 01 api
 router01 = DefaultRouter(trailing_slash=False)
-router01.register(r'supplier', views_c01.SupplierViewSet, base_name='supplier01')
-router01.register(r'minpurchasedoc', views_c01.MinPurchaseDocViewSet, base_name='minpurchasedoc')
+router01.register(r'supplier', views.getSupplierViewSet(models.Supplier01), base_name='supplier01')
 router01.register(r'internalpurchasedoc', views.getInternalPurchaseDocViewSet(
     models.PurchaseDoc01, models.PurchaseDocData01, models.DeliveryNote01, models.DeliveryNoteData01), base_name='internalpurchasedoc')
 router01.register(r'purchasedoc', views.getPurchaseDocViewSet(models.PurchaseDoc01,models.PurchaseDocData01,
     models.DeliveryNote01, models.DeliveryNoteData01))
 router01.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.PurchaseDocData01))
-router01.register(r'purchasedocsupplier', views_c01.PurchaseDocSupplierViewSet)
+router01.register(r'purchasedocsupplier', views.getPurchaseDocSupplierViewSet(models.PurchaseDoc01, models.Supplier01))
 router01.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote01,models.DeliveryNoteData01))
 router01.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData01))
 router01.register(r'projects', views.getProjectViewSet(models.Project01, models.Staff01))
 router01.register(r'staff', views.getStaffViewSet(models.Staff01))
 # router for company 04 api
 router04 = DefaultRouter(trailing_slash=False)
-router04.register(r'supplier', views_c04.SupplierViewSet, base_name='supplier04')
+router04.register(r'supplier', views.getSupplierViewSet(models.Supplier04), base_name='supplier04')
 router04.register(r'internalpurchasedoc', views.getInternalPurchaseDocViewSet(
     models.PurchaseDoc04, models.PurchaseDocData04, models.DeliveryNote04, models.DeliveryNoteData04), base_name='internalpurchasedoc')
 router04.register(r'purchasedoc', views.getPurchaseDocViewSet(models.PurchaseDoc04,models.PurchaseDocData04,
     models.DeliveryNote04, models.DeliveryNoteData04))
 router04.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.PurchaseDocData04))
-router04.register(r'purchasedocsupplier', views_c04.PurchaseDocSupplierViewSet)
+router04.register(r'purchasedocsupplier', views.getPurchaseDocSupplierViewSet(models.PurchaseDoc04, models.Supplier04))
 router04.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote04,models.DeliveryNoteData04))
 router04.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData04))
 router04.register(r'projects', views.getProjectViewSet(models.Project04, models.Staff04))
 router04.register(r'staff', views.getStaffViewSet(models.Staff04))
 # router for company 05 api
 router05 = DefaultRouter(trailing_slash=False)
-router05.register(r'supplier', views_c05.SupplierViewSet, base_name='supplier05')
+router05.register(r'supplier', views.getSupplierViewSet(models.Supplier05), base_name='supplier05')
 router05.register(r'internalpurchasedoc', views.getInternalPurchaseDocViewSet(
     models.PurchaseDoc05, models.PurchaseDocData05, models.DeliveryNote05, models.DeliveryNoteData05), base_name='internalpurchasedoc')
 router05.register(r'purchasedoc', views.getPurchaseDocViewSet(models.PurchaseDoc05,models.PurchaseDocData05,
                                                               models.DeliveryNote05, models.DeliveryNoteData05))
 router05.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.PurchaseDocData05))
-router05.register(r'purchasedocsupplier', views_c05.PurchaseDocSupplierViewSet)
+router05.register(r'purchasedocsupplier', views.getPurchaseDocSupplierViewSet(models.PurchaseDoc05, models.Supplier01))
 router05.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote05,models.DeliveryNoteData05))
 router05.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData05))
 router05.register(r'projects', views.getProjectViewSet(models.Project05, models.Staff05))

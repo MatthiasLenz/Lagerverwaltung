@@ -24,19 +24,22 @@ def getProjectSerializer(model, staffmodel):
     return type(model.__name__ + 'Serializer', (ProjectSerializer,), dict(
             Meta=type("Meta", (),{'fields': fields, 'model': model}),
             manager=getStaffSerializer(staffmodel)(read_only=True, allow_null=True),
-            leader=getStaffSerializer(staffmodel)(read_only=True, allow_null=True)))
+            leader=getStaffSerializer(staffmodel)(read_only=True, allow_null=True)
+    ))
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):
     #    # Only used for debugging. Extend init to print repr of Serializer instance.
     #    super(SupplierSerializer, self).__init__(*args, **kwargs)
     #    print(repr(self))
-    class Meta:
-        fields = (
-            'url', 'id', 'namea', 'nameb', 'address', 'zipcode', 'city', 'country', 'phone', 'fax', 'vatnum', 'active',
-            'numberorders')
-        model = Supplier01
+    Meta = None
 
+def getSupplierSerializer(model):
+    fields = ('url', 'id', 'namea', 'nameb', 'address', 'zipcode', 'city', 'country', 'phone', 'fax', 'vatnum', 'active',
+            'numberorders')
+    return type(model.__name__ + 'Serializer', (SupplierSerializer,), dict(
+            Meta=type("Meta", (),{'fields': fields, 'model': model})
+    ))
 
 class UserSerializer(serializers.ModelSerializer):
     userdata = serializers.SlugRelatedField(many=True, read_only=True, slug_field='prodid')
