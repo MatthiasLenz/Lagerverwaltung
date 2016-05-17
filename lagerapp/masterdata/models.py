@@ -51,6 +51,7 @@ class Project05(ProjectBase):
     leader = models.ForeignKey(Staff05, db_column='Leader', blank=True, null=True)
     leaderid = models.CharField(db_column='Leader', max_length=15, blank=True)
 
+
 class Supplier01(SupplierBase):
     class Meta(SupplierBase.Meta):
         db_table = 'Supplier'

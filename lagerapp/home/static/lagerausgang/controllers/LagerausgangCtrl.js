@@ -3,6 +3,13 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
         function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService, $window, $mdDialog) {
     //ToDo: Input für Abholer und Ausgabe Polier
     var vm = this;
+    $http({
+         method: 'GET',
+         url: '/api/getpr?projectid=1-7800',
+         data: { projectid: '1-7800' }
+        }).then(function(response){
+        vm.consumed = response;
+    })
     vm.files = {};
     vm.simulateQuery = false;
     vm.isDisabled = false;

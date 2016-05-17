@@ -257,7 +257,3 @@ class MinPurchaseDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseDoc01
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'status', 'docdate')
-
-
-
-
