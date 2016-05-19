@@ -5,11 +5,20 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
     var vm = this;
     $http({
          method: 'GET',
-         url: '/api/getpr?projectid=1-7800',
-         data: { projectid: '1-7800' }
+         url: '/api/consumedproduct/1-7800',
+         data: {}
         }).then(function(response){
         vm.consumed = response;
     })
+    vm.addconsumed = function(){
+        $http({
+         method: 'POST',
+         url: '/api/consumedproduct/1-0110',
+         data: {docdate: '2016-01-01', articles: vm.selectedProducts}
+        }).then(function(response){
+        vm.consumed = response;
+        })
+    }
     vm.files = {};
     vm.simulateQuery = false;
     vm.isDisabled = false;

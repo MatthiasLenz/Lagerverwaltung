@@ -1,6 +1,7 @@
 #encoding=UTF-8
 from basemodels import Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, UserData, \
     PurchaseDocuments, StockMovement
+from models import Project01, Staff01
 from serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, getSupplierSerializer,\
     StockMovementSerializer, ProductSerializer, NatureSerializer, FastProductSerializer, ProductSupplierSerializer, \
     ProductPackingSerializer, PurchaseDocumentsSerializer, getStaffSerializer, getDeliveryNoteSerializer, \
@@ -398,30 +399,39 @@ def ftpupload(ftpsettings, file, filename):
     return '%s/%s/%s' % (ftpsettings['uploads'], dirname, filename)
 
 import pyodbc
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.http import JsonResponse
+
 def to_named_rows(rows, description):
     return [{c[0]: row[index]  for index, c in enumerate(description)} for row in rows]
 
+#@authentication_classes(TokenAuthentication)
+#@permission_classes(IsAuthenticatedOrReadOnly)
 @api_view(['GET','POST'])
-def get_project_data(request):
+def get_project_data(request, id, format=None):
 
     def max_consumedproductid(connection):
+        #helper function
         cursor = connection.cursor()
         cursor.execute("SELECT MAX(ID) FROM ConsumedProduct")
         id = str(int(cursor.fetchall()[0][0]) + 1)
         return '0' * (5 - len(id)) + id
 
     def max_consumedproductdatarowid(connection):
+        # helper function
         cursor = connection.cursor()
         cursor.execute("SELECT MAX(ROWID) FROM ConsumedProductData")
-        return cursor.fetchall()[0][0] + 1
+        result = cursor.fetchall()[0][0]
+        if result:
+            return cursor.fetchall()[0][0] + 1
+        else:
+            return 1
 
     if request.method == 'GET':
         data = request.data
-        project_id = request.GET.get('projectid')
+        #project_id = request.GET.get('projectid') # api/getpr?projectid=...
         cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_01_pro_%s;UID=hitoffice;PWD=Hf#379' % project_id.replace('-','_'))
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_01_pro_%s;UID=hitoffice;PWD=Hf#379' % id.replace('-', '_'))
         cursor=cn.cursor()
         cursor.execute("Select * from ConsumedProductData")
         results = cursor.fetchall()
@@ -429,15 +439,14 @@ def get_project_data(request):
         results = [[elem.decode('latin-1').encode('UTF-8') if type(elem)==str else elem for elem in row] for row in results]
         columns = cursor.description
         results = to_named_rows(results, columns)
-        return JsonResponse({'data':results})
+        return Response({'data':results})
 
     elif request.method =='POST':
         data = request.data
-        project_id = data['projectid']
         docdate = data['docdate']
         articles = data['articles']
         cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_01_pro_%s;UID=hitoffice;PWD=Hf#379' % project_id)
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_01_pro_%s;UID=hitoffice;PWD=Hf#379' % id.replace('-', '_'))
         consumedproductid = max_consumedproductid(cn)
         datarowid = max_consumedproductdatarowid(cn)
         print(consumedproductid, datarowid)
@@ -445,9 +454,15 @@ def get_project_data(request):
         cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)", consumedproductid, docdate, 'test')
         cn.commit()
         for a in articles:
+            article = a['article']['prodid']
+            quantity = a['quantity']
             cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
-                           ProductType, Margin, GrossPrice, GrossAmount, SupplierID, PurchaseRef) Values \
-                           (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", a['prodid'], a['name1'])
+                           SupplierID, PurchaseRef) Values \
+                           (?,?,?,?,?,?,?,?,?,?,?)",consumedproductid,datarowid,article['id'],article['name1'],article['unit1'], quantity,
+                           article['netpurchaseprice'], round(article['netpurchaseprice']*quantity, 2), '', '', '')
+            datarowid+=1
+        cursor.commit()
         return Response('')
+
     elif request.method == 'DELETE':
         pass

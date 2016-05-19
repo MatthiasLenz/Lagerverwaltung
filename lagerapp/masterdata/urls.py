@@ -1,6 +1,7 @@
 from django.conf.urls import url, include
-import views, views_c01, views_c04, views_c05
+import views, views_c01
 from rest_framework.routers import DefaultRouter
+from rest_framework.urlpatterns import format_suffix_patterns
 import models
 # Create a router and register our viewsets with it.
 router = DefaultRouter(trailing_slash=False)
@@ -57,13 +58,16 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api/01/', include(router01.urls)),
     url(r'^api/04/', include(router04.urls)),
-    url(r'^api/05/', include(router05.urls)),
-    url(r'^api/productall/', views.CompleteProductView.as_view(), name='productALL'),
+    url(r'^api/05/', include(router05.urls))
+]
+urlpatterns += format_suffix_patterns([url(r'^api/productall/', views.CompleteProductView.as_view(), name='productALL'),
     url(r'^api/users/$', views.UserList.as_view()),
     url(r'^api/users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
     url(r'^api/userdata/$', views.UserDataList.as_view()),
     url(r'^api/userdata/(?P<pk>[0-9]+)/$', views.UserDataDetail.as_view()),
-    url(r'^api/01/makepdf', views_c01.makepdf, name='makepdf'),
-    url(r'^api/01/lagerausgangmakepdf', views_c01.lagerausgangmakepdf, name='lagerausgangmakepdf'),
-    url(r'^api/getpr', views.get_project_data, name='get_project'),
-]
+    url(r'^api/01/makepdf$', views_c01.makepdf, name='makepdf'),
+    url(r'^api/01/lagerausgangmakepdf$', views_c01.lagerausgangmakepdf, name='lagerausgangmakepdf'),
+    url(r'^api/consumedproduct/(?P<id>[0-9-]+)$', views.get_project_data, name='project-detail'),
+    #url(r'^api/consumedproduct/(?P<id>[0-9-]+)$', views.ConsumedProductDetail.as_view(), name='consumedproduct-detail'),
+    #url(r'^api/consumedproduct/$', views.ConsumedProductList.as_view(), name='consumedproduct-list'),
+    ])
