@@ -88,6 +88,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     packing = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productpacking-detail")
     # defaultsupplier = serializers.SlugRelatedField(read_only=True, allow_null=True, slug_field='namea')
     defaultsupplier = getSupplierSerializer(Supplier01)(read_only=True, allow_null=True)
+    #ToDo: getter for ProductSerializer
     class Meta:
         model = Product
         fields = (
@@ -124,6 +125,7 @@ class ProductPackingSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProductSupplierSerializer(serializers.HyperlinkedModelSerializer):
     supplierid = getSupplierSerializer(Supplier01)(read_only=True, allow_null=True)
+    #Todo: getter for ProductSupplierSerializer
     class Meta:
         model = ProductSupplier
         fields = ('url', 'prodid', 'supplierid', 'purchaseprice', 'comment', 'unit', 'id')
