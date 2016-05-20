@@ -125,11 +125,19 @@ class ProductPackingSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProductSupplierSerializer(serializers.HyperlinkedModelSerializer):
     supplierid = getSupplierSerializer(Supplier01)(read_only=True, allow_null=True)
-    #Todo: getter for ProductSupplierSerializer
     class Meta:
         model = ProductSupplier
         fields = ('url', 'prodid', 'supplierid', 'purchaseprice', 'comment', 'unit', 'id')
 
+"""def getProductSupplierSerializer(supplier_model):
+    fields = ('url', 'prodid', 'supplierid', 'purchaseprice', 'comment', 'unit', 'id')
+    return type('ProductSupplierSerializer', (ProductSupplierSerializer,), dict(
+        Meta=type("Meta", (), {
+            'fields': fields,
+            'model': ProductSupplier}),
+        supplierid=getStaffSerializer(supplier_model)(read_only=True, allow_null=True)
+    ))
+"""
 
 from collections import OrderedDict
 from rest_framework.fields import SkipField

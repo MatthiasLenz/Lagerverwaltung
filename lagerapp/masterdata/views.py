@@ -408,7 +408,7 @@ def to_named_rows(rows, description):
 #@authentication_classes(TokenAuthentication)
 #@permission_classes(IsAuthenticatedOrReadOnly)
 @api_view(['GET','POST'])
-def get_project_data(request, id, format=None):
+def get_project_data(request, id, company, format=None):
 
     def max_consumedproductid(connection):
         #helper function
@@ -428,10 +428,11 @@ def get_project_data(request, id, format=None):
             return 1
 
     if request.method == 'GET':
+        print(company)
         data = request.data
         #project_id = request.GET.get('projectid') # api/getpr?projectid=...
         cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_01_pro_%s;UID=hitoffice;PWD=Hf#379' % id.replace('-', '_'))
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=Hf#379' %(company,id.replace('-', '_')))
         cursor=cn.cursor()
         cursor.execute("Select * from ConsumedProductData")
         results = cursor.fetchall()
@@ -446,12 +447,11 @@ def get_project_data(request, id, format=None):
         docdate = data['docdate']
         articles = data['articles']
         cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_01_pro_%s;UID=hitoffice;PWD=Hf#379' % id.replace('-', '_'))
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=Hf#379' %(company,id.replace('-', '_')))
         consumedproductid = max_consumedproductid(cn)
         datarowid = max_consumedproductdatarowid(cn)
-        print(consumedproductid, datarowid)
         cursor = cn.cursor()
-        cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)", consumedproductid, docdate, 'test')
+        cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)", consumedproductid, docdate, '')
         cn.commit()
         for a in articles:
             article = a['article']['prodid']
@@ -465,4 +465,10 @@ def get_project_data(request, id, format=None):
         return Response('')
 
     elif request.method == 'DELETE':
-        pass
+        request.GET.get('purchasedocid') # api/getpr?purchasedocid=...
+        #determine dataids
+        rowid = '9999999999999'
+        cn = pyodbc.connect(
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=Hf#379' %(company,id.replace('-', '_')))
+        cursor = cn.cursor()
+        cursor.execute("DELETE FROM ConsumedProductData where RowID=?", rowid)  #rowid entspricht purchasedocdata dataid

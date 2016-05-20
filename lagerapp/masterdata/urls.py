@@ -67,7 +67,7 @@ urlpatterns += format_suffix_patterns([url(r'^api/productall/', views.CompletePr
     url(r'^api/userdata/(?P<pk>[0-9]+)/$', views.UserDataDetail.as_view()),
     url(r'^api/01/makepdf$', views_c01.makepdf, name='makepdf'),
     url(r'^api/01/lagerausgangmakepdf$', views_c01.lagerausgangmakepdf, name='lagerausgangmakepdf'),
-    url(r'^api/consumedproduct/(?P<id>[0-9-]+)$', views.get_project_data, name='project-detail'),
-    #url(r'^api/consumedproduct/(?P<id>[0-9-]+)$', views.ConsumedProductDetail.as_view(), name='consumedproduct-detail'),
-    #url(r'^api/consumedproduct/$', views.ConsumedProductList.as_view(), name='consumedproduct-list'),
+    url(r'^api/01/consumedproduct/(?P<id>[0-9-]+)$', views.get_project_data, name='project-detail', kwargs={'company':'01'}),
+    url(r'^api/04/consumedproduct/(?P<id>[0-9-]+)$', views.get_project_data, name='project-detail', kwargs={'company':'04'}),
+    url(r'^api/05/consumedproduct/(?P<id>[0-9-]+)$', views.get_project_data, name='project-detail', kwargs={'company': '05'}),
     ])
