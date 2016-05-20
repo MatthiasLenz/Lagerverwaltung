@@ -407,7 +407,7 @@ def to_named_rows(rows, description):
 
 #@authentication_classes(TokenAuthentication)
 #@permission_classes(IsAuthenticatedOrReadOnly)
-@api_view(['GET','POST'])
+@api_view(['GET','POST','DELETE'])
 def get_project_data(request, id, company, format=None):
 
     def max_consumedproductid(connection):
@@ -423,7 +423,7 @@ def get_project_data(request, id, company, format=None):
         cursor.execute("SELECT MAX(ROWID) FROM ConsumedProductData")
         result = cursor.fetchall()[0][0]
         if result:
-            return cursor.fetchall()[0][0] + 1
+            return result + 1
         else:
             return 1
 
@@ -465,10 +465,23 @@ def get_project_data(request, id, company, format=None):
         return Response('')
 
     elif request.method == 'DELETE':
-        request.GET.get('purchasedocid') # api/getpr?purchasedocid=...
-        #determine dataids
-        rowid = '9999999999999'
+        data = request.data
+        purchasedocid = data['purchasedocid']
+        cn = pyodbc.connect(
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_purchase;UID=hitoffice;PWD=Hf#379' %(company))
+        cursor = cn.cursor()
+        cursor.execute("SELECT * FROM purchasedocdata WHERE purchasedocid=?", purchasedocid)
+        results = to_named_rows(cursor.fetchall(),cursor.description)
+        dataids = [row['DataID'] for row in results]
         cn = pyodbc.connect(
             r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=Hf#379' %(company,id.replace('-', '_')))
         cursor = cn.cursor()
-        cursor.execute("DELETE FROM ConsumedProductData where RowID=?", rowid)  #rowid entspricht purchasedocdata dataid
+        for rowid in dataids:
+            cursor.execute("DELETE FROM ConsumedProductData WHERE RowID=?", rowid)  #rowid entspricht purchasedocdata dataid
+        cursor.commit()
+        #Determine ConsumedProduct ID
+        cursor.execute("SELECT ID FROM ConsumedProductData WHERE RowID=?", dataids[0])
+        consumedproductid = cursor.fetchall()[0][0]
+        cursor.execute("DELETE FROM ConsumedProduct WHERE ID=?", consumedproductid)
+        cursor.commit()
+        return Response('')

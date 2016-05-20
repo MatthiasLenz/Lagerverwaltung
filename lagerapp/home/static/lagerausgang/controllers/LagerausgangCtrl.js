@@ -5,18 +5,35 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
     var vm = this;
     $http({
          method: 'GET',
-         url: '/api/consumedproduct/1-7800',
+         url: '/api/01/consumedproduct/1-7800',
          data: {}
         }).then(function(response){
         vm.consumed = response;
     })
     vm.addconsumed = function(){
         $http({
-         method: 'POST',
-         url: '/api/consumedproduct/1-0110',
-         data: {docdate: '2016-01-01', articles: vm.selectedProducts}
+            method: 'POST',
+            url: '/api/01/consumedproduct/1-0110',
+            data: {docdate: '2016-01-01', articles: vm.selectedProducts},
+            dataType: 'json',
+            headers: {
+                "Content-Type": "application/json"
+            }
         }).then(function(response){
         vm.consumed = response;
+        })
+    }
+    vm.deleteconsumed = function(purchasedocid){
+        $http({
+            method: 'DELETE',
+            url: '/api/01/consumedproduct/1-0554',
+            data: {purchasedocid:purchasedocid},
+            dataType: 'json',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function(response){
+            vm.consumed = response;
         })
     }
     vm.files = {};
