@@ -1,28 +1,8 @@
 angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','$timeout', '$q', '$scope',
-    'stockService', 'projectService','bestellungenService','$window', '$mdDialog',
-        function ($http, $timeout, $q, $scope, stockService, projectService, bestellungenService, $window, $mdDialog) {
+    'stockService', 'sessionService', 'projectService','bestellungenService','$window', '$mdDialog',
+        function ($http, $timeout, $q, $scope, stockService, sessionService, projectService, bestellungenService, $window, $mdDialog) {
     //ToDo: Input für Abholer und Ausgabe Polier
     var vm = this;
-    $http({
-         method: 'GET',
-         url: '/api/01/consumedproduct/1-7800',
-         data: {}
-        }).then(function(response){
-        vm.consumed = response;
-    })
-    vm.addconsumed = function(){
-        $http({
-            method: 'POST',
-            url: '/api/01/consumedproduct/1-0110',
-            data: {docdate: '2016-01-01', articles: vm.selectedProducts},
-            dataType: 'json',
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(function(response){
-        vm.consumed = response;
-        })
-    }
     vm.deleteconsumed = function(purchasedocid){
         $http({
             method: 'DELETE',
@@ -146,21 +126,31 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http','
             "data": articles,
             "deliverynotes": []
         };
-        bestellungenService.internalpurchasedoc.create(data).then(function (purchasedoc) {
-            make(purchasedoc, 'pdf').then(function (response){
-                refreshDocs();
-                showAlert('Lagerausgang erfolgreich eingetragen.').then(function(){
-                    $window.open(response.data, '_blank');
-                });
-            }, function(error){
-                refreshDocs();
-                showAlert('Lagerausgang eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
-            });
+        bestellungenService.internalpurchasedoc.create(data)
+            .then(function (purchasedoc) {
+                $http({
+                    method: 'POST',
+                    url: '/api/'+sessionService.getCompany()+'/consumedproduct/'+vm.selectedProject.id,
+                    data: {docdate: vm.dt, articles: vm.selectedProducts,
+                        purchaseref: purchasedoc.id, supplierid:purchasedoc.supplierid},
+                    dataType: 'json',
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }).then(function(response){
+                    make(purchasedoc, 'pdf').then(function (response){
+                    refreshDocs();
+                    showAlert('Lagerausgang erfolgreich eingetragen.').then(function(){
+                        $window.open(response.data, '_blank');
+                    });
+                    }, function(error){
+                        refreshDocs();
+                        showAlert('Lagerausgang eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
+                    });
+                })
             }, function(error){
                 showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler ist aufgetreten.');
         });
-        //enter consumed product data
-
     }
 
     function getTotal(){

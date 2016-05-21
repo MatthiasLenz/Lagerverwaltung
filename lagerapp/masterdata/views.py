@@ -440,29 +440,36 @@ def get_project_data(request, id, company, format=None):
         results = [[elem.decode('latin-1').encode('UTF-8') if type(elem)==str else elem for elem in row] for row in results]
         columns = cursor.description
         results = to_named_rows(results, columns)
+        cursor.close()
         return Response({'data':results})
 
     elif request.method =='POST':
-        data = request.data
-        docdate = data['docdate']
-        articles = data['articles']
-        cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=Hf#379' %(company,id.replace('-', '_')))
-        consumedproductid = max_consumedproductid(cn)
-        datarowid = max_consumedproductdatarowid(cn)
-        cursor = cn.cursor()
-        cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)", consumedproductid, docdate, '')
-        cn.commit()
-        for a in articles:
-            article = a['article']['prodid']
-            quantity = a['quantity']
-            cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
-                           SupplierID, PurchaseRef) Values \
-                           (?,?,?,?,?,?,?,?,?,?,?)",consumedproductid,datarowid,article['id'],article['name1'],article['unit1'], quantity,
-                           article['netpurchaseprice'], round(article['netpurchaseprice']*quantity, 2), '', '', '')
-            datarowid+=1
-        cursor.commit()
-        return Response('')
+        try:
+            data = request.data
+            docdate = data['docdate']
+            articles = data['articles']
+            purchaseref = data['purchaseref']
+            supplierid = data['supplierid']
+            cn = pyodbc.connect(
+                r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=Hf#379' %(company,id.replace('-', '_')))
+            consumedproductid = max_consumedproductid(cn)
+            datarowid = max_consumedproductdatarowid(cn)
+            cursor = cn.cursor()
+            cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)", consumedproductid, docdate, '')
+            cn.commit()
+            for a in articles:
+                article = a['article']['prodid']
+                quantity = a['quantity']
+                test = cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
+                               SupplierID, PurchaseRef) Values \
+                               (?,?,?,?,?,?,?,?,?,?,?)",consumedproductid,datarowid,article['id'],article['name1'],article['unit1'], quantity,
+                               article['netpurchaseprice'], round(article['netpurchaseprice']*quantity, 2), '', supplierid, purchaseref)
+                datarowid+=1
+            cursor.commit()
+            cursor.close()
+        except:
+            return Response({'data':'Error'} ,status='HTTP_500_INTERNAL_SERVER_ERROR')
+        return Response('OK')
 
     elif request.method == 'DELETE':
         data = request.data
@@ -484,4 +491,5 @@ def get_project_data(request, id, company, format=None):
         consumedproductid = cursor.fetchall()[0][0]
         cursor.execute("DELETE FROM ConsumedProduct WHERE ID=?", consumedproductid)
         cursor.commit()
+        cursor.close()
         return Response('')
