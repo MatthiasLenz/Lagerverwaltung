@@ -3,6 +3,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
     function ($http, $timeout, $q, $scope, stockService, sessionService, projectService, bestellungenService, $window, $mdDialog) {
         //ToDo: Input für Abholer und Ausgabe Polier
         var vm = this;
+        window.show = this;
         vm.deleteconsumed = function (purchasedocid) {
             $http({
                 method: 'DELETE',
@@ -16,6 +17,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 vm.consumed = response;
             })
         }
+        vm.packings = {}
         vm.files = {};
         vm.simulateQuery = false;
         vm.isDisabled = false;
@@ -43,7 +45,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         vm.queryStock = queryStock;
         vm.queryProject = queryProject;
         vm.projectDocs = [];
-        vm.selectedItemChange = selectedItemChange;
+        vm.selectedProjectChange = selectedProjectChange;
+        vm.selectedProductChange = selectedProductChange;
         vm.searchTextChange = searchTextChange;
         vm.getTotal = getTotal;
         vm.save = save;
@@ -52,6 +55,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         vm.addRow = addRow;
         vm.deleteRow = deleteRow;
         vm.direction = "row";
+
         vm.swap_direction = function () {
             if (vm.direction == "row") {
                 vm.direction = "column";
@@ -111,7 +115,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     "rowid": null,
                     "prodid": article.article.prodid.id, "name": article.article.prodid.name1,
                     "unit": article.article.prodid.unit1,
-                    "quantity": article.quantity, "price": article.article.prodid.netpurchaseprice,
+                    "quantity": Math.round(article.quantity*article.selectedpacking.quantity * 1000) / 1000,
+                    "price": article.article.prodid.netpurchaseprice,
                     "amount": article.quantity * article.article.prodid.netpurchaseprice
                 });
             }
@@ -162,7 +167,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             for (var i = 0; i < vm.selectedProducts.length; i++) {
                 var row = vm.selectedProducts[i];
                 if (row.quantity && row.article) {
-                    var quantity = row.quantity;
+                    var quantity = Math.round(article.quantity*article.selectedpacking.quantity * 1000) / 1000;
                     var price = row.article.prodid.netpurchaseprice;
                     var amount = quantity * price;
                     total += amount;
@@ -194,13 +199,34 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         function searchTextChange(text) {
         }
 
-        function selectedItemChange(item) {
+        function selectedProjectChange(item) {
             refreshDocs();
         }
 
+        function selectedProductChange(row) {
+            if (row.article!= null && typeof row.article.prodid !== "undefined" ) {
+                //default packing unit
+                var packdata = {name: row.article.prodid.unit1, quantity:1, changed:false};
+                row.packings = [packdata];
+                row.article.prodid.packing.forEach(
+                    function (entry) {
+                        var packdata = {};
+                        var id;
+                        $http.get(entry).then(function (response) {
+                            //Get productpacking data
+                            packdata["name"] = response.data.name;
+                            packdata["quantity"] = response.data.quantity;
+                            packdata["changed"] = false;
+                            id = response.data.packingid;
+                            row.packings.push(packdata);
+                        });
+                    });
+            }
+        }
+        vm.show=vm.selectedProducts;
         function addRow() {
             var newRowID = vm.selectedProducts.length + 1;
-            vm.selectedProducts.push({id: newRowID, quantity: null, article: null});
+            vm.selectedProducts.push({id: newRowID, quantity: null, article: null, selectedpacking:{}});
         }
 
         function deleteRow(rowid) {

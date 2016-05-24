@@ -4,7 +4,7 @@
                      md-selected-item="lagerVm.selectedProject"
                      md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
                      md-search-text="lagerVm.searchProject"
-                     md-selected-item-change="lagerVm.selectedItemChange(item)"
+                     md-selected-item-change="lagerVm.selectedProjectChange(item)"
                      md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
                      md-item-text="item.id+', '+item.description" md-min-length="0"
                      placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
@@ -54,7 +54,7 @@
                 <md-autocomplete md-no-cache="true" md-selected-item="row.article"
                                  md-search-text-change="lagerVm.searchTextChange(row.searchProd)"
                                  md-search-text="row.searchProd"
-                                 md-selected-item-change="lagerVm.selectedItemChange(item)"
+                                 md-selected-item-change="lagerVm.selectedProductChange(row)"
                                  md-items="item in lagerVm.queryStock(row.searchProd)"
                                  md-item-text="item.prodid.id+', '+item.prodid.name1" md-min-length="0"
                                  placeholder="Bitte wählen Sie einen Artikel aus.">
@@ -71,7 +71,14 @@
                 <input type="number" step="0.01" class="form-control" placeholder="Menge" ng-model="row.quantity">
             </div>
             <div flex="5">
-                {{ row.article.prodid.unit1 }}
+                <md-input-container>
+                    <label>Einheit</label>
+                    <md-select ng-model="row.selectedpacking">
+                        <md-option ng-repeat="packing in row.packings" ng-value="{{ packing }}">
+                            {{ packing.name }}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
             </div>
             <div flex="5">
                 <i ng-show="row.article && row.quantity" class="material-icons" style="color:darkgreen" ;>check</i>
@@ -120,15 +127,17 @@
                 <th class="col-md-1">Einheit</th>
                 <th class="col-md-1">Preis</th>
                 <th class="col-md-1">Gesamt</th>
+                <th class="col-md-1">Verpackung</th>
                 </thead>
                 <tbody>
                 <tr ng-repeat="item in lagerVm.selectedProducts" ng-show="item.article && item.quantity">
                     <td> {{ item.article.prodid.id }}</td>
                     <td> {{ item.article.prodid.name1 }}</td>
-                    <td> {{ item.quantity }}</td>
+                    <td> {{ item.quantity * item.selectedpacking.quantity | number : 3}}</td>
                     <td> {{ item.article.prodid.unit1 }}</td>
                     <td> {{ item.article.prodid.netpurchaseprice |currency:""}} €</td>
                     <td> {{ item.article.prodid.netpurchaseprice * item.quantity | currency:""}} €</td>
+                    <td ng-show="item.selectedpacking.quantity!=1">{{ item.selectedpacking.name }}: {{ item.quantity}}  </td>
                 </tr>
                 <tr>
                     <td></td>
@@ -191,7 +200,8 @@
                     <td> {{ item.packing }}</td>
                     <td><span ng-show="bestellung.edit">
                         <textarea type="text" class="form-control" ng-model="item.comment"
-                                  placeholder="Bemerkung (optional)" ng-maxlength="255" maxlength="255"></textarea></span>
+                                  placeholder="Bemerkung (optional)" ng-maxlength="255"
+                                  maxlength="255"></textarea></span>
                         <span ng-show="!bestellung.edit">{{ item.comment }}</span>
                     </td>
                     <td><span ng-show="bestellung.edit">
@@ -234,5 +244,5 @@
         </div>
     </div>
 </div>
-<button ng-click="lagerVm.deleteconsumed('10007979')">consumedproduct löschen</button>
-<pre>{{ lagerVm.consumed.data |json }}</pre>
+<!--<button ng-click="lagerVm.deleteconsumed('10007979')">consumedproduct löschen</button>-->
+<!--<pre>{{ lagerVm.show |json }}</pre>-->
