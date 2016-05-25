@@ -1,6 +1,7 @@
 angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', '$timeout', '$q', '$scope',
-    'stockService', 'sessionService', 'projectService', 'bestellungenService', '$window', '$mdDialog',
-    function ($http, $timeout, $q, $scope, stockService, sessionService, projectService, bestellungenService, $window, $mdDialog) {
+    'stockService', 'sessionService', 'projectService', 'bestellungenService', 'staffService', '$window', '$mdDialog',
+    function ($http, $timeout, $q, $scope, stockService, sessionService, projectService, bestellungenService,
+              staffService, $window, $mdDialog) {
         //ToDo: Input für Abholer und Ausgabe Polier
         var vm = this;
         window.show = this;
@@ -42,6 +43,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 vm.stock = data;
             });
         // list of `state` value/display objects
+        vm.queryStaff = queryStaff;
         vm.queryStock = queryStock;
         vm.queryProject = queryProject;
         vm.projectDocs = [];
@@ -98,11 +100,11 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         };
         vm.refresh_documents = function (doc) {
             bestellungenService.purchasedoc.delete_documents(doc.id).then(function () {
-                make(doc, 'pdf').then(function () {
+                make(doc, 'pdf', '').then(function () {
                     refreshDocs();
                 });
             }, function (error) {
-                make(doc, 'pdf').then(function () {
+                make(doc, 'pdf', '').then(function () {
                     refreshDocs();
                 });
             });
@@ -122,6 +124,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             var articles = [];
             for (var i = 0; i < vm.selectedProducts.length; i++) {
                 article = vm.selectedProducts[i];
+                var packing = article.selectedpacking.quantity!=1 ? "Verpackung: "+ article.quantity+' '+article.selectedpacking.name : "";
                 articles.push({
                     "rowid": null,
                     "prodid": article.article.prodid.id, "name": article.article.prodid.name1,
@@ -129,7 +132,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     "quantity": Math.round(article.quantity*article.selectedpacking.quantity * 1000) / 1000,
                     "price": article.article.prodid.netpurchaseprice,
                     "amount": article.quantity * article.article.prodid.netpurchaseprice,
-                    "packing": "Verpackung: "+ article.quantity+' '+article.selectedpacking.name,
+                    "packing": packing,
                     "comment":""
                 });
             }
@@ -139,6 +142,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 "subject": vm.selectedProject.description,
                 "responsible": manager,
                 "leader": leader,
+                "abholer": vm.abholer.firstname+" "+vm.abholer.lastname,
                 "supplierid": "SOLID-SCHIEREN", // ToDo: variabel
                 "modulerefid": vm.selectedProject.id,
                 "docdate": vm.dt,
@@ -159,7 +163,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                             "Content-Type": "application/json"
                         }
                     }).then(function (response) {
-                        make(purchasedoc, 'pdf').then(function (response) {
+                        make(purchasedoc, 'pdf', vm.abholer.firstname+" "+vm.abholer.lastname).then(function (response) {
                             refreshDocs();
                             showAlert('Lagerausgang erfolgreich eingetragen.').then(function () {
                                 $window.open(response.data, '_blank');
@@ -187,7 +191,15 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             }
             return total;
         }
-
+        function queryStaff(query) {
+            return $q(function (resolve, reject) {
+                staffService.list({
+                    search: query,
+                }).then(function (response) {
+                    resolve(response.results);
+                });
+            })
+        }
         function queryStock(query) {
             return $q(function (resolve, reject) {
                 stockService.articlelist_noload({
@@ -288,8 +300,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             })
         }
 
-        function make(doc, type) {
-            return bestellungenService.makeinternal(doc, type).then(function (docurl) {
+        function make(doc, type, abholer) {
+            return bestellungenService.makeinternal(doc, type, abholer).then(function (docurl) {
                 bestellungenService.purchasedoc.file(doc.id).then(function (item) {
                     vm.files[item.purchasedocid] = {pdf: item.pdf};
                 });

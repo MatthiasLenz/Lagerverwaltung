@@ -396,6 +396,8 @@ class PurchaseDocBase(models.Model):
         db_table = 'PurchaseDoc'
 
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)  # Field name made lowercase.
+    concerns = models.CharField(db_column='Concerns', max_length=60, blank=True)
+    remark = models.CharField(db_column='Remark', max_length=50, blank=True)
     subject = models.CharField(db_column='Subject', max_length=255, blank=True)
     leader = models.CharField(db_column='ContactOnSiteID', max_length=15, blank=True)
     responsible = models.CharField(db_column='Responsible', max_length=15, blank=True, null=True)
@@ -488,10 +490,18 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
+class Company(models.Model):
+    id = models.CharField(db_column='ID', max_length=15, primary_key=True)
+    namea = models.CharField(db_column='NameA', max_length=30, blank=True)
+    address = models.CharField(db_column='Address', max_length=255, blank=True)
+    country = models.CharField(db_column='Country', max_length=3, blank=True)
+    city = models.CharField(db_column='City', max_length=30, blank=True)
 
 class UserData(models.Model):
     user = models.ForeignKey(User, db_column='userid', related_name='userdata')
     prodid = models.CharField(db_column='ProdID', max_length=15, null=True)
+    companyid = models.CharField(db_column='CompanyID', max_length=2, null=True)
+    #companyid = models.ForeignKey(Company, db_column='CompanyID', blank=True, null=True)
 
 
 class PurchaseDocuments(models.Model):

@@ -231,7 +231,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             });
         });
     }
-    function makeinternal(doc, type){
+    function makeinternal(doc, type, abholer){
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
@@ -239,7 +239,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return $http({
                 method: "POST",
                 url: "/api/" + companyid() + "/lagerausgangmakepdf",
-                data: {"doc": doc, "type": type},
+                data: {"doc": doc, "type": type, "abholer": abholer},
                 headers: {"Authorization": getToken}
             });
         });

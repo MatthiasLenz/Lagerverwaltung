@@ -62,7 +62,7 @@ urlpatterns = [
 ]
 urlpatterns += format_suffix_patterns([url(r'^api/productall/', views.CompleteProductView.as_view(), name='productALL'),
     url(r'^api/users/$', views.UserList.as_view()),
-    url(r'^api/users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
+    url(r'^api/users/(?P<pk>[0-9]+)$', views.UserDetail.as_view()),
     url(r'^api/userdata/$', views.UserDataList.as_view()),
     url(r'^api/userdata/(?P<pk>[0-9]+)/$', views.UserDataDetail.as_view()),
     url(r'^api/01/makepdf$', views_c01.makepdf, name='makepdf'),

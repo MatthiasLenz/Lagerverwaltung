@@ -51,7 +51,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserData
-        fields = ('user', 'prodid')
+        fields = ('user', 'prodid', 'companyid')
 
 
 class StockSerializer(serializers.HyperlinkedModelSerializer):

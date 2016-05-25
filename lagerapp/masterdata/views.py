@@ -45,7 +45,8 @@ class LargeResultsSetPagination(pagination.PageNumberPagination):
 
 class StaffViewSet(viewsets.ModelViewSet):
     #queryset and serializer_class defined dynamically
-    pass
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('id', 'firstname', 'lastname')
 
 def getStaffViewSet(model):
     #Class Generator, returns a StaffViewSet class with dynamically defined queryset

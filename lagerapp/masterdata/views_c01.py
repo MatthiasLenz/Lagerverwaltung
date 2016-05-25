@@ -70,6 +70,7 @@ def lagerausgangmakepdf(request):
         lagerausgang = settings["lagerausgang"]
         document_folder = settings["document_folder"]
     data = dict(request.data['doc'])
+    data['abholer'] = request.data['abholer']
     data.update(lagerausgang)
     dt = parse_datetime(data['docdate'])
     data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
@@ -150,6 +151,8 @@ def renderdoc1(data_input, outputfile):
     # company specific
     info = {'kostenstelle': data_input['modulerefid'], 'stock': data_input["stockid"],
             'bez_kostenstelle': data_input['subject'], 'id':data_input['id'],
-            'date': data_input['docdate'], 'recipient':'%s'%(data_input['responsible'])}
+            'date': data_input['docdate'], 'recipient':'%s'%(data_input['responsible']),
+            'polier': data_input['leader'],
+            'abholer': data_input['abholer']}
     data = dict(items=items, info=info)
     t.render(data)
