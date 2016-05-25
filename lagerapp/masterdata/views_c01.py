@@ -142,9 +142,11 @@ def renderdoc1(data_input, outputfile):
     items = []
     #total = '%.2f' % sum(item['amount'] for item in data_input['data'])
     for item in data_input['data']:
+        packing = item['packing'] if item['packing'] else ''
+        comment = item['comment'] if item['comment'] else ''
         items.append(
             {'id': item['prodid'], 'name': item['name'], 'unit': item['unit'], 'quantity': '%.3f' % item['quantity'],
-             'price': '%.2f' % item['price']})
+             'price': '%.2f' % item['price'], 'packing': packing, 'comment': comment})
     # company specific
     info = {'kostenstelle': data_input['modulerefid'], 'stock': data_input["stockid"],
             'bez_kostenstelle': data_input['subject'], 'id':data_input['id'],

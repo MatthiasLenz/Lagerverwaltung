@@ -107,7 +107,18 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 });
             });
         };
+
         function save() {
+            if (!vm.selectedProject){
+                showAlert('Bitte wählen Sie eine Baustelle aus.');
+                return 0;
+            }
+            if (vm.selectedProducts.length==0 || !vm.selectedProducts[0].article){
+                showAlert('Keine Artikel ausgewählt.');
+                return 0;
+            }
+            var manager = vm.selectedProject.manager ? vm.selectedProject.manager.id : '';
+            var leader = vm.selectedProject.leader ? vm.selectedProject.leader.id : '';
             var articles = [];
             for (var i = 0; i < vm.selectedProducts.length; i++) {
                 article = vm.selectedProducts[i];
@@ -117,11 +128,12 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     "unit": article.article.prodid.unit1,
                     "quantity": Math.round(article.quantity*article.selectedpacking.quantity * 1000) / 1000,
                     "price": article.article.prodid.netpurchaseprice,
-                    "amount": article.quantity * article.article.prodid.netpurchaseprice
+                    "amount": article.quantity * article.article.prodid.netpurchaseprice,
+                    "packing": "Verpackung: "+ article.quantity+' '+article.selectedpacking.name,
+                    "comment":""
                 });
             }
-            var manager = vm.selectedProject.manager ? vm.selectedProject.manager.id : '';
-            var leader = vm.selectedProject.leader ? vm.selectedProject.leader.id : '';
+
             data = {
                 "doctype": 3, "module": 9, "status": 4,
                 "subject": vm.selectedProject.description,
@@ -167,7 +179,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             for (var i = 0; i < vm.selectedProducts.length; i++) {
                 var row = vm.selectedProducts[i];
                 if (row.quantity && row.article) {
-                    var quantity = Math.round(article.quantity*article.selectedpacking.quantity * 1000) / 1000;
+                    var quantity = Math.round(row.quantity*row.selectedpacking.quantity * 1000) / 1000;
                     var price = row.article.prodid.netpurchaseprice;
                     var amount = quantity * price;
                     total += amount;
@@ -208,6 +220,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 //default packing unit
                 var packdata = {name: row.article.prodid.unit1, quantity:1, changed:false};
                 row.packings = [packdata];
+                row.selectedpacking = row.packings[0];
                 row.article.prodid.packing.forEach(
                     function (entry) {
                         var packdata = {};
@@ -226,7 +239,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         vm.show=vm.selectedProducts;
         function addRow() {
             var newRowID = vm.selectedProducts.length + 1;
-            vm.selectedProducts.push({id: newRowID, quantity: null, article: null, selectedpacking:{}});
+            vm.selectedProducts.push({id: newRowID, quantity: null, article: null, selectedpacking:null});
         }
 
         function deleteRow(rowid) {

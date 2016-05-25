@@ -1,12 +1,12 @@
 <!--<button ng-click="lagerVm.swap_direction()">swap Layout</button>-->
 <div flex="40">
-    <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="true"
+    <md-autocomplete ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="1000" md-min-length="1"
                      md-selected-item="lagerVm.selectedProject"
                      md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
                      md-search-text="lagerVm.searchProject"
                      md-selected-item-change="lagerVm.selectedProjectChange(item)"
                      md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
-                     md-item-text="item.id+', '+item.description" md-min-length="0"
+                     md-item-text="item.id+', '+item.description"
                      placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
         <md-item-template>
                 <span md-highlight-text="lagerVm.searchProject"
@@ -45,43 +45,45 @@
         </div>
 
         <div ng-repeat="row in lagerVm.selectedProducts" layout="row">
-            <div flex="5">
+            <div flex="10">
                 <md-button class="md-icon-button" aria-label="Remove Row" ng-click="lagerVm.deleteRow(row.id)">
                     <md-icon md-svg-src="static/img/icons/ic_clear_black_24px.svg"></md-icon>
                 </md-button>
             </div>
-            <div flex="70">
-                <md-autocomplete md-no-cache="true" md-selected-item="row.article"
+            <div flex="55">
+                <md-autocomplete md-no-cache="false" md-selected-item="row.article" md-delay="1000" md-min-length="1"
                                  md-search-text-change="lagerVm.searchTextChange(row.searchProd)"
                                  md-search-text="row.searchProd"
                                  md-selected-item-change="lagerVm.selectedProductChange(row)"
                                  md-items="item in lagerVm.queryStock(row.searchProd)"
-                                 md-item-text="item.prodid.id+', '+item.prodid.name1" md-min-length="0"
+                                 md-item-text="item.prodid.id+', '+item.prodid.name1"
                                  placeholder="Bitte wählen Sie einen Artikel aus.">
                     <md-item-template>
-                            <span md-highlight-text="row.searchProd"
-                                  md-highlight-flags="^i">{{ item.prodid.id+', '+item.prodid.name1 }}</span>
+                        <span md-highlight-text="row.searchProd"
+                              md-highlight-flags="^i">{{ item.prodid.id+', '+item.prodid.name1 }}
+                        </span>
+                        <md-tooltip md-delay="0" md-autohide="true">{{ item.prodid.id+', '+item.prodid.name1 }}</md-tooltip>
                     </md-item-template>
                     <md-not-found>
-                        Keine Übereinstimmung mit "{{ lagerVm.searchProd }}" gefunden.
+                        Keine Übereinstimmung mit "{{ row.searchProd }}" gefunden.
                     </md-not-found>
                 </md-autocomplete>
             </div>
-            <div flex="15" flex-offset="5">
+            <div flex="10">
                 <input type="number" step="0.01" class="form-control" placeholder="Menge" ng-model="row.quantity">
             </div>
-            <div flex="5">
+            <div flex="15">
                 <md-input-container>
                     <label>Einheit</label>
-                    <md-select ng-model="row.selectedpacking">
+                    <md-select ng-model="row.selectedpacking" >
                         <md-option ng-repeat="packing in row.packings" ng-value="{{ packing }}">
                             {{ packing.name }}
                         </md-option>
                     </md-select>
                 </md-input-container>
             </div>
-            <div flex="5">
-                <i ng-show="row.article && row.quantity" class="material-icons" style="color:darkgreen" ;>check</i>
+            <div flex="10">
+                <i ng-show="row.article && row.quantity && row.selectedpacking" class="material-icons" style="color:darkgreen" ;>check</i>
             </div>
         </div>
         <div>
