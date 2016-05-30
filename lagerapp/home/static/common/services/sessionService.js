@@ -1,13 +1,38 @@
-angular.module('baseApp.Services').
-factory("sessionService", function ($rootScope) {
-    var companyid = '01';   //default
+angular.module('baseApp.Services').factory("sessionService", function ($rootScope, tokenService, $http, $q) {
+    var companyid = null;
     var stockid = '0';      //default
+    var user = null;
     var setCompany = function (id) {
         companyid = id;
     };
     var getCompany = function () {
-        return companyid;
+        if (companyid) {
+            //turn value into promise with $q.when(value)
+            return $q.when(companyid);
+        }
+        else {
+            return tokenService.getToken()
+                .then(function (tokendata) {
+                    return $http({
+                        method: 'GET',
+                        url: '/api/whoami',
+                        dataType: 'json',
+                        headers: {
+                            "Authorization": "Token " + tokendata.token,
+                            "Content-Type": "application/json"
+                        }
+                    })
+                })
+                .then(function (response) {
+                    companyid = response.data.companyid;
+                    return response.data.companyid;
+                })
+                .catch(function (err) {
+                    alert("Error");
+                });
+        }
     };
+
     var setStock = function (id) {
         stockid = id;
     };

@@ -11,6 +11,7 @@ factory("loginService", function ($uibModal) {
         modalInstance.result.then(function (tokendata) {
             data.user = tokendata.user;
             data.loggedin = true;
+            
         });
         //return a promise
         return modalInstance.result;

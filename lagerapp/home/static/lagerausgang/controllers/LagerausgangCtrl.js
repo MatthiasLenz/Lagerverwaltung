@@ -12,7 +12,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 data: {purchasedocid: purchasedocid},
                 dataType: 'json',
                 headers: {
-                    "Authorisation": "Token "+tokenService.getToken(),
+                    "Authorization": "Token "+tokenService.getToken(),
                     "Content-Type": "application/json"
                 }
             }).then(function (response) {
@@ -152,6 +152,16 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             };
             bestellungenService.internalpurchasedoc.create(data)
                 .then(function (purchasedoc) {
+                        $http({
+                            method: 'GET',
+                            url: '/api/getuserdata',
+                            dataType: 'json',
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                            }).then(function (response) {
+                                vm.show = response;
+                        })
                     projectService.consumedproduct_create(vm.selectedProject,  {
                         docdate: vm.dt, articles: vm.selectedProducts,
                         purchaseref: purchasedoc.id, supplierid: purchasedoc.supplierid}

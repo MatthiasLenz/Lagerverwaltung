@@ -47,11 +47,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username')
 
 class UserDataSerializer(serializers.ModelSerializer):
-    pk = serializers.CharField(source='user.username')
     username = serializers.CharField(source='user.username')
     class Meta:
         model = UserData
-        fields = ('pk','user', 'username', 'prodid', 'companyid')
+        fields = ('user', 'username', 'prodid', 'companyid')
 
 
 

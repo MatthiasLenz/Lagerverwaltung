@@ -406,9 +406,8 @@ def to_named_rows(rows, description):
 
 @api_view(['GET','POST','DELETE'])
 @authentication_classes((TokenAuthentication,))
-@permission_classes((IsAuthenticated,))
+@permission_classes((IsAuthenticatedOrReadOnly,))
 def get_project_data(request, id, company, format=None):
-    print(request.user)
     def max_consumedproductid(connection):
         #helper function
         cursor = connection.cursor()
@@ -492,3 +491,11 @@ def get_project_data(request, id, company, format=None):
         cursor.commit()
         cursor.close()
         return Response('')
+
+@api_view(['GET',])
+def whoami(request):
+    userid = request.user.id
+    userdata = UserDataSerializer(UserData.objects.get(user_id=userid)).data
+    userdata.pop('user')   #not needed
+    userdata.pop('prodid') #not used
+    return Response(userdata, content_type='json')
