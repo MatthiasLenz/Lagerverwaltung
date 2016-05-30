@@ -34,8 +34,9 @@
 {% load rest_framework %}
 {% load custom_tags %}
 {% load i18n %}
+<link rel="shortcut icon" href="{% static "favicon.png" %}" type="image/x-icon"/>
+<link rel="icon" href="{% static "favicon.png" %}" type="image/x-icon"/>
 <script src="{% static "base.js" %}"></script>
-
 <script src="{% static "common/directives/docsTimeDirective.js" %}"></script>
 <script src="{% static "common/directives/head.js" %}"></script>
 <script src="{% static "common/services/sessionService.js" %}"></script>
@@ -62,7 +63,6 @@
 <script src="{% static "bestellungen/directives/deliverynote.js" %}"></script>
 <script src="{% static "lagerausgang/directives/base.js" %}"></script>
 <script src="{% static "lagerausgang/controllers/LagerausgangCtrl.js" %}"></script>
-
 
 <link rel="stylesheet" href="{% static "css/list.css" %}">
 {% verbatim %}
