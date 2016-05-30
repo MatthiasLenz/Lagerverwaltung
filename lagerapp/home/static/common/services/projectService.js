@@ -1,5 +1,5 @@
 angular.module('baseApp.Services').
-factory("projectService", function ($resource, $cacheFactory, sessionService) {
+factory("projectService", function ($resource, $cacheFactory, sessionService, tokenService, $http) {
     var companyid = sessionService.getCompany;
     var companies = ['01', '04', '05']; //Todo: make it dynamic
     var projectCache = $cacheFactory('Project');
@@ -16,9 +16,25 @@ factory("projectService", function ($resource, $cacheFactory, sessionService) {
     function project_get(id) {
         return projects[companyid()].get(id).$promise;
     }
-
+    function consumedproduct_create(selectedProject, data){
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata){
+            return $http({
+                method: 'POST',
+                url: '/api/' + sessionService.getCompany() + '/consumedproduct/' + selectedProject.id,
+                data: data,
+                dataType: 'json',
+                headers: {
+                    "Authorization": "Token "+tokendata.token,
+                    "Content-Type": "application/json"
+                }
+            })
+        });
+    }
     return {
         get: project_get,
-        project_list: project_list
+        project_list: project_list,
+        consumedproduct_create: consumedproduct_create
     };
 });

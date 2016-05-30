@@ -42,16 +42,18 @@ def getSupplierSerializer(model):
     ))
 
 class UserSerializer(serializers.ModelSerializer):
-    userdata = serializers.SlugRelatedField(many=True, read_only=True, slug_field='prodid')
     class Meta:
         model = User
-        fields = ('id', 'username', 'userdata')
-
+        fields = ('id', 'username')
 
 class UserDataSerializer(serializers.ModelSerializer):
+    pk = serializers.CharField(source='user.username')
+    username = serializers.CharField(source='user.username')
     class Meta:
         model = UserData
-        fields = ('user', 'prodid', 'companyid')
+        fields = ('pk','user', 'username', 'prodid', 'companyid')
+
+
 
 
 class StockSerializer(serializers.HyperlinkedModelSerializer):

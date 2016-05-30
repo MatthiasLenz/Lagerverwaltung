@@ -161,7 +161,6 @@ class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -170,7 +169,6 @@ class UserDetail(generics.RetrieveAPIView):
 class UserDataList(generics.ListAPIView, generics.UpdateAPIView, generics.CreateAPIView):
     queryset = UserData.objects.all()
     serializer_class = UserDataSerializer
-
 
 class UserDataDetail(generics.RetrieveAPIView, generics.UpdateAPIView, ):
     queryset = UserData.objects.all()
@@ -406,11 +404,11 @@ from django.http import JsonResponse
 def to_named_rows(rows, description):
     return [{c[0]: row[index]  for index, c in enumerate(description)} for row in rows]
 
-#@authentication_classes(TokenAuthentication)
-#@permission_classes(IsAuthenticatedOrReadOnly)
 @api_view(['GET','POST','DELETE'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
 def get_project_data(request, id, company, format=None):
-
+    print(request.user)
     def max_consumedproductid(connection):
         #helper function
         cursor = connection.cursor()

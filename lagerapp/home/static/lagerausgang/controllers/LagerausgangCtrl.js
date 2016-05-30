@@ -12,6 +12,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 data: {purchasedocid: purchasedocid},
                 dataType: 'json',
                 headers: {
+                    "Authorisation": "Token "+tokenService.getToken(),
                     "Content-Type": "application/json"
                 }
             }).then(function (response) {
@@ -151,18 +152,11 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             };
             bestellungenService.internalpurchasedoc.create(data)
                 .then(function (purchasedoc) {
-                    $http({
-                        method: 'POST',
-                        url: '/api/' + sessionService.getCompany() + '/consumedproduct/' + vm.selectedProject.id,
-                        data: {
-                            docdate: vm.dt, articles: vm.selectedProducts,
-                            purchaseref: purchasedoc.id, supplierid: purchasedoc.supplierid
-                        },
-                        dataType: 'json',
-                        headers: {
-                            "Content-Type": "application/json"
-                        }
-                    }).then(function (response) {
+                    projectService.consumedproduct_create(vm.selectedProject,  {
+                        docdate: vm.dt, articles: vm.selectedProducts,
+                        purchaseref: purchasedoc.id, supplierid: purchasedoc.supplierid}
+                    )
+                    .then(function (response) {
                         make(purchasedoc, 'pdf', vm.abholer.firstname+" "+vm.abholer.lastname).then(function (response) {
                             refreshDocs();
                             showAlert('Lagerausgang erfolgreich eingetragen.').then(function () {

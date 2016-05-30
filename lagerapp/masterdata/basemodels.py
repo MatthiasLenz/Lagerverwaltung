@@ -498,7 +498,7 @@ class Company(models.Model):
     city = models.CharField(db_column='City', max_length=30, blank=True)
 
 class UserData(models.Model):
-    user = models.ForeignKey(User, db_column='userid', related_name='userdata')
+    user = models.OneToOneField(User, db_column='userid', primary_key=True)
     prodid = models.CharField(db_column='ProdID', max_length=15, null=True)
     companyid = models.CharField(db_column='CompanyID', max_length=2, null=True)
     #companyid = models.ForeignKey(Company, db_column='CompanyID', blank=True, null=True)
