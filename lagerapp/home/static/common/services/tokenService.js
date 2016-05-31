@@ -8,7 +8,6 @@ factory("tokenService", function ($q, loginService) {
             return $q.when(token);
         }
         else {
-            //ToDo: split into two functions and init a login here
             return loginService.login().then(function (tokendata) {
                 token = tokendata;
                 return token;

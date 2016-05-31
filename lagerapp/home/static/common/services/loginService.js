@@ -1,8 +1,13 @@
 angular.module('baseApp.Services').
 factory("loginService", function ($uibModal) {
+    var modalInstance = null;
     var data = {user: "", loggedin: false};
     var login = function () {
-        var modalInstance = $uibModal.open({
+        if (login.running){
+            return modalInstance.result; //login has already been called (from a different location) and is running,
+                                        // return  the existing promise;
+        }
+        modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'static/login.html',
             controller: 'LoginInstanceCtrl',
@@ -11,8 +16,9 @@ factory("loginService", function ($uibModal) {
         modalInstance.result.then(function (tokendata) {
             data.user = tokendata.user;
             data.loggedin = true;
-            
+            login.running = false;
         });
+        login.running = true;
         //return a promise
         return modalInstance.result;
     };

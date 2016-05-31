@@ -493,6 +493,8 @@ def get_project_data(request, id, company, format=None):
         return Response('')
 
 @api_view(['GET',])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticatedOrReadOnly,))
 def whoami(request):
     userid = request.user.id
     userdata = UserDataSerializer(UserData.objects.get(user_id=userid)).data
