@@ -501,3 +501,12 @@ def whoami(request):
     userdata.pop('user')   #not needed
     userdata.pop('prodid') #not used
     return Response(userdata, content_type='json')
+
+@api_view(['GET',])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticatedOrReadOnly,))
+def companylogo(request):
+    userid = request.user.id
+    userdata = UserDataSerializer(UserData.objects.get(user_id=userid)).data
+    logourl=userdata['companyid']+".png"
+    return Response({'logourl': logourl}, content_type='json')
