@@ -10,10 +10,14 @@ factory("staffService", function ($resource, $cacheFactory, sessionService) {
         );
     }
     function staff_get(id) {
-        return resource[companyid()].get(id).$promise;
+        return sessionService.getCompany().then(function(companyid) {
+            return resource[companyid()].get(id).$promise;
+        })
     }
     function staff_list(kwargs) {
-        return resource[companyid()].query({'search': kwargs.search}).$promise;
+        return sessionService.getCompany().then(function(companyid){
+            return resource[companyid].query({'search': kwargs.search}).$promise;
+        })
     }
     return {
         get: staff_get,

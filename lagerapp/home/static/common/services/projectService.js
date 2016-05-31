@@ -10,27 +10,34 @@ factory("projectService", function ($resource, $cacheFactory, sessionService, to
                 isArray:false,ignoreLoadingBar: true}}
         );
     }
+    
     function project_list(kwargs) {
-        return projects[companyid()].query({'search': kwargs.search}).$promise;
+        return sessionService.getCompany().then(function(companyid) {
+            return projects[companyid].query({'search': kwargs.search}).$promise;
+        });
     }
     function project_get(id) {
-        return projects[companyid()].get(id).$promise;
+        return sessionService.getCompany().then(function(companyid) {
+            return projects[companyid()].get(id).$promise;
+        })
     }
     function consumedproduct_create(selectedProject, data){
-        return tokenService.getToken().then(function (response) {
-            return response;
-        }).then(function (tokendata){
-            return $http({
-                method: 'POST',
-                url: '/api/' + sessionService.getCompany() + '/consumedproduct/' + selectedProject.id,
-                data: data,
-                dataType: 'json',
-                headers: {
-                    "Authorization": "Token "+tokendata.token,
-                    "Content-Type": "application/json"
-                }
+        return tokenService.getToken()
+            .then(function (tokendata) {
+                return sessionService.getCompany();
             })
-        });
+            .then(function(companyid){
+                return $http({
+                    method: 'POST',
+                    url: '/api/' + companyid + '/consumedproduct/' + selectedProject.id,
+                    data: data,
+                    dataType: 'json',
+                    headers: {
+                        "Authorization": "Token "+tokendata.token,
+                        "Content-Type": "application/json"
+                    }
+                })
+            });
     }
     return {
         get: project_get,

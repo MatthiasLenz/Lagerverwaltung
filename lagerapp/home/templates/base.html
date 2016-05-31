@@ -1,6 +1,6 @@
 {% verbatim %}
     <!DOCTYPE html>
-    <html ng-app="baseApp">
+    <html>
     <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
@@ -89,10 +89,10 @@
                         ng-change="cc.setStockID(cc.stockid);cc.stockIDChanged()"></select>
             </div>-->
             <div class="form-group">
-                <label> Firma </label>
-                <select class="form-control" style="width:200px;" ng-model="cc.companyid"
+                <label> Firma {{ cc.companyid }}</label>
+                <!--<select class="form-control" style="width:200px;" ng-model="cc.companyid"
                         ng-options="id for id in cc.companies"
-                        ng-change="cc.setCompanyID(cc.companyid);cc.stockIDChanged()"></select>
+                        ng-change="cc.setCompanyID(cc.companyid);cc.stockIDChanged()"></select>-->
             </div>
         </form>
         <br>

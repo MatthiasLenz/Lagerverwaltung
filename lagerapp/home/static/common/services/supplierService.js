@@ -1,6 +1,13 @@
 angular.module('baseApp.Services').
 factory("supplierService", function ($resource, $cacheFactory, sessionService) {
-    var companyid = sessionService.getCompany;
+    var companyid = null;
+    function init (){
+        return sessionService.getCompany()
+            .then(function (company){
+                companyid = company;
+                return companyid;
+            })
+    }
     var companies = ['01', '04', '05']; //Todo: make it dynamic
     var supplierCache = $cacheFactory('Supplier');
     var resource = {};
@@ -10,10 +17,11 @@ factory("supplierService", function ($resource, $cacheFactory, sessionService) {
         );
     }
     function supplier_get(id) {
-        return resource[companyid()].get(id).$promise;
+        return resource[companyid].get(id).$promise;
     }
 
     return {
+        init: init,
         get: supplier_get
     };
 });

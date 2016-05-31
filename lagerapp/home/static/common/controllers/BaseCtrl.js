@@ -1,13 +1,21 @@
 angular.module('baseApp').
-controller('BaseCtrl', ['tokenService', 'loginService', 'sessionService', 'stockService', '$rootScope',
-    function (tokenService, loginService, sessionService, stockService, $rootScope) {
+controller('BaseCtrl', ['$q', 'tokenService', 'loginService', 'sessionService', 'stockService', 'bestellungenService',
+    'supplierService',
+    function ($q, tokenService, loginService, sessionService, stockService, bestellungenService, supplierService) {
     var controller = this;
     controller.logininfo = loginService.data;
     controller.login = tokenService.getToken;
-    controller.state = 'lagerausgang_state';
+    controller.state = null;
     controller.setState = function (state) {
-        controller.state = state;
+        best_init  = bestellungenService.init();
+        supp_init  = supplierService.init();
+        stock_init = stockService.init();
+        //ensure that all services are initialized before setting state which loads the directive
+        $q.all([best_init, supp_init, stock_init]).then(function(){
+            controller.state = state;
+        })
     };
+    controller.setState('lagerausgang_state');
     controller.isActive = function (state) {
         return controller.state == state;
     };
@@ -25,7 +33,9 @@ controller('BaseCtrl', ['tokenService', 'loginService', 'sessionService', 'stock
             sessionService.setStock(stockid);
         };
         controller.companies = ['01', '04', '05']; //Todo: retrieve ID's dynamically
-        controller.companyid = sessionService.getCompany();
+        sessionService.getCompany().then(function(companyid){
+            controller.companyid=companyid;
+        });
 
         controller.stockIDChanged = function () {
             sessionService.publish();

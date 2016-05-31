@@ -100,6 +100,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             });
         };
         vm.refresh_documents = function (doc) {
+            bestellungenService.init().then
             bestellungenService.purchasedoc.delete_documents(doc.id).then(function () {
                 make(doc, 'pdf', '').then(function () {
                     refreshDocs();
