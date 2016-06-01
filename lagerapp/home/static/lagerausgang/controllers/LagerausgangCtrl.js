@@ -183,14 +183,15 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     },
                     /*error:*/ function(error) {
                         switch (error){
-                            case "consumedproduct_error":
-                                showAlert('Der Lagerausgangs wurde eingetragen. Beim Eintragen ins Projekt ist ein Fehler ist aufgetreten.');
-                                break;
                             case "purchasedoc_error":
                                 showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler ist aufgetreten.');
                                 break;
+                            case "consumedproduct_error":
+                                showAlert('Beim Eintragen ins Projekt ist ein Fehler ist aufgetreten.');
+                                bestellungenService.internalpurchasedoc.delete(purchasedoc);
+                                break;
                             default:
-                                showAlert('Der Lagerausgang wurde eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
+                                showAlert('Daten in Lagerausgang und Projekt eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
                         }
                         return $q.reject("make_error");
                     }
