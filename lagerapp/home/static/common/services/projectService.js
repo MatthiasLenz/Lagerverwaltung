@@ -22,8 +22,10 @@ factory("projectService", function ($resource, $cacheFactory, sessionService, to
         })
     }
     function consumedproduct_create(selectedProject, data){
+        var tokendata = null;
         return tokenService.getToken()
-            .then(function (tokendata) {
+            .then(function (response) {
+                tokendata = response;
                 return sessionService.getCompany();
             })
             .then(function(companyid){
