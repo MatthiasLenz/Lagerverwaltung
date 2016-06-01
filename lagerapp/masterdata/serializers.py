@@ -1,7 +1,7 @@
 from datetime import date
 from rest_framework import serializers
 from basemodels import UserData, Stock, StockData, Product, Nature, ProductSupplier, \
-    ProductPacking, StockMovement, PurchaseDocuments
+    ProductPacking, StockMovement, PurchaseDocuments, Company
 from models import Supplier01, PurchaseDoc01,  Project01
 
 from django.contrib.auth.models import User
@@ -53,7 +53,9 @@ class UserDataSerializer(serializers.ModelSerializer):
         fields = ('user', 'username', 'prodid', 'companyid')
 
 
-
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
 
 class StockSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

@@ -491,6 +491,10 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 class Company(models.Model):
+    class Meta:
+        managed = False
+        db_table = 'Company'
+        app_label = 'hit'
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)
     namea = models.CharField(db_column='NameA', max_length=30, blank=True)
     address = models.CharField(db_column='Address', max_length=255, blank=True)

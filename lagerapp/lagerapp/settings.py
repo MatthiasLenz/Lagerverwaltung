@@ -173,6 +173,8 @@ class HitRouter(object):
             return 'hit_04_staff'
         if model._meta.app_label == 'hit_04_project':
             return 'hit_04_project'
+        if model._meta.app_label == 'hit':
+            return 'hit'
         # go to default
 
         return None
@@ -206,3 +208,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/'), private_settings['purchase']['folder'], private_settings['document_folder']]
+STOCKBYID = private_settings['stockbyid']

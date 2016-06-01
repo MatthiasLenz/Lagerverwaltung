@@ -1,14 +1,19 @@
 angular.module('baseApp.Services').
 factory("stockService", function ($resource, $cacheFactory, sessionService) {
     var companyid = null;
+    var stockbyid = null;
     function init (){
-        return sessionService.getCompany()
+        sessionService.getCompany()
             .then(function (company){
                 companyid = company;
                 return companyid;
-            })
+            });
+        sessionService.getConfig().then(function(response){
+            stockbyid = response.stockbyid;
+        });
     }
-    var byCompany = {'01': '0', '04': '40', '05': '50'};
+
+
     var stockCache = $cacheFactory('Stock');
     var stockdataCache = $cacheFactory('StockData');
     var stockdata_noload = $resource(
@@ -33,20 +38,22 @@ factory("stockService", function ($resource, $cacheFactory, sessionService) {
         "query": "",
         "resourcenatureid": null
     };
-
+    function get_stockbyid(){
+        return stockbyid;
+    }
     function stockdataQuery_noload(params) {
-        params.stockid = byCompany[companyid];
+        params.stockid = stockbyid[companyid];
         return stockdata_noload.query(params).$promise
     }
     function stockdataQuery(params) {
-        params.stockid = byCompany[companyid];
+        params.stockid = stockbyid[companyid];
         return stockdata.query(params).$promise
     }
     function stockinfoQuery(params) {
         return stock.query(params).$promise
     }
     function currentStock(){
-        return stock.query({id: byCompany[companyid]}).$promise;
+        return stock.query({id: stockbyid[companyid]}).$promise;
     }
     return {
         init: init,
@@ -55,6 +62,6 @@ factory("stockService", function ($resource, $cacheFactory, sessionService) {
         stockinfo: stockinfoQuery,
         currentStock: currentStock,
         model: model,
-        byCompany: byCompany
+        byCompany: get_stockbyid
     }
 });

@@ -2,7 +2,7 @@ angular.module('baseApp.Services').
 factory("bestellungenService", function ($resource, $cacheFactory, tokenService, $q, $http, sessionService) {
     var purchasedocCache = $cacheFactory('PurchaseDoc');
     var token;
-    var companies = ['01', '04', '05']; //Todo: make it dynamic
+    var companies = null;
     var stockid = sessionService.getStock;
     function getToken() {
         return "Token " + token;
@@ -13,40 +13,45 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     var purchasedocdata = {};
     var internalpurchasedoc = {};
     var purchasedocsupplier = {};
-    for (var i = 0; i < companies.length; i++) {
-        purchasedoc[companies[i]] = $resource(
-            "/api/" + companies[i] + "/purchasedoc/:id", {id: "@id"}, {
-            create: {method: 'POST', headers: {"Authorization": getToken}},
-            update: {method: 'PATCH', headers: {"Authorization": getToken}},
-            delete: {method: 'DELETE', headers: {"Authorization": getToken}}
-            });
-        internalpurchasedoc[companies[i]] = $resource(
-            "/api/" + companies[i] + "/internalpurchasedoc/:id", {id: "@id"}, {
-            create: {method: 'POST', headers: {"Authorization": getToken}},
-            update: {method: 'PATCH', headers: {"Authorization": getToken}},
-            delete: {method: 'DELETE', headers: {"Authorization": getToken}}
-            });
-        deliverynote[companies[i]] = $resource(
-            "/api/" + companies[i] + "/deliverynote/:id", {id: "@id"}, {
+    function init_resources(){
+        for (var i = 0; i < companies.length; i++) {
+            purchasedoc[companies[i]] = $resource(
+                "/api/" + companies[i] + "/purchasedoc/:id", {id: "@id"}, {
                 create: {method: 'POST', headers: {"Authorization": getToken}},
-                update: {method: 'PUT', headers: {"Authorization": getToken}},
+                update: {method: 'PATCH', headers: {"Authorization": getToken}},
                 delete: {method: 'DELETE', headers: {"Authorization": getToken}}
-            });
-        purchasedocdata[companies[i]] = $resource(
-            "/api/" + companies[i] + "/purchasedocdata/:id", {id: "@id"}, {
+                });
+            internalpurchasedoc[companies[i]] = $resource(
+                "/api/" + companies[i] + "/internalpurchasedoc/:id", {id: "@id"}, {
                 create: {method: 'POST', headers: {"Authorization": getToken}},
-                update: {method: 'PUT', headers: {"Authorization": getToken}},
+                update: {method: 'PATCH', headers: {"Authorization": getToken}},
                 delete: {method: 'DELETE', headers: {"Authorization": getToken}}
-            });
-        purchasedocsupplier[companies[i]] = $resource(
-            "/api/" + companies[i] + "/purchasedocsupplier/:id", {id: "@id"}, {}
-        );
+                });
+            deliverynote[companies[i]] = $resource(
+                "/api/" + companies[i] + "/deliverynote/:id", {id: "@id"}, {
+                    create: {method: 'POST', headers: {"Authorization": getToken}},
+                    update: {method: 'PUT', headers: {"Authorization": getToken}},
+                    delete: {method: 'DELETE', headers: {"Authorization": getToken}}
+                });
+            purchasedocdata[companies[i]] = $resource(
+                "/api/" + companies[i] + "/purchasedocdata/:id", {id: "@id"}, {
+                    create: {method: 'POST', headers: {"Authorization": getToken}},
+                    update: {method: 'PUT', headers: {"Authorization": getToken}},
+                    delete: {method: 'DELETE', headers: {"Authorization": getToken}}
+                });
+            purchasedocsupplier[companies[i]] = $resource(
+                "/api/" + companies[i] + "/purchasedocsupplier/:id", {id: "@id"}, {}
+            );
+        }
     }
+
     var companyid = null;
     function init (){
-        return sessionService.getCompany()
-            .then(function (company){
-                companyid = company;
+        return sessionService.getConfig()
+            .then(function (config_data){
+                companyid = config_data.company.id;
+                companies = Object.keys(config_data.stockbyid);
+                init_resources();
                 return companyid;
             })
     }

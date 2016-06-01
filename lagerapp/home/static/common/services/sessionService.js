@@ -1,10 +1,18 @@
 angular.module('baseApp.Services').factory("sessionService", function ($rootScope, tokenService, $http, $q) {
     var companyid = null;
-    var stockid = '0';      //default
+    var stockid = null;      //default
     var user = null;
+    var config = null;
     var setCompany = function (id) {
         companyid = id;
     };
+    function init (){
+        return get_config()
+        .then(function (config_data){
+            console.log(config_data.company.id);
+            companyid = config_data.company.id;
+        })
+    }
     var getCompany = function () {
         if (companyid) {
             //turn value into promise with $q.when(value)
@@ -32,18 +40,42 @@ angular.module('baseApp.Services').factory("sessionService", function ($rootScop
                 });
         }
     };
-
-    var setStock = function (id) {
-        stockid = id;
+    var get_config = function(){
+        if (config) {
+            //turn value into promise with $q.when(value)
+            return $q.when(config);
+        }
+        return tokenService.getToken()
+        .then(function (tokendata) {
+            return $http({
+                method: 'GET',
+                url: '/api/getconfig',
+                dataType: 'json',
+                headers: {
+                    "Authorization": "Token " + tokendata.token,
+                    "Content-Type": "application/json"
+                }
+            })
+        })
+        .then(function (response) {
+            console.log(response.data);
+            config = response.data;
+            return response.data;
+        })
+        .catch(function (err) {
+            alert("Error");
+        });
     };
+
     var getStock = function () {
-        return stockid;
+        return config.stockbyid[companyid];
     };
     //Maybe add get Token and get User here
     return {
+        init: init,
+        getConfig: get_config,
         setCompany: setCompany,
         getCompany: getCompany,
-        setStock: setStock,
         getStock: getStock,
         subscribeStockIDChange: function (scope, callback) {
             var handler = $rootScope.$on('stock-change-event', callback);

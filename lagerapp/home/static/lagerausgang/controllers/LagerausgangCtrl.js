@@ -1,6 +1,6 @@
 angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', '$timeout', '$q', '$scope',
-    'stockService', 'sessionService', 'projectService', 'bestellungenService', 'staffService', '$window', '$mdDialog',
-    function ($http, $timeout, $q, $scope, stockService, sessionService, projectService, bestellungenService,
+    'stockService', 'projectService', 'bestellungenService', 'staffService', '$window', '$mdDialog',
+    function ($http, $timeout, $q, $scope, stockService,  projectService, bestellungenService,
               staffService, $window, $mdDialog) {
         //ToDo: Input für Abholer und Ausgabe Polier
         var vm = this;
