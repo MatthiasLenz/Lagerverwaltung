@@ -35,7 +35,7 @@ directive('bestellungen', function () {
 
             bestellungenService.purchasedoc.files().then(function (files) {
                 //build a dictionary
-                files.results.forEach(function (item) {
+                files.forEach(function (item) {
                     controller.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
                 });
             });

@@ -209,3 +209,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/'), private_settings['purchase']['folder'], private_settings['document_folder']]
 STOCKBYID = private_settings['stockbyid']
+DBSERVER = private_settings['dbserver']
+DBPASSWORD = private_settings['dbpassword']

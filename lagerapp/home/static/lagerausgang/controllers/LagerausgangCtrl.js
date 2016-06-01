@@ -99,9 +99,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             });
         };
         vm.refresh_documents = function (doc) {
-            bestellungenService.init().then
             bestellungenService.purchasedoc.delete_documents(doc.id).then(function () {
-                make(doc, 'pdf', '').then(function () {
+                make(doc, 'pdf', '').then(function (response) {
                     refreshDocs();
                 });
             }, function (error) {
@@ -176,7 +175,8 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 )
                 .then(
                     /*success:*/ function(response) {
-                        console.log(response);
+                        refreshDocs();
+                        clear();
                         showAlert('Lagerausgang erfolgreich eingetragen.').then(function () {
                             $window.open(response.data, '_blank');
                         });
@@ -323,7 +323,10 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     status: 4, modulerefid: vm.selectedProject.id,
                     min_date: dt
                 }).then(function (data) {
-                vm.projectDocs = data;
+                    vm.projectDocs = data;
+                })
+                .catch(function(error){
+                    console.log(error);
                 })
             }
             else{
@@ -336,12 +339,16 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             return bestellungenService.makeinternal(doc, type, abholer).then(function (docurl) {
                 bestellungenService.purchasedoc.file(doc.id).then(function (item) {
                     vm.files[item.purchasedocid] = {pdf: item.pdf};
+                })
+                .catch(function(error){
+                    console.log(error);
                 });
                 return docurl;
             });
         };
         bestellungenService.purchasedoc.files().then(function (files) {
-            files.results.forEach(function (item) {
+            console.log(files);
+            files.forEach(function (item) {
                 vm.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
             });
         });

@@ -414,7 +414,7 @@ class MinPurchaseDocViewSet(viewsets.GenericViewSet):
 class PurchaseDocumentsView(viewsets.ModelViewSet):
     queryset = PurchaseDocuments.objects.all().order_by('-purchasedocid')
     serializer_class = PurchaseDocumentsSerializer
-    pagination_class = LargeResultsSetPagination
+    pagination_class = None
 
 
 from genshi.core import Markup
@@ -451,6 +451,8 @@ def to_named_rows(rows, description):
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticatedOrReadOnly,))
 def get_project_data(request, id, company, format=None):
+    dbserver = settings.DBSERVER
+    dbpassword = settings.DBPASSWORD
     def max_consumedproductid(connection):
         # helper function
         cursor = connection.cursor()
@@ -473,8 +475,8 @@ def get_project_data(request, id, company, format=None):
         data = request.data
         # project_id = request.GET.get('projectid') # api/getpr?projectid=...
         cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=Hf#379' % (
-            company, id.replace('-', '_')))
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=%s' % (
+            dbserver, company, id.replace('-', '_'), dbpassword))
         cursor = cn.cursor()
         cursor.execute("Select * from ConsumedProductData")
         results = cursor.fetchall()
@@ -494,8 +496,8 @@ def get_project_data(request, id, company, format=None):
             purchaseref = data['purchaseref']
             supplierid = data['supplierid']
             cn = pyodbc.connect(
-                r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=Hf#379' % (
-                company, id.replace('-', '_')))
+                r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=%s' % (
+                dbserver, company, id.replace('-', '_'), dbpassword))
             consumedproductid = max_consumedproductid(cn)
             datarowid = max_consumedproductdatarowid(cn)
             cursor = cn.cursor()
@@ -522,15 +524,15 @@ def get_project_data(request, id, company, format=None):
         data = request.data
         purchasedocid = data['purchasedocid']
         cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_purchase;UID=hitoffice;PWD=Hf#379' % (
-            company))
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_purchase;UID=hitoffice;PWD=%s' % (
+            dbserver, company, dbpassword))
         cursor = cn.cursor()
         cursor.execute("SELECT * FROM purchasedocdata WHERE purchasedocid=?", purchasedocid)
         results = to_named_rows(cursor.fetchall(), cursor.description)
         dataids = [row['DataID'] for row in results]
         cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=95-NOTEBOOK-EK\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=Hf#379' % (
-            company, id.replace('-', '_')))
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=%s' % (
+            dbserver, company, id.replace('-', '_'), dbpassword))
         cursor = cn.cursor()
         for rowid in dataids:
             cursor.execute("DELETE FROM ConsumedProductData WHERE RowID=?",
