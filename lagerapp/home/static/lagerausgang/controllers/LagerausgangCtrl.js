@@ -2,7 +2,6 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
     'stockService', 'projectService', 'bestellungenService', 'staffService', '$window', '$mdDialog',
     function ($http, $timeout, $q, $scope, stockService,  projectService, bestellungenService,
               staffService, $window, $mdDialog) {
-        //ToDo: Input für Abholer und Ausgabe Polier
         var vm = this;
         window.show = this;
         vm.deleteconsumed = function (purchasedocid) {
@@ -151,28 +150,59 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 "data": articles,
                 "deliverynotes": []
             };
+            var purchasedoc = null;
+            //1: create purchasedoc, 2: create consumed product for selected project, 3: make PDF document of purchasedoc
             bestellungenService.internalpurchasedoc.create(data)
-                .then(function (purchasedoc) {
-                    projectService.consumedproduct_create(vm.selectedProject,  {
-                        docdate: vm.dt, articles: vm.selectedProducts,
-                        purchaseref: purchasedoc.id, supplierid: purchasedoc.supplierid}
-                    )
-                    .then(function (response) {
-                        make(purchasedoc, 'pdf', vm.abholer.firstname+" "+vm.abholer.lastname).then(function (response) {
-                            refreshDocs();
-                            showAlert('Lagerausgang erfolgreich eingetragen.').then(function () {
-                                $window.open(response.data, '_blank');
-                            });
-                        }, function (error) {
-                            refreshDocs();
-                            showAlert('Lagerausgang eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
+                .then(
+                    /*success:*/ function(response) {
+                        purchasedoc = response;
+                        return projectService.consumedproduct_create(vm.selectedProject, {
+                            docdate: vm.dt, articles: vm.selectedProducts,
+                            purchaseref: purchasedoc.id, supplierid: purchasedoc.supplierid
+                        })
+                    },
+                    /*error:*/ function(error){ return $q.reject("purchasedoc_error"); }
+                )
+                .then(
+                    /*success:*/ function(response) {
+                        console.log(response);
+                        return make(purchasedoc, 'pdf', vm.abholer.firstname+" "+vm.abholer.lastname);
+                    },
+                    /*error:*/ function(error) {
+                        if (error == "purchasedoc_error"){
+                            return $q.reject(error);
+                        }
+                        return $q.reject("consumedproduct_error"); }
+                )
+                .then(
+                    /*success:*/ function(response) {
+                        console.log(response);
+                        showAlert('Lagerausgang erfolgreich eingetragen.').then(function () {
+                            $window.open(response.data, '_blank');
                         });
-                    })
-                }, function (error) {
-                    showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler ist aufgetreten.');
-                });
+                    },
+                    /*error:*/ function(error) {
+                        switch (error){
+                            case "consumedproduct_error":
+                                showAlert('Der Lagerausgangs wurde eingetragen. Beim Eintragen ins Projekt ist ein Fehler ist aufgetreten.');
+                                break;
+                            case "purchasedoc_error":
+                                showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler ist aufgetreten.');
+                                break;
+                            default:
+                                showAlert('Der Lagerausgang wurde eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
+                        }
+                        return $q.reject("make_error");
+                    }
+                )
         }
-
+        function clear(){
+            vm.selectedProject = null;
+            vm.selectedProducts = [{id: 0, quantity: null, article: null}];
+            vm.abholer = null;
+            vm.searchAbholer = "";
+            vm.searchProject = "";
+        }
         function getTotal() {
             var total = 0;
             for (var i = 0; i < vm.selectedProducts.length; i++) {
@@ -287,12 +317,18 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             var dt = new Date();
             dt.setMonth(dt.getMonth() - 1);
             dt = dt.toISOString().slice(0, 10);
-            bestellungenService.internalpurchasedoc.list({
-                status: 4, modulerefid: vm.selectedProject.id,
-                min_date: dt
-            }).then(function (data) {
+            if(vm.searchProject){
+                bestellungenService.internalpurchasedoc.list({
+                    status: 4, modulerefid: vm.selectedProject.id,
+                    min_date: dt
+                }).then(function (data) {
                 vm.projectDocs = data;
-            })
+                })
+            }
+            else{
+                vm.projectDocs = null;
+            }
+
         }
 
         function make(doc, type, abholer) {
