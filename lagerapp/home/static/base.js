@@ -7,8 +7,8 @@ var baseApp = angular.module('baseApp', ['ui.bootstrap', 'ngResource', 'ngMateri
 baseApp.config(["$locationProvider", function ($locationProvider) {
     //disable this, if the app is being used by html5 incompatible browsers.
     $locationProvider.html5Mode({
-        enabled: true,
-        requireBase: false
+        enabled: true
+        //requireBase: false
     });
 }]);
 

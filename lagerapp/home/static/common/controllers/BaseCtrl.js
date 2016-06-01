@@ -1,6 +1,10 @@
-angular.module('baseApp').controller('BaseCtrl', ['$q', 'tokenService', 'loginService', 'sessionService', 'stockService', 'bestellungenService',
-    'supplierService',
-    function ($q, tokenService, loginService, sessionService, stockService, bestellungenService, supplierService) {
+angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 'tokenService', 'loginService',
+    'sessionService', 'stockService', 'bestellungenService', 'supplierService',
+    function ($q, $location, $scope, tokenService, loginService, sessionService, stockService, bestellungenService, supplierService) {
+        $scope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
+            $scope.successPath = $location.path();
+            vm.setState($scope.successPath.substring(1));
+        });
         var vm = this; //ViewModel
         vm.logininfo = loginService.data;
         vm.login = tokenService.getToken;
@@ -14,12 +18,12 @@ angular.module('baseApp').controller('BaseCtrl', ['$q', 'tokenService', 'loginSe
                 $q.all([best_init, supp_init, stock_init]).then(function () {
                     //ensure that all services are initialized before setting state which loads the directive
                     vm.state = state;
+                    $location.url(state);
                     sessionService.getConfig().then(function (response) {
                         vm.config_data = response;
                     });
                 })
             });
-
         };
 
         vm.setState('lagerausgang_state');
