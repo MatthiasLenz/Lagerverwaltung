@@ -1,6 +1,7 @@
 angular.module('baseApp.Services').
 factory("bestellungenService", function ($resource, $cacheFactory, tokenService, $q, $http, sessionService) {
     var purchasedocCache = $cacheFactory('PurchaseDoc');
+    var documentCache = $cacheFactory('Documents');
     var token;
     var companies = null;
     var stockid = sessionService.getStock;
@@ -258,9 +259,9 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     }
     var documents = $resource(
         "/api/purchasedocuments/:id", {id: "@purchasedocid"}, {
-            delete: {method: 'DELETE', headers: {"Authorization": getToken}},
-            getfiles: {method: 'GET', isArray: true, headers: {"Authorization": getToken}},
-            getfile: {method: 'GET', isArray: false, headers: {"Authorization": getToken}}
+            delete: {method: 'DELETE', headers: {"Authorization": getToken}, cache: documentCache},
+            getfiles: {method: 'GET', isArray: true, headers: {"Authorization": getToken}, cache: documentCache},
+            getfile: {method: 'GET', isArray: false, headers: {"Authorization": getToken}, cache: documentCache}
         }
     );
 

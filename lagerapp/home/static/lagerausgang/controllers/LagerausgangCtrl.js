@@ -347,9 +347,9 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             });
         };
         bestellungenService.purchasedoc.files().then(function (files) {
-            console.log(files);
             files.forEach(function (item) {
                 vm.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
             });
         });
+        console.log('Lagerausgang loaded');
     }]);

@@ -9,7 +9,6 @@ angular.module('baseApp.Services').factory("sessionService", function ($rootScop
     function init (){
         return get_config()
         .then(function (config_data){
-            console.log(config_data.company.id);
             companyid = config_data.company.id;
         })
     }
@@ -47,6 +46,7 @@ angular.module('baseApp.Services').factory("sessionService", function ($rootScop
         }
         return tokenService.getToken()
         .then(function (tokendata) {
+            console.log("Config data loaded");
             return $http({
                 method: 'GET',
                 url: '/api/getconfig',
@@ -58,7 +58,6 @@ angular.module('baseApp.Services').factory("sessionService", function ($rootScop
             })
         })
         .then(function (response) {
-            console.log(response.data);
             config = response.data;
             return response.data;
         })
