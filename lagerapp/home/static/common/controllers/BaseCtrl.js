@@ -25,19 +25,12 @@ angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 't
                 })
             });
         };
-
-        vm.setState('lagerausgang_state');
         vm.isActive = function (state) {
             return vm.state == state;
         };
 
         vm.dropdown = false;
         window.base = vm;
-        stockService.stockinfo({})
-            .then(function (data) {
-                vm.stockinfo = data.results;
-                vm.stockid = vm.stockinfo[0].id; //default
-            });
         vm.setCompanyID = function (id) {
             sessionService.setCompany(id);
         };

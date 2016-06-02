@@ -1,13 +1,22 @@
 angular.module('baseApp.bestellen').
 controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     // 1. Self-reference
-    var controller = this;
+    var vm = this;
 
     // 2. requirements
     var natureService = $injector.get('natureService');
     var stockService = $injector.get('stockService');
     var sessionService = $injector.get('sessionService');
-    // 3. Do scope stuff
+    stockService.stockinfo({})
+        .then(function (data) {
+            var stockinfo = data.results;
+            //Transform into HashMap
+            vm.stockinfo = {};
+            for (i=0;i<stockinfo.length;i++){
+                var id = stockinfo[i].id;
+                vm.stockinfo[id] = stockinfo[i];
+            }
+        });
     // 3b. Expose methods or data on the scope
     $scope.productModel = stockService.model;
     $scope.solid = "Solid S.A.";
@@ -16,13 +25,13 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
 
     // 4. Expose methods and properties on the controller instance
     for (var key in stockService.model) {
-        if (!(key in controller)) {
-            controller[key] = stockService.model[key];
+        if (!(key in vm)) {
+            vm[key] = stockService.model[key];
         }
     }
     this.stockid = sessionService.getStock();
     sessionService.subscribeStockIDChange($scope, function () {
-        controller.resetAndUpdate();
+        vm.resetAndUpdate();
     });
     this.resourcenatureids = natureService.nature_list;
     this.sortDirection = 'sort-caret desc';
@@ -41,73 +50,76 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     // 5. Clean up
     $scope.$on('$destroy', function () {
         // Do whatever cleanup might be necessary
-        controller = null; // MEMLEAK FIX
+        vm = null; // MEMLEAK FIX
         $scope = null; // MEMLEAK FIX
     });
 
     // 6. All the actual implementations go here.
     updateList();
     function updateList() {
-        /*var query = controller.query+" in:title repo:angular/angular.js";*/
-        var query = controller.query;
+        /*var query = vm.query+" in:title repo:angular/angular.js";*/
+        var query = vm.query;
         stockService.articlelist({
-            ordering: controller.ordering,
-            page: controller.page,
-            page_size: controller.perPage,
+            ordering: vm.ordering,
+            page: vm.page,
+            page_size: vm.perPage,
             search: query,
-            prodid__nature: controller.resourcenatureid,
+            prodid__nature: vm.resourcenatureid,
             stockid: sessionService.getStock()
         }).then(function (data) {
-            controller.items = data.results;
-            controller.lastPage = Math.ceil(data.count / controller.perPage);
+            vm.items = data.results;
+            vm.lastPage = Math.ceil(data.count / vm.perPage);
         });
     }
 
     function resetPage() {
-        controller.page = 1;
+        vm.page = 1;
+        updateList();
     }
     function nextPage() {
-        if (controller.lastPage !== controller.page) {
-            controller.page++;
+        if (vm.lastPage !== vm.page) {
+            vm.page++;
         }
+        updateList();
     }
 
     function previousPage() {
-        if (controller.page !== 1) {
-            controller.page--;
+        if (vm.page !== 1) {
+            vm.page--;
         }
+        updateList();
     }
 
     function setPage(num) {
-        if (num <= controller.lastPage && num > 0) {
-            controller.page = num;
+        if (num <= vm.lastPage && num > 0) {
+            vm.page = num;
         }
     }
 
     function setOrder(field) {
-        if (controller.ordering == field) {
-            controller.ordering = '-' + controller.ordering;
-            controller.sortorder = 'desc';
+        if (vm.ordering == field) {
+            vm.ordering = '-' + vm.ordering;
+            vm.sortorder = 'desc';
         }
         else {
-            controller.ordering = field;
-            controller.sortorder = 'asc';
+            vm.ordering = field;
+            vm.sortorder = 'asc';
         }
         sortDirection();
         updateList();
     }
 
     function getOrder() {
-        if (controller.ordering.charAt(0) == '-') {
-            return controller.ordering.substr(1, controller.ordering.length);
+        if (vm.ordering.charAt(0) == '-') {
+            return vm.ordering.substr(1, vm.ordering.length);
         }
-        else return controller.ordering;
+        else return vm.ordering;
     }
 
     function sortDirection() {
-        if (controller.ordering.charAt(0) == '-') {
-            controller.sortDirection = 'sort-caret desc';
-        } else controller.sortDirection = 'sort-caret asc';
+        if (vm.ordering.charAt(0) == '-') {
+            vm.sortDirection = 'sort-caret desc';
+        } else vm.sortDirection = 'sort-caret asc';
     }
 
 }]);

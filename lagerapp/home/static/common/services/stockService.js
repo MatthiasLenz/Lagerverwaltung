@@ -3,13 +3,9 @@ factory("stockService", function ($resource, $cacheFactory, sessionService) {
     var companyid = null;
     var stockbyid = null;
     function init (){
-        sessionService.getCompany()
-            .then(function (company){
-                companyid = company;
-                return companyid;
-            });
         sessionService.getConfig().then(function(response){
             stockbyid = response.stockbyid;
+            companyid = response.company.id;
         });
     }
 
