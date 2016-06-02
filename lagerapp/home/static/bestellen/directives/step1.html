@@ -14,70 +14,70 @@
     </div>
 </form>
 <br/>
-<table class="table">
-    <thead>
-    <th class="col-md-2">
-        Artikelgruppe <b ng-class="step1.sortDirection"></b>
-    </th>
-    <th class="col-md-3">
-        Bezeichnung <b ng-class="step1.sortDirection"></b>
-    </th>
-    <th class="col-md-1"></th>
-    <th class="col-md-1" ng-click="step1.setOrder('prodid')"
-        ng-class="{sort: step1.getOrder() == 'prodid', sortable:true}">
-        ID
-    </th>
-    <th class="col-md-1">Einheit</th>
-    <th class="col-md-1" ng-click="step1.setOrder('quantityavail')"
-        ng-class="{sort: step1.getOrder() == 'quantityavail', sortable:true}">
-        Stock verfügbar <b ng-class="step1.sortDirection"></b>
-    </th>
-    <th class="col-md-1">
-        Netto Preis <b ng-class="step1.sortDirection"></b>
-    </th>
-    <th class="col-md-1">
-        Standard Lieferant <b ng-class="step1.sortDirection"></b>
-    </th>
-    <th class="col-md-1">StockID</th>
+<div flex="65">
+    <table class="table">
+        <thead>
+        <th class="col-md-2">
+            Artikelgruppe <b ng-class="step1.sortDirection"></b>
+        </th>
+        <th class="col-md-3">
+            Bezeichnung <b ng-class="step1.sortDirection"></b>
+        </th>
+        <th class="col-md-1"></th>
+        <th class="col-md-1" ng-click="step1.setOrder('prodid')"
+            ng-class="{sort: step1.getOrder() == 'prodid', sortable:true}">
+            ID
+        </th>
+        <th class="col-md-1">
+            Netto Preis <b ng-class="step1.sortDirection"></b>
+        </th>
+        <th class="col-md-2">
+            Standard Lieferant <b ng-class="step1.sortDirection"></b>
+        </th>
+            <th class="col-md-1" ng-click="step1.setOrder('quantityavail')"
+            ng-class="{sort: step1.getOrder() == 'quantityavail', sortable:true}">
+            {{ step1.stockinfo[step1.stockid].name }} <b ng-class="step1.sortDirection"></b>
+        </th>
+        <th class="col-md-1">Einheit</th>
 
-    </thead>
-    <tbody>
-    <tr ng-repeat="stockitem in step1.items track by stockitem.id"
-        ng-class="{'text-muted': stockitem.prodid.supplier.length==0}">
-        <td>{{ stockitem.prodid.nature }} </td>
-        <td><b>{{ stockitem.prodid.name1 }}</b></td>
-        <td><span ng-class="{hide:stockitem.prodid.title}">
-            <button ng-click="bestellen.selectprod(stockitem.prodid)">auswählen</button></span>
-        </td>
-        <td>{{ stockitem.prodid.id }}</td>
-        <td>{{ stockitem.prodid.unit1 }}</td>
-        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.quantityavail }}</span></td>
-        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.netpurchaseprice }}</span></td>
-        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.defaultsupplier.namea }}</span></td>
-        <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.stockid }}</span></td>
-    </tr>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        <tr ng-repeat="stockitem in step1.items track by stockitem.id"
+            ng-class="{'text-muted': stockitem.prodid.supplier.length==0}">
+            <td>{{ stockitem.prodid.nature }} </td>
+            <td><b>{{ stockitem.prodid.name1 }}</b></td>
+            <td><span ng-class="{hide:stockitem.prodid.title}">
+                <button ng-click="bestellen.selectprod(stockitem.prodid)">auswählen</button></span>
+            </td>
+            <td>{{ stockitem.prodid.id }}</td>
+            <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.netpurchaseprice }}</span></td>
+            <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.prodid.defaultsupplier.namea }}</span></td>
+            <td><span ng-class="{hide:stockitem.prodid.title}">{{ stockitem.quantityavail }}</span></td>
+            <td>{{ stockitem.prodid.unit1 }}</td>
+        </tr>
+        </tbody>
+    </table>
 
-<ul class="pager">
-    <div class="form-inline">
-    <li>
-        <select class="form-control" style="width:80px;" ng-model="step1.perPage"
-                ng-options="number for number in [10,20,50,100,200]" ng-change="step1.resetAndUpdate()">
-        </select>
-    </li>
+    <ul class="pager">
+        <div class="form-inline">
+        <li>
+            <select class="form-control" style="width:80px;" ng-model="step1.perPage"
+                    ng-options="number for number in [10,20,50,100,200]" ng-change="step1.resetAndUpdate()">
+            </select>
+        </li>
 
 
-    <li ng-click="step1.previousPage()" ng-class="{disabled:step1.page == 1}">
-        <a>Zurück</a>
-    </li>
-    <li ng-click="step1.nextPage()" ng-class="{disabled:step1.page==step1.lastPage}">
-        <a>Vor</a>
-    </li>
-    <li>
-        <input class="form-control" type="text" name="page" ng-model="step1.page" ng-change="step1.updateList()"
-               style="width: 50px;"><label>/{{ step1.lastPage }}</label>
-    </li>
-    </div>
-</ul>
+        <li ng-click="step1.previousPage()" ng-class="{disabled:step1.page == 1}">
+            <a>Zurück</a>
+        </li>
+        <li ng-click="step1.nextPage()" ng-class="{disabled:step1.page==step1.lastPage}">
+            <a>Vor</a>
+        </li>
+        <li>
+            <input class="form-control" type="text" name="page" ng-model="step1.page" ng-change="step1.updateList()"
+                   style="width: 50px;"><label>/{{ step1.lastPage }}</label>
+        </li>
+        </div>
+    </ul>
+</div>
 <!--Directive inner scope: {{ solid }}-->
