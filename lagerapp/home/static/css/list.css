@@ -73,7 +73,7 @@ tr td { border-top:none !important;}
 .wizard a {
     padding: 10px 12px 10px;
     margin-right: 5px;
-    background: #efefef;
+    background: #cccccc;
     position: relative;
     display: inline-block;
     text-decoration: none;
@@ -96,7 +96,7 @@ tr td { border-top:none !important;}
     height: 0;
     border-top: 20px inset transparent;
     border-bottom: 20px inset transparent;
-    border-left: 20px solid #efefef;
+    border-left: 20px solid #cccccc;
     position: absolute;
     content: "";
     top: 0;
@@ -125,6 +125,14 @@ tr td { border-top:none !important;}
     margin: 0 5px 0 18px;
     position: relative;
     top: -1px;
+}
+.wizard .disabled {
+    cursor: default;
+    color: #95b8d1;
+    background: #e4e4e4;
+}
+.wizard .disabled:after {
+    border-left-color: #e4e4e4;
 }
 
 .wizard a:first-child .badge {

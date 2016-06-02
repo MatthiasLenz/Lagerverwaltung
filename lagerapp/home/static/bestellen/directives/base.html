@@ -1,12 +1,12 @@
 <div class="wizard">
     <a ng-class="{current:bestellen.state=='best1'}" ng-click="bestellen.selectState('best1')"><span
             class="badge">1</span><span>Artikel auswählen</span></a>
-    <a ng-class="{current:bestellen.state=='best2'}" ng-click="bestellen.selectState('best2')"><span
+    <a ng-class="{current:bestellen.state=='best2', disabled:!bestellen.selectedprod}" ng-click="bestellen.selectState('best2')"><span
             class="badge">2</span>Lieferant
         auswählen</a>
-    <a ng-class="{current:bestellen.state=='best3'}" ng-click="bestellen.selectState('best3')"><span
+    <a ng-class="{current:bestellen.state=='best3', disabled:!bestellen.selectedsupp}" ng-click="bestellen.selectState('best3')"><span
             class="badge">3</span>Bestellung abschließen</a>
-    <a ng-class="{current:bestellen.state=='best4'}" ng-click="bestellen.selectState('best4')"><span
+    <a ng-class="{current:bestellen.state=='best4', disabled:!bestellen.finished}" ng-click="bestellen.selectState('best4')"><span
             class="badge badge-inverse">4</span>Bestellung gespeichert</a>
 </div>
 <div ng-switch="bestellen.state">

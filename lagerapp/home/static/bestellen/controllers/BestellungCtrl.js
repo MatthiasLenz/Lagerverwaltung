@@ -16,7 +16,7 @@ controller('BestellungCtrl', [function () {
     this.finish = function () {
         vm.state = 'best4';
         vm.finished = true;
-    }
+    };
     this.selectState = function (state) {
         if (state == 'best1' ||
             (state == 'best2' && vm.selectedprod) ||
