@@ -616,7 +616,7 @@ def send(recipient, filepath, subject):
     attachFile.set_payload(file(path, "rb").read())
     Encoders.encode_base64(attachFile)
     attachFile.add_header('Content-Disposition', 'attachment',
-                          filename=('iso-8859-1', 'de', ("%s" % filepath).encode('iso-8859-1')))
+                          filename="Bestellung.pdf")
     msg.attach(attachFile)
     msg['To'] = recipient
     smtp = smtplib.SMTP("smtp.site.lu", 26)
