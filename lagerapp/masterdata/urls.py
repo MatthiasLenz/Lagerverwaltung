@@ -75,4 +75,5 @@ urlpatterns += format_suffix_patterns([url(r'^api/productall/', views.CompletePr
     url(r'^api/whoami$', views.whoami, name='whoami'),
     url(r'^api/companylogo$', views.companylogo, name='companylogo'),
     url(r'^api/getconfig$', views.getconfig, name='getconfig'),
+    url(r'^api/sendmail/?$', views.sendmail, name='sendmail'),
     ])

@@ -41,7 +41,7 @@ def makepdf(request):
         'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to ' + doctype + ' ' +
                     os.path.abspath('masterdata/bestellung.odt') + ' --outdir ' + document_folder,
                     shell=True)
-    docname = '%s-Bestellung-%s.%s' % (data['company'], data['docdate'].replace('.', '-'), doctype)
+    docname = '%s-Bestellung-%s.%s' % (data['company'], data['id'], doctype)
     try:
         os.remove(document_folder + docname)
     except WindowsError:

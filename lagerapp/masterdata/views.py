@@ -578,3 +578,47 @@ def getconfig(request):
     logourl = companyid + ".png"
     company = CompanySerializer(Company.objects.get(id=companyid)).data
     return Response({'logourl': logourl, 'company': company, 'stockbyid': settings.STOCKBYID}, content_type='json')
+
+@api_view(['POST', ])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticatedOrReadOnly,))
+def sendmail(request):
+    purchasedocid = request.data['purchasedocid']
+    purchasedoc = PurchaseDocumentsSerializer(PurchaseDocuments.objects.get(purchasedocid=purchasedocid)).data
+    url = purchasedoc['pdf']
+    filepath = settings.DOCFOLDER + 'bestellungen/' + url.rsplit('/',2)[-2] +'/'+ url.rsplit('/',1)[-1]
+    print(filepath)
+    send('vimesx@gmail.com', filepath, 'Bestellung Solid S.A.')
+    return Response(filepath)
+
+import smtplib
+from email.MIMEBase import MIMEBase
+from email.MIMEText import MIMEText
+from email.MIMEMultipart import MIMEMultipart
+from email import Encoders
+from datetime import date
+
+def send(recipient, filepath, subject):
+    msg = MIMEMultipart()
+    msg['Subject'] = "%s %02d.%02d.%04d" % (subject, date.today().day, date.today().month, date.today().year)
+    msg['From'] = "matthias.lenz@solid.lu"
+
+    # Create the body of the message (a plain-text and an HTML version).
+    text = "Aktuelle Listen im Anhang."
+    # Record the MIME types of both parts - text/plain and text/html.
+    part1 = MIMEText(text, _charset="ANSI")
+    # Attach parts into message container.
+    # According to RFC 2046, the last part of a multipart message, in this case
+    # the HTML message, is best and preferred.
+    msg.attach(part1)
+    path = filepath
+    attachFile = MIMEBase('application', 'pdf')
+    attachFile.set_payload(file(path, "rb").read())
+    Encoders.encode_base64(attachFile)
+    attachFile.add_header('Content-Disposition', 'attachment',
+                          filename=('iso-8859-1', 'de', ("%s" % filepath).encode('iso-8859-1')))
+    msg.attach(attachFile)
+    msg['To'] = recipient
+    smtp = smtplib.SMTP("smtp.site.lu", 26)
+    smtp.sendmail("vimesx@gmail.com", recipient, msg.as_string())
+    smtp.quit()
