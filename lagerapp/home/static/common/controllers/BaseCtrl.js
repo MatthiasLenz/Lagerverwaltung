@@ -1,12 +1,11 @@
-angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 'tokenService', 'loginService',
+angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 'tokenService',
     'sessionService', 'stockService', 'bestellungenService', 'supplierService',
-    function ($q, $location, $scope, tokenService, loginService, sessionService, stockService, bestellungenService, supplierService) {
+    function ($q, $location, $scope, tokenService, sessionService, stockService, bestellungenService, supplierService) {
         $scope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
             $scope.successPath = $location.path();
             vm.setState($scope.successPath.substring(1));
         });
         var vm = this; //ViewModel
-        vm.logininfo = loginService.data;
         vm.login = tokenService.getToken;
         vm.state = null;
         vm.setState = function (state) {

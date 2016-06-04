@@ -96,11 +96,12 @@
 
     <div ng-controller="BaseCtrl as cc">
         <div class="nav navbar-nav pull-right" id="top">
-            <span ng-hide="cc.logininfo.loggedin"><button type="button" class="btn btn-default" ng-click="cc.login()">
+            <span ng-hide="cc.config_data"><button type="button" class="btn btn-default" ng-click="cc.login()">
                 Login
             </button></span>
-            <span ng-show="cc.logininfo.loggedin"><button type="button"
-                                                          class="btn btn-default">{{ cc.logininfo.user }}</button></span>
+            <span ng-show="cc.config_data"><button type="button" class="btn btn-default">
+                {{ cc.config_data.userdata.first_name }} {{ cc.config_data.userdata.last_name }}
+            </button></span>
         </div>
         <head-content></head-content>
         <form role="form" class="form-inline">

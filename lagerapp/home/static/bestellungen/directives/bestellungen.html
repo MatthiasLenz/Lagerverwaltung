@@ -1,5 +1,5 @@
 <h1 ng-show="!bestellungen.list.length">Keine offenen Bestellungen</h1>
-<div layout="row" flex="60" ng-repeat="bestellung in bestellungen.list | orderBy: '-docdate'" >
+<div layout="row" flex="50" ng-repeat="bestellung in bestellungen.list | orderBy: '-docdate'" >
     <div >
         <div class="panel" ng-class="{'panel-primary': !bestellung.edit, 'panel-edit' : bestellung.edit }">
             <div class="panel-heading">Lieferant: {{ bestellung.supplier.namea }} Bestellung: {{ bestellung.id }}

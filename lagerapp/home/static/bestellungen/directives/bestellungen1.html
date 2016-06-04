@@ -48,7 +48,7 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                                     <th class="col-md-2">Kosten</th>
                                     </thead>
                                     <tbody>
-                                    <tr ng-class="{'bg-success':bestellungen1.marked==item.prodid}"
+                                    <tr ng-class="{'success':bestellungen1.marked==item.prodid}"
                                         ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
                                         ng-repeat="(key, item) in bestellungen1.select.data">
                                         <td> {{ item.name }}</td>
@@ -127,7 +127,7 @@ Bestellung auswählen: <select class="form-control" style="width:350px;" ng-mode
                                     <th class="col-md-2">Kosten</th>
                                     </thead>
                                     <tbody>
-                                    <tr ng-class="{'bg-success':bestellungen1.marked==item.prodid}"
+                                    <tr ng-class="{'success':bestellungen1.marked==item.prodid}"
                                         ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
                                         ng-repeat="(key, item) in deliverynote.data">
                                         <td> {{ item.name }}</td>
