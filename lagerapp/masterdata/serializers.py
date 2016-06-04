@@ -44,13 +44,16 @@ def getSupplierSerializer(model):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name')
 
 class UserDataSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username')
+    username = serializers.CharField(source='user.username', allow_blank=True)
+    email = serializers.CharField(source='user.email', allow_blank=True)
+    first_name = serializers.CharField(source='user.first_name', allow_blank=True)
+    last_name = serializers.CharField(source='user.last_name', allow_blank=True)
     class Meta:
         model = UserData
-        fields = ('user', 'username', 'prodid', 'companyid')
+        fields = ('user', 'username', 'email','first_name', 'last_name', 'companyid')
 
 
 class CompanySerializer(serializers.ModelSerializer):

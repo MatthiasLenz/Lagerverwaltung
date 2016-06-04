@@ -554,7 +554,6 @@ def whoami(request):
     userid = request.user.id
     userdata = UserDataSerializer(UserData.objects.get(user_id=userid)).data
     userdata.pop('user')  # not needed
-    userdata.pop('prodid')  # not used
     return Response(userdata, content_type='json')
 
 
@@ -577,7 +576,7 @@ def getconfig(request):
     companyid = userdata['companyid']
     logourl = companyid + ".png"
     company = CompanySerializer(Company.objects.get(id=companyid)).data
-    return Response({'logourl': logourl, 'company': company, 'stockbyid': settings.STOCKBYID}, content_type='json')
+    return Response({'userdata':userdata,'logourl': logourl, 'company': company, 'stockbyid': settings.STOCKBYID}, content_type='json')
 
 @api_view(['POST', ])
 @authentication_classes((TokenAuthentication,))
