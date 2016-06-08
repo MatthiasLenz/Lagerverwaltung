@@ -1,7 +1,7 @@
 angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', '$timeout', '$q', '$scope',
-    'stockService', 'projectService', 'bestellungenService', 'staffService', '$window', '$mdDialog',
+    'stockService', 'projectService', 'bestellungenService', 'staffService', '$window', 'alertService',
     function ($http, $timeout, $q, $scope, stockService,  projectService, bestellungenService,
-              staffService, $window, $mdDialog) {
+              staffService, $window, alertService) {
         var vm = this;
         window.show = this;
         vm.deleteconsumed = function (purchasedocid) {
@@ -112,11 +112,11 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
 
         function save() {
             if (!vm.selectedProject){
-                showAlert('Bitte wählen Sie eine Baustelle aus.');
+                alertService.showAlert('Bitte wählen Sie eine Baustelle aus.');
                 return 0;
             }
             if (vm.selectedProducts.length==0 || !vm.selectedProducts[0].article){
-                showAlert('Keine Artikel ausgewählt.');
+                alertService.showAlert('Keine Artikel ausgewählt.');
                 return 0;
             }
             var manager = vm.selectedProject.manager ? vm.selectedProject.manager.id : '';
@@ -177,21 +177,21 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     /*success:*/ function(response) {
                         refreshDocs();
                         clear();
-                        showAlert('Lagerausgang erfolgreich eingetragen.').then(function () {
+                        alertService.showAlert('Lagerausgang erfolgreich eingetragen.').then(function () {
                             $window.open(response.data, '_blank');
                         });
                     },
                     /*error:*/ function(error) {
                         switch (error){
                             case "purchasedoc_error":
-                                showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler ist aufgetreten.');
+                                alertService.showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler ist aufgetreten.');
                                 break;
                             case "consumedproduct_error":
-                                showAlert('Beim Eintragen ins Projekt ist ein Fehler ist aufgetreten.');
+                                alertService.showAlert('Beim Eintragen ins Projekt ist ein Fehler ist aufgetreten.');
                                 bestellungenService.internalpurchasedoc.delete(purchasedoc);
                                 break;
                             default:
-                                showAlert('Daten in Lagerausgang und Projekt eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
+                                alertService.showAlert('Daten in Lagerausgang und Projekt eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
                         }
                         return $q.reject("make_error");
                     }
@@ -303,17 +303,6 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             alert("Sorry! You'll need to create a Constituion for " + state + " first!");
         }
 
-        function showAlert(text) {
-            return $mdDialog.show(
-                $mdDialog.alert()
-                    .parent(angular.element(document.querySelector('#popupContainer')))
-                    .clickOutsideToClose(true)
-                    .title(text)
-                    .textContent('')
-                    .ariaLabel('Benachrichtigung')
-                    .ok('OK')
-            );
-        };
         function refreshDocs() {
             var dt = new Date();
             dt.setMonth(dt.getMonth() - 1);

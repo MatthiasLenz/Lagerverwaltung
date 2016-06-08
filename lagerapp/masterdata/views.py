@@ -593,16 +593,16 @@ def sendmail(request):
     purchasedoc = PurchaseDocumentsSerializer(PurchaseDocuments.objects.get(purchasedocid=purchasedocid)).data
     url = purchasedoc['pdf']
     filepath = settings.DOCFOLDER + 'bestellungen/' + url.rsplit('/',2)[-2] +'/'+ url.rsplit('/',1)[-1]
-    send(sender, recipient, filepath, 'Bestellung %s'%suppliername, 'Bestellung %s'%companyname, sendername)
-    return Response(filepath)
+    return send(sender, recipient, filepath, 'Bestellung %s'%suppliername, 'Bestellung %s'%companyname, sendername)
 
-from smtplib import SMTP
+
+from smtplib import SMTP,SMTPSenderRefused
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email import Encoders
 from datetime import date
-
+import sys
 def send(sender, recipient, filepath, sendersubject, recipientsubject, sendername):
     msg = MIMEMultipart()
 
@@ -629,10 +629,16 @@ def send(sender, recipient, filepath, sendersubject, recipientsubject, sendernam
             #Send copy to sender
             msg['Subject'] = "%s %02d.%02d.%04d" % (sendersubject, date.today().day, date.today().month, date.today().year)
             msg['To'] = sender
-            smtp.sendmail( sender, sender, msg.as_string())
+            #smtp.sendmail( "notexisting@solid.lu", "notexisting@solid.lu", msg.as_string())
             #Send message to recipient
             msg['Subject'] = "%s %02d.%02d.%04d" % (recipientsubject, date.today().day, date.today().month, date.today().year)
             msg['To'] = recipient
-            smtp.sendmail( sender, recipient, msg.as_string())
+            print(smtp.sendmail( sender, "a@b.de", msg.as_string()))#
+
+    except:
+        print(sys.exc_info()[0])
+        return Response({'data': 'Error'}, status='HTTP_500_INTERNAL_SERVER_ERROR')
+    else:
+        return Response(filepath)
     finally:
         smtp.quit()

@@ -69,11 +69,17 @@ tr.title { font-weight: bold; }
 tr.title +tr { border-top: 2px solid #DDD;}
 
 tr td { border-top:none !important;}
-tbody tr:nth-child(odd) {
+.ok{
+    background-color: #00CC00;
+}
+.notok {
+    color: #d17d00;
+}
+tbody:nth-child(odd) {
    background-color: #f1f1f1;
 }
-tbody tr .success {
-    background-color: #dff0d8;
+tbody:nth-child(even) {
+   background-color: #f9f9f9;
 }
 .wizard a {
     padding: 10px 12px 10px;

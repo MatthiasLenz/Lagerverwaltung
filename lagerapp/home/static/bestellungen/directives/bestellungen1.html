@@ -9,9 +9,8 @@
     <div><select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
                               ng-options="(bestellung.docdate|date:'dd. MMM yyyy')
                               for bestellung in bestellungen1.list | orderBy: '-docdate'"></select></div>
-    <div>ODER Bestellnummer</div>
-    <div>
-    <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
+    <div>ODER</div><div>Bestellnummer</div>
+    <div><select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
                               ng-options="bestellung.id for bestellung in bestellungen1.list | orderBy:'id'"></select></div>
 
 </div>

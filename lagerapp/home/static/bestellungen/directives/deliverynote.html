@@ -46,8 +46,8 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                   placeholder="Kommentar (optional)" ng-maxlength="255" maxlength="255"></textarea>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-12">
+                <div layout="row">
+                    <div flex="70">
                         <div class="panel panel-default">
                             <div class="panel-heading">Bestellungen</div>
                             <div class="panel-body">
@@ -66,11 +66,11 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                     <th class="col-md-1">Lieferung</th>
                                     <th class="col-md-1">Gesamt</th>
                                     </thead>
-                                    <tbody ng-show="!deliverynote.delivery_complete(prodid, articles)"
+                                    <tbody ng-if="!deliverynote.delivery_complete(prodid, articles)"
                                            ng-repeat="(prodid, articles) in deliverynote.articles">
-                                    <tr ng-class="{'bg-success':item.article.quantity - item.delivered_quantity - item.quantity==0,
-                                        'bg-warning':item.article.quantity - item.delivered_quantity - item.quantity<0}"
-                                        ng-mouseover="deliverynote.mark(prodid)" class="text-muted"
+                                    <tr ng-class="{'ok':item.article.quantity - item.delivered_quantity - item.quantity==0,
+                                        'notok':item.article.quantity - item.delivered_quantity - item.quantity<0}"
+                                        ng-mouseover="deliverynote.mark(prodid)"
                                         ng-repeat="item in articles">
                                         <td> {{ item.article.prodid }}</td>
                                         <td> {{ item.article.name }}</td>
@@ -85,6 +85,7 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                             {{ item.article.quantity - item.received - item.quantity | number:3}}</td>
                                         <td><input type="number" class="form-control" ng-model="item.quantity"
                                                    placeholder="Anzahl"></td>
+                                        <td ng-show="!$last"></td>
                                         <td ng-show="$last">{{ deliverynote.total(articles) }}</td>
                                     </tr>
                                     </tbody>

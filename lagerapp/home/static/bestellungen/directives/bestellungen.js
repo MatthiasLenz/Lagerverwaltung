@@ -2,8 +2,8 @@ angular.module('baseApp').
 directive('bestellungen', function () {
     return {
         templateUrl: 'static/bestellungen/directives/bestellungen.html',
-        controller: ['$scope', '$http', 'bestellungenService', 'supplierService', 'tokenService', 'sessionService',
-            function ($scope, $http, bestellungenService, supplierService, tokenService, sessionService) {
+        controller: ['$scope', '$http', 'bestellungenService', 'supplierService', 'tokenService', 'sessionService', 'alertService',
+            function ($scope, $http, bestellungenService, supplierService, tokenService, sessionService, alertService) {
             var vm = this;
             vm.list = [];
             updateList();
@@ -65,7 +65,13 @@ directive('bestellungen', function () {
                             "Content-Type": "application/json"
                         }
                     })
-                });
+                    .then(function(response){
+                        alertService.showAlert("Senden erfolgreich.");
+                    })
+                    .catch(function (error) {
+                        alertService.showAlert("Senden fehlgeschlagen.");
+                    })
+                })
             };
             vm.delete_docdata = function (id) {
                 bestellungenService.purchasedocdata.delete(id).then(function () {
