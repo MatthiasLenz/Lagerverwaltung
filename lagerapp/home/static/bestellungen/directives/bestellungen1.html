@@ -1,11 +1,22 @@
-Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.supplierid"
+<h4>Lieferant auswählen: </h4><select class="form-control" style="width:350px;" ng-model="bestellungen1.supplierid"
                              ng-options="supplier.id as supplier.namea for supplier in bestellungen1.suppliers | orderBy: 'namea'"
                              ng-change="bestellungen1.update()"></select>
 
 
-Bestellung auswählen: <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
+<h4>Bestellung auswählen:</h4>
+<div layout="row" layout-margin layout-align="start center">
+    <div> Datum </div>
+    <div><select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
                               ng-options="(bestellung.docdate|date:'dd. MMM yyyy')
-                              for bestellung in bestellungen1.list | orderBy: '-docdate'"></select>
+                              for bestellung in bestellungen1.list | orderBy: '-docdate'"></select></div>
+    <div>ODER Bestellnummer</div>
+    <div>
+    <select class="form-control" style="width:350px;" ng-model="bestellungen1.select"
+                              ng-options="bestellung.id for bestellung in bestellungen1.list | orderBy:'id'"></select></div>
+
+</div>
+
+
 <br>
 <div class="row">
     <div class="col-lg-12">
