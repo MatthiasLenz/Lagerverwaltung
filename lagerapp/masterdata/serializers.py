@@ -36,7 +36,7 @@ class SupplierSerializer(serializers.HyperlinkedModelSerializer):
 
 def getSupplierSerializer(model):
     fields = ('url', 'id', 'namea', 'nameb', 'address', 'zipcode', 'city', 'country', 'phone', 'fax', 'vatnum', 'active',
-            'numberorders')
+            'numberorders', 'mainmail')
     return type(model.__name__ + 'Serializer', (SupplierSerializer,), dict(
             Meta=type("Meta", (),{'fields': fields, 'model': model})
     ))

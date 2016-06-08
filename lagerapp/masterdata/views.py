@@ -582,28 +582,33 @@ def getconfig(request):
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticatedOrReadOnly,))
 def sendmail(request):
-    purchasedocid = request.data['purchasedocid']
+    userid = request.user.id
+    userdata = UserDataSerializer(UserData.objects.get(user_id=userid)).data
+    companyname = CompanySerializer(Company.objects.get(id=userdata['companyid'])).data['namea']
+    sender = userdata['email']
+    sendername = "{} {}".format(userdata['first_name'],userdata['last_name'])
+    purchasedocid = request.data['purchasedoc']['id']
+    recipient = request.data['purchasedoc']['supplier']['mainmail']
+    suppliername = request.data['purchasedoc']['supplier']['namea']
     purchasedoc = PurchaseDocumentsSerializer(PurchaseDocuments.objects.get(purchasedocid=purchasedocid)).data
     url = purchasedoc['pdf']
     filepath = settings.DOCFOLDER + 'bestellungen/' + url.rsplit('/',2)[-2] +'/'+ url.rsplit('/',1)[-1]
-    print(filepath)
-    send('vimesx@gmail.com', filepath, 'Bestellung Solid S.A.')
+    send(sender, recipient, filepath, 'Bestellung %s'%suppliername, 'Bestellung %s'%companyname, sendername)
     return Response(filepath)
 
-import smtplib
-from email.MIMEBase import MIMEBase
-from email.MIMEText import MIMEText
-from email.MIMEMultipart import MIMEMultipart
+from smtplib import SMTP
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from email import Encoders
 from datetime import date
 
-def send(recipient, filepath, subject):
+def send(sender, recipient, filepath, sendersubject, recipientsubject, sendername):
     msg = MIMEMultipart()
-    msg['Subject'] = "%s %02d.%02d.%04d" % (subject, date.today().day, date.today().month, date.today().year)
-    msg['From'] = "matthias.lenz@solid.lu"
 
+    msg['From'] = sender
     # Create the body of the message (a plain-text and an HTML version).
-    text = "Aktuelle Listen im Anhang."
+    text = "Sehr geehrte Damen und Herren,\n\nbitte entnehmen Sie dem Anhang unsere aktuelle Bestellung.\n\nMit freundlichen Grüßen\n{}".format(sendername)
     # Record the MIME types of both parts - text/plain and text/html.
     part1 = MIMEText(text, _charset="ANSI")
     # Attach parts into message container.
@@ -617,7 +622,17 @@ def send(recipient, filepath, subject):
     attachFile.add_header('Content-Disposition', 'attachment',
                           filename="Bestellung.pdf")
     msg.attach(attachFile)
-    msg['To'] = recipient
-    smtp = smtplib.SMTP("smtp.site.lu", 26)
-    smtp.sendmail("vimesx@gmail.com", recipient, msg.as_string())
-    smtp.quit()
+
+    smtp = SMTP("smtp.site.lu", 26)
+    smtp.set_debuglevel(0)
+    try:
+            #Send copy to sender
+            msg['Subject'] = "%s %02d.%02d.%04d" % (sendersubject, date.today().day, date.today().month, date.today().year)
+            msg['To'] = sender
+            smtp.sendmail( sender, sender, msg.as_string())
+            #Send message to recipient
+            msg['Subject'] = "%s %02d.%02d.%04d" % (recipientsubject, date.today().day, date.today().month, date.today().year)
+            msg['To'] = recipient
+            smtp.sendmail( sender, recipient, msg.as_string())
+    finally:
+        smtp.quit()

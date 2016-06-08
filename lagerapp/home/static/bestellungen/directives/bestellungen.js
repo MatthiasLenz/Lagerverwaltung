@@ -58,7 +58,7 @@ directive('bestellungen', function () {
                     $http({
                         method: 'POST',
                         url: '/api/sendmail/',
-                        data: {purchasedocid: doc.id},
+                        data: {purchasedoc: doc},
                         dataType: 'json',
                         headers: {
                             "Authorization": "Token "+tokendata.token,
