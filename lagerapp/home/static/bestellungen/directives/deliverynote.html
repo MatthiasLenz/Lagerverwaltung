@@ -47,47 +47,54 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                     </div>
                 </div>
                 <div layout="row">
-                    <div flex="70">
+                    <div flex="80">
                         <div class="panel panel-default">
                             <div class="panel-heading">Bestellungen</div>
                             <div class="panel-body">
                                 <table class="table">
                                     <thead>
-                                    <th class="col-md-1">ID</th>
-                                    <th class="col-md-2">Name</th>
-                                    <th class="col-md-1">Bestellt</th>
-                                    <th class="col-md-1">Geliefert</th>
-                                    <th class="col-md-1">Einheit</th>
-                                    <th class="col-md-1">Preis</th>
-                                    <th class="col-md-1">Kosten</th>
-                                    <th class="col-md-1">Datum</th>
-                                    <th class="col-md-1">Bestellung</th>
-                                    <th class="col-md-1">noch zu liefern</th>
-                                    <th class="col-md-1">Lieferung</th>
-                                    <th class="col-md-1">Gesamt</th>
+                                    <th flex="10">ID</th>
+                                    <th flex="15">Name</th>
+                                    <th flex="10">Bestellt</th>
+                                    <th flex="10">Geliefert</th>
+                                    <th flex="10">Einheit</th>
+                                    <th flex="10">Preis</th>
+                                    <th flex="10">Kosten</th>
+                                    <th flex="10">Datum</th>
+                                    <th flex="10">Bestellung</th>
+                                    <th flex="10">noch zu liefern</th>
+                                    <th flex="5">Lieferung</th>
                                     </thead>
                                     <tbody ng-if="!deliverynote.delivery_complete(prodid, articles)"
                                            ng-repeat="(prodid, articles) in deliverynote.articles">
-                                    <tr ng-class="{'ok':item.article.quantity - item.delivered_quantity - item.quantity==0,
-                                        'notok':item.article.quantity - item.delivered_quantity - item.quantity<0}"
-                                        ng-mouseover="deliverynote.mark(prodid)"
-                                        ng-repeat="item in articles">
-                                        <td> {{ item.article.prodid }}</td>
-                                        <td> {{ item.article.name }}</td>
-                                        <td> {{ item.article.quantity }}</td>
-                                        <td> {{ item.received }}</td>
-                                        <td> {{ item.article.unit }}</td>
-                                        <td> {{ item.article.price |currency:""}} €</td>
-                                        <td> {{ item.article.amount |currency:""}} €</td>
-                                        <td> {{ item.date|date:'d. MMM yyyy'  }}</td>
-                                        <td> {{ item.article.purchasedocid }}</td>
-                                        <td>
-                                            {{ item.article.quantity - item.received - item.quantity | number:3}}</td>
-                                        <td><input type="number" class="form-control" ng-model="item.quantity"
-                                                   placeholder="Anzahl"></td>
-                                        <td ng-show="!$last"></td>
-                                        <td ng-show="$last">{{ deliverynote.total(articles) }}</td>
-                                    </tr>
+                                        <tr ng-class="{'ok':item.article.quantity - item.received - item.quantity==0,
+                                            'notok':item.article.quantity - item.received - item.quantity<0}"
+                                            ng-mouseover="deliverynote.mark(prodid)"
+                                            ng-repeat="item in articles">
+                                            <td> {{ item.article.prodid }}</td>
+                                            <td> {{ item.article.name }}</td>
+                                            <td> {{ item.article.quantity }}</td>
+                                            <td> {{ item.received }}</td>
+                                            <td> {{ item.article.unit }}</td>
+                                            <td> {{ item.article.price |currency:""}}€</td>
+                                            <td> {{ item.article.amount |currency:""}}€</td>
+                                            <td> {{ item.date|date:'d. MMM yyyy'  }}</td>
+                                            <td> {{ item.article.purchasedocid }}</td>
+                                            <td>
+                                                {{ item.article.quantity - item.received - item.quantity | number:1}}</td>
+                                            <td><input type="number" class="form-control" ng-model="item.quantity"
+                                                       placeholder="Anzahl" style="width:100px;"></td>
+                                        </tr>
+                                        <tr class="total" ng-if="articles.length>1"><td></td><td></td>
+                                            <td>{{ articles | total_indirect:['article','quantity']|number:1}}</td>
+                                            <td>{{ articles | total:'received' | number:1}}</td>
+                                            <td></td><td></td>
+                                            <td>{{ articles | total_indirect:['article','amount']|currency:""}}€</td>
+                                            <td></td><td></td>
+                                            <td>{{ (articles | total_indirect:['article','quantity']) -
+                                                    (articles | total:'received') - deliverynote.total(articles) | number:1 }}</td>
+                                            <td>{{ deliverynote.total(articles) | number:1 }}</td>
+                                        </tr>
                                     </tbody>
 
                                 </table>

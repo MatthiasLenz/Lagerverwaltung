@@ -70,10 +70,13 @@ tr.title +tr { border-top: 2px solid #DDD;}
 
 tr td { border-top:none !important;}
 .ok{
-    background-color: #00CC00;
+    color: #00CC00;
 }
 .notok {
     color: #d17d00;
+}
+.total{
+    font-weight: 600;
 }
 tbody:nth-child(odd) {
    background-color: #f1f1f1;
