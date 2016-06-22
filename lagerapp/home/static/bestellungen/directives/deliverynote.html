@@ -85,7 +85,7 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                             <td><input type="number" class="form-control" ng-model="item.quantity"
                                                        placeholder="Anzahl" style="width:100px;"></td>
                                         </tr>
-                                        <tr class="total" ng-if="articles.length>1"><td></td><td></td>
+                                        <tr class="title" ng-if="articles.length>1"><td></td><td></td>
                                             <td>{{ articles | total_indirect:['article','quantity']|number:1}}</td>
                                             <td>{{ articles | total:'received' | number:1}}</td>
                                             <td></td><td></td>
@@ -96,7 +96,6 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                             <td>{{ deliverynote.total(articles) | number:1 }}</td>
                                         </tr>
                                     </tbody>
-
                                 </table>
                                 <button ng-click="deliverynote.save($event)">Speichern</button>
                             </div>

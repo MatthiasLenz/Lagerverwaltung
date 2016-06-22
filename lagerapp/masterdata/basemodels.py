@@ -504,10 +504,8 @@ class Company(models.Model):
 
 class UserData(models.Model):
     user = models.OneToOneField(User, db_column='userid', primary_key=True)
-    prodid = models.CharField(db_column='ProdID', max_length=15, null=True)
     companyid = models.CharField(db_column='CompanyID', max_length=2, null=True)
     #companyid = models.ForeignKey(Company, db_column='CompanyID', blank=True, null=True)
-
 
 class PurchaseDocuments(models.Model):
     # extends legacy database table PurchaseDoc

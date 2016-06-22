@@ -19,9 +19,12 @@ factory("supplierService", function ($resource, $cacheFactory, sessionService) {
     function supplier_get(id) {
         return resource[companyid].get(id).$promise;
     }
-
+    function supplier_list(kwargs) {
+        return resource[companyid].query({'search': kwargs.search}).$promise;
+    }
     return {
         init: init,
+        list: supplier_list,
         get: supplier_get
     };
 });

@@ -4,7 +4,8 @@ from basemodels import UserData, Stock, StockData, Product, Nature, ProductSuppl
     ProductPacking, StockMovement, PurchaseDocuments, Company
 from models import Supplier01, PurchaseDoc01,  Project01
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+
 
 class StaffSerializer(serializers.ModelSerializer):
     Meta = None
@@ -41,16 +42,21 @@ def getSupplierSerializer(model):
             Meta=type("Meta", (),{'fields': fields, 'model': model})
     ))
 
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'groups')
+
 
 class UserDataSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', allow_blank=True)
     email = serializers.CharField(source='user.email', allow_blank=True)
     first_name = serializers.CharField(source='user.first_name', allow_blank=True)
     last_name = serializers.CharField(source='user.last_name', allow_blank=True)
+
+
     class Meta:
         model = UserData
         fields = ('user', 'username', 'email','first_name', 'last_name', 'companyid')

@@ -1,7 +1,7 @@
 angular.module('baseApp.lagerausgang').
 directive('lagerausgang', function () {
     return {
-        restrict: 'A',
+        restrict: 'E',
         scope: {
             info: '=testattr'
         },

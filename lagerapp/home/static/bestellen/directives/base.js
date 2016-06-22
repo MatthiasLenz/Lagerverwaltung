@@ -1,7 +1,7 @@
 angular.module('baseApp.bestellen').
 directive('bestellenBase', function () {
     return {
-        restrict: 'A',
+        restrict: 'E',
         scope: {
             info: '=testattr'
         },

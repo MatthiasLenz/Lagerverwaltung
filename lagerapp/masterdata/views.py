@@ -572,7 +572,9 @@ def companylogo(request):
 @permission_classes((IsAuthenticatedOrReadOnly,))
 def getconfig(request):
     userid = request.user.id
+    groups = request.user.groups.values_list('name',flat=True)
     userdata = UserDataSerializer(UserData.objects.get(user_id=userid)).data
+    userdata['groups'] = str(groups)
     companyid = userdata['companyid']
     logourl = companyid + ".png"
     company = CompanySerializer(Company.objects.get(id=companyid)).data

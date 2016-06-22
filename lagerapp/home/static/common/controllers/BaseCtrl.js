@@ -8,20 +8,33 @@ angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 't
         var vm = this; //ViewModel
         vm.login = tokenService.getToken;
         vm.state = null;
+        vm.config_data = {};
+        vm.modules = {Bestellen:false, Lagerausgang:false, Projektbestellung:false};
         vm.setState = function (state) {
-            sessionService.init().then(function(config_data){
+            sessionService.init().then(function(response){
                 //only load config once
                 best_init = bestellungenService.init();
                 supp_init = supplierService.init();
                 stock_init = stockService.init();
                 $q.all([best_init, supp_init, stock_init]).then(function () {
                     //ensure that all services are initialized before setting state which loads the directive
-                    vm.state = state;
-                    $location.url(state);
-                    sessionService.getConfig().then(function (response) {
-                        vm.config_data = response;
+                    sessionService.getConfig().then(function (config_data) {
+                        vm.config_data = config_data;
+                        var groups = config_data.userdata['groups'];
+                        if (groups.indexOf('Bestellen')!=-1) vm.modules.Bestellen = true;
+                        if (groups.indexOf('Lagerausgang')!=-1) vm.modules.Lagerausgang = true;
+                        if (groups.indexOf('Projektbestellung')!=-1) vm.modules.Projektbestellung = true;
+                        switch (state){
+                            case 'productlist_state':  if(vm.modules.Bestellen)  vm.state = state; break;
+                            case 'purchasedoc0_state': if(vm.modules.Bestellen)  vm.state = state; break;
+                            case 'purchasedoc1_state': if(vm.modules.Bestellen)  vm.state = state; break;
+                            case 'purchasedoc2_state': if(vm.modules.Bestellen)  vm.state = state; break;
+                            case 'lagerausgang_state': if(vm.modules.Lagerausgang)  vm.state = state; break;
+                            case 'bestellenprojekt_state': if(vm.modules.Projektbestellung)  vm.state = state;
+                        }
+                        $location.url(vm.state);
                     });
-                })
+                });
             });
         };
         vm.isActive = function (state) {
@@ -39,5 +52,8 @@ angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 't
 
         vm.stockIDChanged = function () {
             sessionService.publish();
-        }
+        };
+        vm.hasGroup = function(modulename){
+            alert(vm.config_data.userdata['groups'].indexOf(modulename));
+        };
     }]);
