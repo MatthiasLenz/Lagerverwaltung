@@ -1,0 +1,8 @@
+How to add a new User:
+
+1: Go to serverurl/admin/, login with admin and add a new user
+2: Go to serverurl/api/users/ to obtain the id of the new user
+3: Assign a company to the new user:
+    3.1: open the Django shell (run "python manage.py shell" in app base folder)
+    3.2  run from masterdata import basemodels
+    3.2: run basemodels.UserData(user=basemodels.User.objects.get(id=newuserid),companyid='yourchoice').save()
