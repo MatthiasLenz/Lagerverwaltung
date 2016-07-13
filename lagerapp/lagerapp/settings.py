@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import json
-
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
+INTERNAL_IPS = ['127.0.0.1',]
 with open('settings.json') as settings_file:
     private_settings = json.load(settings_file)
 DEFAULTSTOCK = private_settings["defaultstock"]
@@ -82,6 +83,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
 )
 
 REST_FRAMEWORK = {
@@ -90,6 +92,7 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE_CLASSES = (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -98,8 +101,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'lagerapp.middleware.profile_middleware.ProfileMiddleware',
 )
+#'lagerapp.middleware.profile_middleware.ProfileMiddleware', //conflict with debug toolbar
 
 ROOT_URLCONF = 'lagerapp.urls'
 
@@ -208,6 +211,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/'), private_settings['purchase']['folder'], private_settings['document_folder']]
+print(STATICFILES_DIRS)
 DOCFOLDER = private_settings['document_folder']
 STOCKBYID = private_settings['stockbyid']
 DBSERVER = private_settings['dbserver']
