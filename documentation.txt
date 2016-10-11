@@ -6,3 +6,4 @@ How to add a new User:
     3.1: open the Django shell (run "python manage.py shell" in app base folder)
     3.2  run from masterdata import basemodels
     3.2: run basemodels.UserData(user=basemodels.User.objects.get(id=newuserid),companyid='yourchoice').save()
+    3.3
