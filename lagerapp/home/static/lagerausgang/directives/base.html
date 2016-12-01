@@ -29,6 +29,7 @@
                 </md-icon> Lagerausgang eintragen</span>
             </div>
         </md-toolbar>
+        <md-content md-theme="docs-dark" layout-padding>
         <div>
             <p class="input-group" flex="50">
                 <input placeholder="Datum" type="text" class="form-control"
@@ -45,23 +46,12 @@
             </p>
         </div>
         <div>
-            <md-autocomplete flex="50" md-no-cache="false" md-selected-item="lagerVm.abholer" md-delay="600" md-min-length="1"
-                             md-search-text-change=""
-                             md-search-text="lagerVm.searchAbholer"
-                             md-selected-item-change=""
-                             md-items="item in lagerVm.queryStaff(lagerVm.searchAbholer)"
-                             md-item-text="item.firstname+' '+item.lastname"
-                             placeholder="Bitte wählen Sie einen Abholer aus.">
-                <md-item-template>
-                    <span md-highlight-text="lagerVm.searchAbholer"
-                          md-highlight-flags="^i">{{ item.firstname +' '+ item.lastname }}
-                    </span>
-                </md-item-template>
-                <md-not-found>
-                    Keine Übereinstimmung mit "{{ lagerVm.searchAbholer }}" gefunden.
-                </md-not-found>
-            </md-autocomplete>
+            <md-input-container>
+                <label>Abholer</label>
+                <input ng-model="lagerVm.abholer">
+            </md-input-container>
         </div>
+
         <div layout="row" ng-repeat="row in lagerVm.selectedProducts" layout-align="space-around center">
             <div flex="5">
                 <md-button class="md-icon-button" aria-label="Remove Row" ng-click="lagerVm.deleteRow(row.id)">
@@ -110,6 +100,7 @@
             </md-button>
         </div>
     </div>
+    </md-content>
     <md-divider layout-margin></md-divider>
     <div flex="50" layout-margin>
         <md-toolbar layout="row" class="md-hue-3">
@@ -156,7 +147,7 @@
                     <td> {{ item.quantity * item.selectedpacking.quantity | number : 3}}</td>
                     <td> {{ item.article.prodid.unit1 }}</td>
                     <td> {{ item.article.prodid.netpurchaseprice |currency:""}} €</td>
-                    <td> {{ item.article.prodid.netpurchaseprice * item.quantity | currency:""}} €</td>
+                    <td> {{ item.article.prodid.netpurchaseprice * item.quantity * item.selectedpacking.quantity| currency:""}} €</td>
                     <td ng-show="item.selectedpacking.quantity!=1">{{ item.selectedpacking.name }}: {{ item.quantity}}  </td>
                 </tr>
                 <tr>

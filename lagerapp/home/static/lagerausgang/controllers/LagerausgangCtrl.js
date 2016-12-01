@@ -142,7 +142,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 "subject": vm.selectedProject.description,
                 "responsible": manager,
                 "leader": leader,
-                "abholer": vm.abholer.firstname+" "+vm.abholer.lastname,
+                "abholer": vm.abholer,
                 "supplierid": "SOLID-SCHIEREN", // ToDo: variabel
                 "modulerefid": vm.selectedProject.id,
                 "docdate": vm.dt,
@@ -165,7 +165,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 .then(
                     /*success:*/ function(response) {
                         console.log(response);
-                        return make(purchasedoc, 'pdf', vm.abholer.firstname+" "+vm.abholer.lastname);
+                        return make(purchasedoc, 'pdf', vm.abholer);
                     },
                     /*error:*/ function(error) {
                         if (error == "purchasedoc_error"){
@@ -200,7 +200,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         function clear(){
             vm.selectedProject = null;
             vm.selectedProducts = [{id: 0, quantity: null, article: null}];
-            vm.abholer = null;
+            vm.abholer = "";
             vm.searchAbholer = "";
             vm.searchProject = "";
         }
