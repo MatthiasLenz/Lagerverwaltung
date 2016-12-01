@@ -1,8 +1,9 @@
 <!--<button ng-click="lagerVm.swap_direction()">swap Layout</button>-->
-<div layout="row"  layout-align="start" flex="30">
+<div layout="row" layout-align="start center" flex="30">
     <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_one_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
-                'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
-    <md-autocomplete flex ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600" md-min-length="1"
+        'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
+    <md-autocomplete flex ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
+                     md-min-length="1"
                      md-selected-item="lagerVm.selectedProject"
                      md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
                      md-search-text="lagerVm.searchProject"
@@ -11,99 +12,99 @@
                      md-item-text="item.id+', '+item.description"
                      placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
         <md-item-template>
-                <span md-highlight-text="lagerVm.searchProject"
-                      md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
-                        + ' ' +item.manager.lastname }}</span>
+        <span md-highlight-text="lagerVm.searchProject"
+              md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
+                + ' ' +item.manager.lastname }}</span>
         </md-item-template>
         <md-not-found>
             Keine Übereinstimmung mit "{{ lagerVm.searchProject }}" gefunden.
         </md-not-found>
     </md-autocomplete>
 </div>
-<div layout="row">
-    <div layout="column" layout-margin flex="50">
-        <md-toolbar class="md-hue-3">
+<div layout="row" >
+    <section layout="column" flex="50" class="demo-container md-whiteframe-z1">
+        <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3"><!--md-hue-3-->
             <div class="md-toolbar-tools">
                 <span><md-icon md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px',
                 'height': '48px', 'width': '48px', 'fill':'black'}">
                 </md-icon> Lagerausgang eintragen</span>
             </div>
         </md-toolbar>
-        <md-content md-theme="docs-dark" layout-padding>
-        <div>
-            <p class="input-group" flex="50">
-                <input placeholder="Datum" type="text" class="form-control"
-                       uib-datepicker-popup="dd.MM.yyyy" ng-model="lagerVm.dt"
-                       is-open="lagerVm.popup.opened" datepicker-options="lagerVm.dateOptions"
-                       ng-required="true"
-                       date-disabled="lagerVm.disabled(date, mode)" current-text="Heute"
-                       clear-text="Leeren"
-                       close-text="Schließen"/>
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" ng-click="lagerVm.open_datepicker()">
-                        <i class="glyphicon glyphicon-calendar"></i></button>
-                </span>
-            </p>
-        </div>
-        <div>
-            <md-input-container>
-                <label>Abholer</label>
-                <input ng-model="lagerVm.abholer">
-            </md-input-container>
-        </div>
-
-        <div layout="row" ng-repeat="row in lagerVm.selectedProducts" layout-align="space-around center">
-            <div flex="5">
-                <md-button class="md-icon-button" aria-label="Remove Row" ng-click="lagerVm.deleteRow(row.id)">
-                    <md-icon md-svg-src="static/img/icons/ic_clear_black_24px.svg"></md-icon>
-                </md-button>
+        <md-content>
+            <div>
+                <p class="input-group" flex="50" style="padding-left:5px;">
+                    <input placeholder="Datum" type="text" class="form-control"
+                           uib-datepicker-popup="dd.MM.yyyy" ng-model="lagerVm.dt"
+                           is-open="lagerVm.popup.opened" datepicker-options="lagerVm.dateOptions"
+                           ng-required="true"
+                           date-disabled="lagerVm.disabled(date, mode)" current-text="Heute"
+                           clear-text="Leeren"
+                           close-text="Schließen"/>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="lagerVm.open_datepicker()">
+                            <i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </p>
             </div>
-            <div flex="50">
-                <md-autocomplete md-no-cache="false" md-selected-item="row.article" md-delay="600" md-min-length="1"
-                                 md-search-text-change="lagerVm.searchTextChange(row.searchProd)"
-                                 md-search-text="row.searchProd"
-                                 md-selected-item-change="lagerVm.selectedProductChange(row)"
-                                 md-items="item in lagerVm.queryStock(row.searchProd)"
-                                 md-item-text="item.prodid.id+', '+item.prodid.name1"
-                                 placeholder="Bitte wählen Sie einen Artikel aus.">
-                    <md-item-template>
-                        <span md-highlight-text="row.searchProd"
-                              md-highlight-flags="^i">{{ item.prodid.id+', '+item.prodid.name1 }}
-                        </span>
-                        <md-tooltip md-delay="0" md-autohide="true">{{ item.prodid.id+', '+item.prodid.name1 }}</md-tooltip>
-                    </md-item-template>
-                    <md-not-found>
-                        Keine Übereinstimmung mit "{{ row.searchProd }}" gefunden.
-                    </md-not-found>
-                </md-autocomplete>
-            </div>
-            <div flex="15">
-                <input type="number" step="0.01" class="form-control" placeholder="Menge" ng-model="row.quantity">
-            </div>
-            <div flex="15">
-                <md-input-container>
-                    <label>Einheit</label>
-                    <md-select ng-model="row.selectedpacking" >
-                        <md-option ng-repeat="packing in row.packings" ng-value="{{ packing }}">
-                            {{ packing.name }}
-                        </md-option>
-                    </md-select>
+            <div>
+                <md-input-container style="margin:8px">
+                    <label>Abholer</label>
+                    <input ng-model="lagerVm.abholer">
                 </md-input-container>
             </div>
-            <div flex="10">
-                <i ng-show="row.article && row.quantity && row.selectedpacking" class="material-icons" style="color:darkgreen" ;>check</i>
+
+            <div layout="row" style="margin:8px" ng-repeat="row in lagerVm.selectedProducts" layout-align="space-around center">
+                <div flex="5">
+                    <md-button class="md-icon-button" aria-label="Remove Row" ng-click="lagerVm.deleteRow(row.id)">
+                        <md-icon md-svg-src="static/img/icons/ic_clear_black_24px.svg"></md-icon>
+                    </md-button>
+                </div>
+                <div flex="50">
+                    <md-autocomplete md-no-cache="false" md-selected-item="row.article" md-delay="600" md-min-length="1"
+                                     md-search-text-change="lagerVm.searchTextChange(row.searchProd)"
+                                     md-search-text="row.searchProd"
+                                     md-selected-item-change="lagerVm.selectedProductChange(row)"
+                                     md-items="item in lagerVm.queryStock(row.searchProd)"
+                                     md-item-text="item.prodid.id+', '+item.prodid.name1"
+                                     placeholder="Bitte wählen Sie einen Artikel aus.">
+                        <md-item-template>
+                            <span md-highlight-text="row.searchProd"
+                                  md-highlight-flags="^i">{{ item.prodid.id+', '+item.prodid.name1 }}
+                            </span>
+                            <md-tooltip md-delay="0" md-autohide="true">{{ item.prodid.id+', '+item.prodid.name1 }}</md-tooltip>
+                        </md-item-template>
+                        <md-not-found>
+                            Keine Übereinstimmung mit "{{ row.searchProd }}" gefunden.
+                        </md-not-found>
+                    </md-autocomplete>
+                </div>
+                <div flex="15">
+                    <input type="number" step="0.01" class="form-control" placeholder="Menge" ng-model="row.quantity">
+                </div>
+                <div flex="15">
+                    <md-input-container style="margin:0px">
+                        <label>Einheit</label>
+                        <md-select ng-model="row.selectedpacking" >
+                            <md-option ng-repeat="packing in row.packings" ng-value="{{ packing }}">
+                                {{ packing.name }}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div flex="10">
+                    <i ng-show="row.article && row.quantity && row.selectedpacking" class="material-icons" style="color:darkgreen" ;>check</i>
+                </div>
             </div>
-        </div>
-        <div>
-            <md-button class="md-fab md-mini md-primary" aria-label="Add Row" ng-click="lagerVm.addRow()">
-                <md-icon md-svg-src="static/img/icons/ic_add_white_24px.svg"></md-icon>
-            </md-button>
-        </div>
-    </div>
-    </md-content>
-    <md-divider layout-margin></md-divider>
-    <div flex="50" layout-margin>
-        <md-toolbar layout="row" class="md-hue-3">
+            <div>
+                <md-button class="md-fab md-mini md-primary" aria-label="Add Row" ng-click="lagerVm.addRow()">
+                    <md-icon md-svg-src="static/img/icons/ic_add_white_24px.svg"></md-icon>
+                </md-button>
+            </div>
+        </md-content>
+    </section>
+    <div layout-margin></div>
+    <section layout="column" flex="50" class="demo-container md-whiteframe-z1">
+        <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
             <div class="md-toolbar-tools">
                 <span>Vorschau</span>
             </div>
@@ -171,91 +172,99 @@
         </div>
     </div>
 </div>
-<h2 ng-show="lagerVm.projectDocs.length!=0">30 Tage Übersicht:</h2>
-<div flex="65" ng-repeat="bestellung in lagerVm.projectDocs | orderBy: '-docdate'">
-    <div class="panel" ng-class="{'panel-primary': !bestellung.edit, 'panel-edit' : bestellung.edit }">
-        <div class="panel-heading">Lagerausgang Nr.: {{ bestellung.id }}
-            ({{ bestellung.docdate |date:'d. MMM yyyy' }}) Baustelle: {{ bestellung.modulerefid }}
-            <li class="btn-group pull-right" uib-dropdown is-open="">
-                <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
-                   ng-disabled="disabled">
-                    Optionen <span class="caret"></span>
-                </a>
-                <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                    <li><a ng-click="lagerVm.delete_doc(bestellung)">Bestellung löschen</a></li>
-                    <li><a ng-click="lagerVm.edit_doc(bestellung)">Bestellung bearbeiten</a></li>
-                </ul>
-            </li>
-        </div>
-        <div class="panel-body">
-            <table class="table">
-                <thead>
-                <th class="col-md-4">Name</th>
-                <th class="col-md-1">Anzahl</th>
-                <th class="col-md-1">Einheit</th>
-                <th class="col-md-1">Preis</th>
-                <th class="col-md-1">Kosten</th>
-                <th class="col-md-2">Verpackung</th>
-                <th class="col-md-3">Bemerkung</th>
-                </thead>
-                <tbody>
-                <tr class="text-muted" ng-repeat="(key, item) in bestellung.data">
-                    <td> {{ item.name }}</td>
-                    <td> <span ng-show="bestellung.edit">
-                            <input type="number" step="0.01" class="form-control" style="width:100px;"
-                                   placeholder="{{ item.quantity }}"
-                                   ng-model="item.quantity"></span>
-                        <span ng-show="!bestellung.edit">{{ item.quantity }}</span>
-                    </td>
-                    <td> {{ item.unit }}</td>
-                    <td> {{ item.price |currency:""}} €</td>
-                    <td> {{ item.quantity*item.price |currency:""}} €</td>
-                    <td> {{ item.packing }}</td>
-                    <td><span ng-show="bestellung.edit">
-                        <textarea type="text" class="form-control" ng-model="item.comment"
-                                  placeholder="Bemerkung (optional)" ng-maxlength="255"
-                                  maxlength="255"></textarea></span>
-                        <span ng-show="!bestellung.edit">{{ item.comment }}</span>
-                    </td>
-                    <td><span ng-show="bestellung.edit">
-                        <li class="btn-group pull-right" uib-dropdown is-open="">
-                            <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
-                               ng-disabled="disabled">
-                                Optionen <span class="caret"></span>
-                            </a>
-                            <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                                <li><a ng-click="lagerVm.delete_docdata(bestellung, item.rowid)">Eintrag
-                                    löschen</a></li>
-                            </ul>
-                        </li></span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+<br/><br/>
+<section  class="demo-container md-whiteframe-z1">
+    <md-toolbar ng-show="lagerVm.projectDocs.length!=0" class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
+        <h2 class="md-toolbar-tools">
+          <span>30 Tage Übersicht:</span>
+        </h2>
+    </md-toolbar>
 
-            <div class="well col-md-8 pull-left" ng-hide="bestellung.edit">
-                <span ng-show="lagerVm.files[bestellung.id].pdf">
-                    <a target="_blank" href="{{ lagerVm.files[bestellung.id].pdf }}">
-                        <img ng-src="static/pdficon.png" width="32">Lagerausgang.pdf</a>
-                </span>
+    <div flex="65" ng-repeat="bestellung in lagerVm.projectDocs | orderBy: '-docdate'" style="padding:8px">
+        <div class="panel" ng-class="{'panel-primary': !bestellung.edit, 'panel-edit' : bestellung.edit }">
+            <div class="panel-heading">Lagerausgang Nr.: {{ bestellung.id }}
+                ({{ bestellung.docdate |date:'d. MMM yyyy' }}) Baustelle: {{ bestellung.modulerefid }} Abholer: {{ bestellung.remark }}
+                <li class="btn-group pull-right" uib-dropdown is-open="">
+                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                       ng-disabled="disabled">
+                        Optionen <span class="caret"></span>
+                    </a>
+                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                        <li><a ng-click="lagerVm.delete_doc(bestellung)">Bestellung löschen</a></li>
+                        <li><a ng-click="lagerVm.edit_doc(bestellung)">Bestellung bearbeiten</a></li>
+                    </ul>
+                </li>
             </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <th class="col-md-4">Name</th>
+                    <th class="col-md-1">Anzahl</th>
+                    <th class="col-md-1">Einheit</th>
+                    <th class="col-md-1">Preis</th>
+                    <th class="col-md-1">Kosten</th>
+                    <th class="col-md-2">Verpackung</th>
+                    <th class="col-md-3">Bemerkung</th>
+                    </thead>
+                    <tbody>
+                    <tr class="text-muted" ng-repeat="(key, item) in bestellung.data">
+                        <td> {{ item.name }}</td>
+                        <td> <span ng-show="bestellung.edit">
+                                <input type="number" step="0.01" class="form-control" style="width:100px;"
+                                       placeholder="{{ item.quantity }}"
+                                       ng-model="item.quantity"></span>
+                            <span ng-show="!bestellung.edit">{{ item.quantity }}</span>
+                        </td>
+                        <td> {{ item.unit }}</td>
+                        <td> {{ item.price |currency:""}} €</td>
+                        <td> {{ item.quantity*item.price |currency:""}} €</td>
+                        <td> {{ item.packing }}</td>
+                        <td><span ng-show="bestellung.edit">
+                            <textarea type="text" class="form-control" ng-model="item.comment"
+                                      placeholder="Bemerkung (optional)" ng-maxlength="255"
+                                      maxlength="255"></textarea></span>
+                            <span ng-show="!bestellung.edit">{{ item.comment }}</span>
+                        </td>
+                        <td><span ng-show="bestellung.edit">
+                            <li class="btn-group pull-right" uib-dropdown is-open="">
+                                <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                                   ng-disabled="disabled">
+                                    Optionen <span class="caret"></span>
+                                </a>
+                                <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                                    <li><a ng-click="lagerVm.delete_docdata(bestellung, item.rowid)">Eintrag
+                                        löschen</a></li>
+                                </ul>
+                            </li></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
-
-            <div ng-hide="bestellung.edit" class="btn-group col-md-4 pull-right" role="group" aria-label="...">
-                <div class="btn-group-vertical" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default"
-                            ng-click="lagerVm.refresh_documents(bestellung)">
-                        <img ng-src="static/pdficon.png" width="24"> erstellen
-                    </button>
+                <div class="well col-md-8 pull-left" ng-hide="bestellung.edit">
+                    <span ng-show="lagerVm.files[bestellung.id].pdf">
+                        <a target="_blank" href="{{ lagerVm.files[bestellung.id].pdf }}">
+                            <img ng-src="static/pdficon.png" width="32">Lagerausgang.pdf</a>
+                    </span>
                 </div>
+
+
+                <div ng-hide="bestellung.edit" class="btn-group col-md-4 pull-right" role="group" aria-label="...">
+                    <div class="btn-group-vertical" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default"
+                                ng-click="lagerVm.refresh_documents(bestellung)">
+                            <img ng-src="static/pdficon.png" width="24"> erstellen
+                        </button>
+                    </div>
+                </div>
+
+
+                <button ng-show="bestellung.edit" ng-click="lagerVm.save_doc(bestellung)"
+                        type="button" class="btn btn-default">Speichern
+                </button>
             </div>
-
-
-            <button ng-show="bestellung.edit" ng-click="lagerVm.save_doc(bestellung)"
-                    type="button" class="btn btn-default">Speichern
-            </button>
         </div>
     </div>
-</div>
-<!--<button ng-click="lagerVm.deleteconsumed('10007979')">consumedproduct löschen</button>-->
-<!--<pre>{{ lagerVm.show |json }}</pre>-->
+</section>
+    <!--<button ng-click="lagerVm.deleteconsumed('10007979')">consumedproduct löschen</button>-->
+    <!--<pre>{{ lagerVm.show |json }}</pre>-->

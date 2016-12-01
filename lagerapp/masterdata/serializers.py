@@ -262,7 +262,7 @@ class PurchaseDocSerializer(serializers.ModelSerializer):
         return instance
 
 def getPurchaseDocSerializer(model, datamodel, delno_model, delno_datamodel):
-    fields = ('url', 'id','subject','responsible','leader','doctype', 'module','modulerefid', 'supplierid', 'status',
+    fields = ('url','id','subject','remark','responsible','leader','doctype', 'module','modulerefid', 'supplierid', 'status',
             'docdate', 'data', 'deliverynotes','stockid')
     return type(model.__name__+"Serializer", (PurchaseDocSerializer,), dict(
         Meta=type("Meta",(),{'fields' : fields, 'model': model,'datamodel':datamodel}),

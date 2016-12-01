@@ -17,8 +17,9 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             }).then(function (response) {
                 vm.consumed = response;
             })
-        }
-        vm.packings = {}
+        };
+        vm.abholer = "";
+        vm.packings = {};
         vm.files = {};
         vm.simulateQuery = false;
         vm.isDisabled = false;
@@ -69,7 +70,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         };
         vm.delete_doc = function (doc) {
             bestellungenService.internalpurchasedoc.delete(doc).then(function () {
-                refreshDocs();
+                initDocs();
             });
         };
         vm.edit_doc = function (doc) {
@@ -101,12 +102,12 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         };
         vm.refresh_documents = function (doc) {
             bestellungenService.purchasedoc.delete_documents(doc.id).then(function () {
-                make(doc, 'pdf', '').then(function (response) {
-                    refreshDocs();
+                make(doc, 'pdf', doc.remark).then(function (response) {
+                    initDocs();
                 });
             }, function (error) {
-                make(doc, 'pdf', '').then(function () {
-                    refreshDocs();
+                make(doc, 'pdf', doc.remark).then(function () {
+                    initDocs();
                 });
             });
         };
@@ -143,7 +144,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 "subject": vm.selectedProject.description,
                 "responsible": manager,
                 "leader": leader,
-                "abholer": vm.abholer,
+                "remark": vm.abholer,
                 "supplierid": "SOLID-SCHIEREN", // ToDo: variabel
                 "modulerefid": vm.selectedProject.id,
                 "docdate": vm.dt,
@@ -166,7 +167,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 .then(
                     /*success:*/ function(response) {
                         console.log(response);
-                        return make(purchasedoc, 'pdf', vm.abholer);
+                        return make(purchasedoc, 'pdf', purchasedoc.remark);
                     },
                     /*error:*/ function(error) {
                         if (error == "purchasedoc_error"){
@@ -185,14 +186,16 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     /*error:*/ function(error) {
                         switch (error){
                             case "purchasedoc_error":
-                                alertService.showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler ist aufgetreten.');
+                                alertService.showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler aufgetreten.');
                                 break;
                             case "consumedproduct_error":
-                                alertService.showAlert('Beim Eintragen ins Projekt ist ein Fehler ist aufgetreten.');
-                                bestellungenService.internalpurchasedoc.delete(purchasedoc);
+                                alertService.showAlert('Beim Eintragen ins Projekt ist ein Fehler aufgetreten.');
+                                bestellungenService.internalpurchasedoc.delete(purchasedoc); //clean up
                                 break;
                             default:
-                                alertService.showAlert('Daten in Lagerausgang und Projekt eingetragen. Beim Erstellen des Dokuments ist ein Fehler ist aufgetreten.');
+                                alertService.showAlert('Daten in Lagerausgang und Projekt eingetragen. Beim Erstellen des Dokuments ist ein Fehler aufgetreten.');
+                                refreshDocs();
+                                break;
                         }
                         return $q.reject("make_error");
                     }
