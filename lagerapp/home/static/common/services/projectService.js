@@ -12,8 +12,15 @@ factory("projectService", function ($resource, $cacheFactory, sessionService, to
     }
     
     function project_list(kwargs) {
+        var company = "";
+        if ("company" in kwargs){
+            company = kwargs["company"];
+        }
+        else{
+            console.log("not in kwargs");
+        }
         return sessionService.getCompany().then(function(companyid) {
-            return projects[companyid].query({'search': kwargs.search}).$promise;
+            return projects[company].query(kwargs).$promise;
         });
     }
     function project_get(id) {

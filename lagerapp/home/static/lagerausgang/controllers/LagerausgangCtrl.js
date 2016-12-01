@@ -18,7 +18,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 vm.consumed = response;
             })
         };
-        vm.selectedCustomer = "01";
+        vm.selectedCustomer = "04";
         vm.abholer = "";
         vm.packings = {};
         vm.files = {};
@@ -242,10 +242,15 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         }
 
         function queryProject(query) {
+            console.log("queryProject");
+            console.log(vm.selectedCustomer);
             return $q(function (resolve, reject) {
-                projectService.project_list({
-                    search: query,
-                }).then(function (response) {
+                var kwargs = {
+                    company: vm.selectedCustomer,
+                    search: query
+                };
+                console.log(kwargs);
+                projectService.project_list(kwargs).then(function (response) {
                     resolve(response.results);
                 });
             })
