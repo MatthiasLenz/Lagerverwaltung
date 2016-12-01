@@ -68,7 +68,7 @@ def lagerausgangmakepdf(request):
         settings = json.load(settings_file)
         ftpsettings = settings["ftp"]
         lagerausgang = settings["lagerausgang"]
-        document_folder = settings["document_folder"]
+        document_folder = settings["lagerausgang"]["folder"]
     data = dict(request.data['doc'])
     data['abholer'] = request.data['abholer']
     data.update(lagerausgang)
@@ -76,7 +76,7 @@ def lagerausgangmakepdf(request):
     data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
 
     renderdoc1(data, os.path.abspath("masterdata/lagerausgang.odt"))
-    document_folder = document_folder +"lagerausgang/" + data['modulerefid'] + '/'
+    document_folder = document_folder + data['modulerefid'] + '/'
     doctype = request.data['type']
     subprocess.call(os.path.abspath(
         'LibreOfficePortable/App/libreoffice/program/swriter.exe') + ' --headless --convert-to ' + doctype + ' ' +
@@ -90,7 +90,7 @@ def lagerausgangmakepdf(request):
     os.rename(document_folder + 'lagerausgang.' + doctype, document_folder + docname)
     # with open(document_folder+"bestellung.pdf", 'rb') as f:
     #    url = ftpupload(ftpsettings, f, "bestellung.pdf")
-    fileurl = 'http://%s/static/lagerausgang/%s/%s' % (settings['server'], data['modulerefid'], docname)
+    fileurl = 'http://%s/static/Lagerausgang/%s/%s' % (settings['server'], data['modulerefid'], docname)
     try:
         obj = PurchaseDocuments.objects.get(purchasedocid=data['id'])
         setattr(obj, doctype, fileurl)
