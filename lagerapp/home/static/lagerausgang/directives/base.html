@@ -1,6 +1,18 @@
 <!--<button ng-click="lagerVm.swap_direction()">swap Layout</button>-->
-<div layout="row" layout-align="start center" flex="30">
+<div layout="row" layout-align="start" flex="30">
     <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_one_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
+        'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
+    <md-input-container flex>
+        <label>Firma/Kunde</label>
+        <md-select ng-model="lagerVm.selectedCustomer"  class="md-no-underline">
+              <md-option ng-value="01">Solid SA</md-option>
+              <md-option ng-value="04">Sofico</md-option>
+              <md-option ng-value="05">Solid Bau</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+<div layout="row" layout-align="start center" flex="30">
+    <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
         'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
     <md-autocomplete flex ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
                      md-min-length="1"
@@ -21,11 +33,12 @@
         </md-not-found>
     </md-autocomplete>
 </div>
+<br/>
 <div layout="row" >
     <section layout="column" flex="50" class="demo-container md-whiteframe-z1">
         <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3"><!--md-hue-3-->
             <div class="md-toolbar-tools">
-                <span><md-icon md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px',
+                <span><md-icon md-svg-src="static/img/icons/ic_looks_3_48px.svg" ng-style="{'font-size': '48px',
                 'height': '48px', 'width': '48px', 'fill':'black'}">
                 </md-icon> Lagerausgang eintragen</span>
             </div>
@@ -166,7 +179,7 @@
             <!--<md-button class="md-icon-button md-primary" aria-label="Save" ng-click="lagerVm.save()">
                 <md-icon md-svg-icon="static/img/icons/ic_save_black_48px.svg"></md-icon>
             </md-button>-->
-            <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_3_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
+            <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_4_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
                 'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
             <md-button class="md-raised" ng-click="lagerVm.save()">Speichern</md-button>
         </div>

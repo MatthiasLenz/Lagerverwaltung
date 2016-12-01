@@ -18,6 +18,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 vm.consumed = response;
             })
         };
+        vm.selectedCustomer = "01";
         vm.abholer = "";
         vm.packings = {};
         vm.files = {};
