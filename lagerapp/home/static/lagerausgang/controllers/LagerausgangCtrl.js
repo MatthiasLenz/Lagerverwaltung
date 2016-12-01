@@ -47,6 +47,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
         vm.queryStock = queryStock;
         vm.queryProject = queryProject;
         vm.projectDocs = [];
+        initDocs();
         vm.selectedProjectChange = selectedProjectChange;
         vm.selectedProductChange = selectedProductChange;
         vm.searchTextChange = searchTextChange;
@@ -323,7 +324,21 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             }
 
         }
+        function initDocs() {
+            var dt = new Date();
+            dt.setMonth(dt.getMonth() - 1);
+            dt = dt.toISOString().slice(0, 10);
+                bestellungenService.internalpurchasedoc.list({
+                    status: 4,
+                    min_date: dt
+                }).then(function (data) {
+                    vm.projectDocs = data;
+                })
+                .catch(function(error){
+                    console.log(error);
+                })
 
+        }
         function make(doc, type, abholer) {
             return bestellungenService.makeinternal(doc, type, abholer).then(function (docurl) {
                 bestellungenService.purchasedoc.file(doc.id).then(function (item) {

@@ -175,7 +175,7 @@
 <div flex="65" ng-repeat="bestellung in lagerVm.projectDocs | orderBy: '-docdate'">
     <div class="panel" ng-class="{'panel-primary': !bestellung.edit, 'panel-edit' : bestellung.edit }">
         <div class="panel-heading">Lagerausgang Nr.: {{ bestellung.id }}
-            ({{ bestellung.docdate |date:'d. MMM yyyy' }})
+            ({{ bestellung.docdate |date:'d. MMM yyyy' }}) Baustelle: {{ bestellung.modulerefid }}
             <li class="btn-group pull-right" uib-dropdown is-open="">
                 <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
                    ng-disabled="disabled">
