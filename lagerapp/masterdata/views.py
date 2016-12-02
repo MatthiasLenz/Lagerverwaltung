@@ -457,8 +457,13 @@ def get_project_data(request, id, company, format=None):
         # helper function
         cursor = connection.cursor()
         cursor.execute("SELECT MAX(ID) FROM ConsumedProduct")
-        id = str(int(cursor.fetchall()[0][0]) + 1)
-        return '0' * (5 - len(id)) + id
+        result = cursor.fetchall()[0][0]
+        if result:
+            id = str(int(result) + 1)
+            return '0' * (5 - len(id)) + id
+        else:
+            return "00001"
+
 
     def max_consumedproductdatarowid(connection):
         # helper function
@@ -478,6 +483,7 @@ def get_project_data(request, id, company, format=None):
             r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=%s' % (
             dbserver, company, id.replace('-', '_'), dbpassword))
         cursor = cn.cursor()
+
         cursor.execute("Select * from ConsumedProductData")
         results = cursor.fetchall()
         # convert strings to UTF-8
@@ -490,16 +496,24 @@ def get_project_data(request, id, company, format=None):
 
     elif request.method == 'POST':
         try:
+            print("try create consumedproduct")
             data = request.data
             docdate = data['docdate']
             articles = data['articles']
             purchaseref = data['purchaseref']
             supplierid = data['supplierid']
+            print("try connect")
             cn = pyodbc.connect(
                 r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=%s' % (
-                dbserver, company, id.replace('-', '_'), dbpassword))
+                dbserver, company, id.replace('-', '_').lower(), dbpassword))
+            print("success")
+            print("try maxid")
             consumedproductid = max_consumedproductid(cn)
+            print("success")
+            print("try maxrowid")
             datarowid = max_consumedproductdatarowid(cn)
+            print("success")
+            print(consumedproductid, datarowid)
             cursor = cn.cursor()
             cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)",
                            consumedproductid, docdate, '')
@@ -545,7 +559,6 @@ def get_project_data(request, id, company, format=None):
         cursor.commit()
         cursor.close()
         return Response('')
-
 
 @api_view(['GET', ])
 @authentication_classes((TokenAuthentication,))
