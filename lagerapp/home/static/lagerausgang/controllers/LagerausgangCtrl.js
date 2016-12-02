@@ -159,7 +159,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     /*success:*/ function(response) {
                         purchasedoc = response;
                         return projectService.consumedproduct_create(vm.selectedProject, {
-                            docdate: vm.dt, articles: vm.selectedProducts,
+                            company: vm.selectedCustomer, docdate: vm.dt, articles: vm.selectedProducts,
                             purchaseref: purchasedoc.id, supplierid: purchasedoc.supplierid
                         })
                     },

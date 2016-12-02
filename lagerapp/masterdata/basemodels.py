@@ -14,6 +14,7 @@ class ProjectBase(models.Model):
     country = models.CharField(db_column='Country', max_length=3, blank=True)
     city = models.CharField(db_column='City', max_length=30, blank=True)
     projectsimulated = models.NullBooleanField(db_column='ProjectSimulated', default=0)
+    status = models.SmallIntegerField(db_column='Status', blank=True, null=True)
     class Meta:
         abstract = True
         managed = False

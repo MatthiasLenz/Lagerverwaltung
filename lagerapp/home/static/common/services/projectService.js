@@ -17,7 +17,7 @@ factory("projectService", function ($resource, $cacheFactory, sessionService, to
             company = kwargs["company"];
         }
         else{
-            console.log("not in kwargs");
+            company = companyid();
         }
         return sessionService.getCompany().then(function(companyid) {
             return projects[company].query(kwargs).$promise;
@@ -28,18 +28,26 @@ factory("projectService", function ($resource, $cacheFactory, sessionService, to
             return projects[companyid()].get(id).$promise;
         })
     }
-    function consumedproduct_create(selectedProject, data){
+    function consumedproduct_create(selectedProject, kwargs){
         var tokendata = null;
         return tokenService.getToken()
             .then(function (response) {
                 tokendata = response;
                 return sessionService.getCompany();
             })
-            .then(function(companyid){
+            .then(function(loggedin_company){
+                var company = "";
+                //use company user is logged in with or specified company (in Lagerausgang)
+                if ("company" in kwargs){
+                    company = kwargs["company"];
+                }
+                else{
+                    company = loggedin_company;
+                }
                 return $http({
                     method: 'POST',
-                    url: '/api/' + companyid + '/consumedproduct/' + selectedProject.id,
-                    data: data,
+                    url: '/api/' + company + '/consumedproduct/' + selectedProject.id,
+                    data: kwargs,
                     dataType: 'json',
                     headers: {
                         "Authorization": "Token "+tokendata.token,

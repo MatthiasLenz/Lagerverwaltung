@@ -147,7 +147,7 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
 
 def getProjectViewSet(model, staffmodel):
     return type(model.__name__ + 'ViewSet', (ProjectViewSet,), dict(
-        queryset=model.objects.filter(projectsimulated=0),
+        queryset=model.objects.filter(projectsimulated=0, status__in=[0,1,2]),
         serializer_class=getProjectSerializer(model, staffmodel)
     ))
 
