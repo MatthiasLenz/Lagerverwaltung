@@ -59,7 +59,7 @@ def makepdf(request):
     return Response('')
 
 @api_view(['POST'])
-def lagerausgangmakepdf(request):
+def lagerausgangmakepdf(request, companyid):
     """ Build a data dictionary and use py3o.template to render an odt file from an odt template.
         Use the libreoffice odt to pdf converter with a subprocess call.
         Upload the generated pdf document to a webserver via FTP.
@@ -74,8 +74,8 @@ def lagerausgangmakepdf(request):
     data.update(lagerausgang)
     dt = parse_datetime(data['docdate'])
     data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
-
-    renderdoc1(data, os.path.abspath("masterdata/lagerausgang.odt"))
+    logo = "logo{}.png".format(companyid)
+    renderdoc1(data, os.path.abspath("masterdata/lagerausgang.odt"), companyid)
     document_folder = document_folder + data['modulerefid'] + '/'
     doctype = request.data['type']
     subprocess.call(os.path.abspath(
@@ -134,10 +134,10 @@ def renderdoc(data_input, outputfile):
 
 
 
-def renderdoc1(data_input, outputfile):
-    t = Template(os.path.abspath("masterdata/lagerausgang_template.odt"),
+def renderdoc1(data_input, outputfile, companyid):
+    t = Template(os.path.abspath("masterdata/lagerausgang_template{}.odt".format(companyid)),
                  outputfile)
-    t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
+    #t.set_image_path('staticimage.logo', os.path.abspath("masterdata/"+logo))
 
     #responsible = Staff01.objects.get(id=data_input['responsible'])
     items = []

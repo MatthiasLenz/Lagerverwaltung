@@ -1,9 +1,14 @@
 angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', '$timeout', '$q', '$scope',
-    'stockService', 'projectService', 'bestellungenService', 'staffService', '$window', 'alertService',
+    'stockService', 'projectService', 'bestellungenService', 'staffService', '$window', 'alertService', 'sessionService',
     function ($http, $timeout, $q, $scope, stockService,  projectService, bestellungenService,
-              staffService, $window, alertService) {
+              staffService, $window, alertService, sessionService) {
         var vm = this;
         window.show = this;
+        var supplierids = {'01':'SOLID-SCHIEREN','02':'LOCAL-SCHIE','03':'MJINV-SCHIE','04':'SOFIC-SCHIE','05':'SOLIB-BAU','06':'SOLID-CONST'};
+        var supplierid = "";
+        sessionService.getCompany().then(function(companyid){
+            supplierid = supplierids[companyid];
+        });
         vm.deleteconsumed = function (purchasedocid) {
             $http({
                 method: 'DELETE',
@@ -18,7 +23,9 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 vm.consumed = response;
             })
         };
-        vm.selectedCustomer = "04";
+        sessionService.getCompany().then(function(companyid){
+            vm.selectedCustomer = companyid;
+        });
         vm.abholer = "";
         vm.packings = {};
         vm.files = {};
@@ -122,6 +129,10 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 alertService.showAlert('Keine Artikel ausgewählt.');
                 return 0;
             }
+            if (!vm.selectedProducts[0].quantity){
+                alertService.showAlert('Bitte geben Sie die Menge an.');
+                return 0;
+            }
             var manager = vm.selectedProject.manager ? vm.selectedProject.manager.id : '';
             var leader = vm.selectedProject.leader ? vm.selectedProject.leader.id : '';
             var articles = [];
@@ -142,11 +153,12 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
 
             data = {
                 "doctype": 3, "module": 9, "status": 4,
+                "stockid": vm.stock.id,
                 "subject": vm.selectedProject.description,
                 "responsible": manager,
                 "leader": leader,
                 "remark": vm.abholer,
-                "supplierid": "SOLID-SCHIEREN", // ToDo: variabel
+                "supplierid": supplierid,
                 "modulerefid": vm.selectedProject.id,
                 "docdate": vm.dt,
                 "data": articles,
@@ -296,8 +308,6 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     vm.selectedProducts.splice(i, 1);
                 }
             }
-
-            vm.selectedProducts
         }
 
         function createFilterFor(query) {
@@ -358,7 +368,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 });
                 return docurl;
             });
-        };
+        }
         bestellungenService.purchasedoc.files().then(function (files) {
             files.forEach(function (item) {
                 vm.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};

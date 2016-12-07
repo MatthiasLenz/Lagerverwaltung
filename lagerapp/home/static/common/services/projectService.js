@@ -12,14 +12,14 @@ factory("projectService", function ($resource, $cacheFactory, sessionService, to
     }
     
     function project_list(kwargs) {
-        var company = "";
-        if ("company" in kwargs){
-            company = kwargs["company"];
-        }
-        else{
-            company = companyid();
-        }
         return sessionService.getCompany().then(function(companyid) {
+            var company = "";
+            if ("company" in kwargs){
+                company = kwargs["company"];
+            }
+            else{
+                company = companyid;
+            }
             return projects[company].query(kwargs).$promise;
         });
     }

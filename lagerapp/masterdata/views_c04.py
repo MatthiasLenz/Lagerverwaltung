@@ -91,7 +91,7 @@ def renderdoc(data_input, outputfile):
 def renderdoc1(data_input, outputfile):
     t = Template(os.path.abspath("masterdata/lagerausgang_template.odt"),
                  outputfile)
-    t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
+    t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo_sofico.png"))
 
     #responsible = Staff01.objects.get(id=data_input['responsible'])
     items = []

@@ -57,7 +57,7 @@ def makepdf(request):
 def renderdoc(data_input, outputfile):
     t = Template(os.path.abspath("masterdata/bestellung_template.odt"),
                  outputfile)
-    t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
+    t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo_solidbau.png"))
 
     supplier = data_input['supplier']
     responsible = Staff05.objects.get(id=data_input['responsible'])
