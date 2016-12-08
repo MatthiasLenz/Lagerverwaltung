@@ -112,7 +112,9 @@
                     <md-icon md-svg-src="static/img/icons/ic_add_white_24px.svg"></md-icon>
                 </md-button>
             </div>
+            <br/><br/><br/><br/>
         </md-content>
+
     </section>
     <div layout-margin></div>
     <section layout="column" flex="50" class="demo-container md-whiteframe-z1">
@@ -126,11 +128,11 @@
                 <div layout="row">
                     <div flex="60">
                         <div>Bauleiter:
-                            : {{ lagerVm.selectedProject.manager.firstname }} {{ lagerVm.selectedProject.manager.lastname }}</div>
+                            {{ lagerVm.selectedProject.manager.firstname }} {{ lagerVm.selectedProject.manager.lastname }}</div>
                         <div>Polier:
-                            : {{ lagerVm.selectedProject.leader.firstname }} {{ lagerVm.selectedProject.leader.lastname }}</div>
+                            {{ lagerVm.selectedProject.leader.firstname }} {{ lagerVm.selectedProject.leader.lastname }}</div>
                         <div>Abholer:
-                            : {{ lagerVm.abholer.firstname }} {{ lagerVm.abholer.lastname }}</div>
+                            {{ lagerVm.abholer }} </div>
                         <div>Baustelle : {{ lagerVm.selectedProject.id }} -
                             {{ lagerVm.selectedProject.description | limitTo: 30}}{{ lagerVm.selectedProject.description.length>30 ? '...' : '' }}
                         </div>
