@@ -14,7 +14,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters import Filter, DateFilter
 from django_filters.fields import Lookup
-
+from django.core.exceptions import ObjectDoesNotExist
 
 class ListFilter1(Filter):
     def filter(self, qs, value):
@@ -174,7 +174,12 @@ class PurchaseDocSupplierViewSet(viewsets.ModelViewSet):
 
 def getPurchaseDocSupplierViewSet(purchasedoc, supplier):
     queryset = purchasedoc.objects.filter(module=5).filter(doctype=2)
-    supplierids = [pd.supplierid for pd in queryset]
+    supplierids = []
+    for pd in queryset:
+        try:
+            supplierids.append(pd.supplierid)
+        except ObjectDoesNotExist:
+            pass
     queryset = supplier.objects.filter(pk__in=supplierids)  # this fails, if supplierid is not found, ToDo: failsafe
     return type(supplier.__name__ + 'PurchaseDocSupplierViewSet', (PurchaseDocSupplierViewSet,), dict(
         queryset=queryset,
