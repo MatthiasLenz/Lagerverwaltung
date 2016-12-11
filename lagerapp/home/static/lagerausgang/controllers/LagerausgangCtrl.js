@@ -179,6 +179,16 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 )
                 .then(
                     /*success:*/ function(response) {
+                        return bestellungenService.deliverynote.create(delnote)
+                    },
+                    /*error:*/ function(error) {
+                        if (error == "deliverynote_error"){
+                            return $q.reject(error);
+                        }
+                        return $q.reject("consumedproduct_error"); }
+                )
+                .then(
+                    /*success:*/ function(response) {
                         console.log(response);
                         return make(purchasedoc, 'pdf', purchasedoc.remark);
                     },
@@ -186,7 +196,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                         if (error == "purchasedoc_error"){
                             return $q.reject(error);
                         }
-                        return $q.reject("consumedproduct_error"); }
+                        return $q.reject("deliverynote_error"); }
                 )
                 .then(
                     /*success:*/ function(response) {
@@ -228,8 +238,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 if (row.quantity && row.article) {
                     var quantity = Math.round(row.quantity*row.selectedpacking.quantity * 1000) / 1000;
                     var price = row.article.prodid.netpurchaseprice;
-                    var amount = quantity * price;
-                    total += amount;
+                    total += quantity * price;
                 }
             }
             return total;

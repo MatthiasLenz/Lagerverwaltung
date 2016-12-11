@@ -199,6 +199,7 @@ class DeliveryNoteSerializer(serializers.ModelSerializer):
     #data = DeliveryNoteDataSerializer(many=True, allow_null=True, required=False)
     Meta = None
     def create(self, validated_data):
+        """ Creates a Deliverynote and corresponding Stockmovement"""
         data = validated_data.pop('data')  # 'data' needs to be removed first
         model = self.Meta.model
         datamodel = self.Meta.datamodel
@@ -213,13 +214,15 @@ class DeliveryNoteSerializer(serializers.ModelSerializer):
             datecreation = "%s-%s-%s" % (date.today().year, date.today().month, date.today().day)
             stock = Stock.objects.get(id=deliverynote.stockid)
             product = Product.objects.get(id=data_data["prodid"])
+            #stockdata = StockData.objects.filter(stockid=0).filter(prodid__id=data_data["prodid"])
+
             StockMovement.objects.create(datecreation=datecreation, datemodification=datecreation,
                                          stockid=stock, prodid=product, quantitydelta=data_data["quantity"], moduleid=6,
                                          modulerecordtypeid=6000, key1=deliverynote.id, userid=deliverynote.responsible)
         return deliverynote
 
 def getDeliveryNoteSerializer(model, datamodel):
-    fields = ('id', 'orderid','extdocno', 'subject', 'responsible', 'doctype', 'module', 'supplierid', 'status',
+    fields = ('id', 'orderid','extdocno', 'subject', 'responsible', 'doctype', 'module', 'modulerefid', 'supplierid', 'status',
               'docdate', 'stockid', 'supplierinvoicenumber', 'data')
     return type(model.__name__+"Serializer", (DeliveryNoteSerializer,), dict(
         Meta=type("Meta",(),{'fields' : fields, 'model': model,'datamodel':datamodel}),
