@@ -47,6 +47,7 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     this.getOrder = getOrder;
     this.query = '';
     this.items = [];
+    this.setOrder("ID"); //default
     // 5. Clean up
     $scope.$on('$destroy', function () {
         // Do whatever cleanup might be necessary
