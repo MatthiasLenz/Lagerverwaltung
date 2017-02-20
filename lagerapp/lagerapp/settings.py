@@ -210,8 +210,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/'), private_settings['purchase']['folder'], private_settings['document_folder']]
-print(STATICFILES_DIRS)
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/'), private_settings['purchase']['folder'],
+                    private_settings['document_folder']]
+
 DOCFOLDER = private_settings['document_folder']
 STOCKBYID = private_settings['stockbyid']
 DBSERVER = private_settings['dbserver']

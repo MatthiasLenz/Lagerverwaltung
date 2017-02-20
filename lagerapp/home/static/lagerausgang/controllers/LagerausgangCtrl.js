@@ -177,16 +177,16 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                     },
                     /*error:*/ function(error){ return $q.reject("purchasedoc_error"); }
                 )
-                .then(
-                    /*success:*/ function(response) {
-                        return bestellungenService.deliverynote.create(delnote)
-                    },
-                    /*error:*/ function(error) {
-                        if (error == "deliverynote_error"){
-                            return $q.reject(error);
-                        }
-                        return $q.reject("consumedproduct_error"); }
-                )
+                //.then(
+                //    /*success:*/ function(response) {
+                //       return bestellungenService.deliverynote.create(response)
+                //  },
+                //    /*error:*/ function(error) {
+                //        if (error == "deliverynote_error"){
+                //            return $q.reject(error);
+                //        }
+                //        return $q.reject("consumedproduct_error"); }
+                //)
                 .then(
                     /*success:*/ function(response) {
                         console.log(response);
