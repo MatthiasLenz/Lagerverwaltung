@@ -42,11 +42,13 @@ def getStatusFilter(model):
     return type("StatusFilter", (StatusFilter,), dict(Meta=type("Meta", (), {'fields': fields, 'model': model})))
 
 
-class LargeResultsSetPagination(pagination.PageNumberPagination):
+class ResultsSetPagination(pagination.PageNumberPagination):
     page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
+def get_pagination(page_size):
+    return type("ResultsSetPagination", (ResultsSetPagination,), dict(page_size=page_size))
 
 class StaffViewSet(viewsets.ModelViewSet):
     # queryset and serializer_class defined dynamically
@@ -67,7 +69,7 @@ class DeliveryNoteViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    pagination_class = LargeResultsSetPagination
+    pagination_class = ResultsSetPagination
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('status',)
 
@@ -84,7 +86,7 @@ class DeliveryNoteDataViewSet(viewsets.ModelViewSet):
     """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    pagination_class = LargeResultsSetPagination
+    pagination_class = ResultsSetPagination
 
 
 def getDeliveryNoteDataViewSet(model):
@@ -114,7 +116,7 @@ class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    pagination_class = LargeResultsSetPagination
+    pagination_class = ResultsSetPagination
 
 
 def getPurchaseDocDataViewSet(model):
@@ -142,12 +144,13 @@ def getInternalPurchaseDocViewSet(model, datamodel, deliverynote_model, delivery
 
 class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.SearchFilter,)
+    pagination_class = get_pagination(30)
     search_fields = ('id', 'description', 'managerid', 'leaderid')
 
 
 def getProjectViewSet(model, staffmodel):
     return type(model.__name__ + 'ViewSet', (ProjectViewSet,), dict(
-        queryset=model.objects.filter(projectsimulated=0, status__in=[0,1,2]),
+        queryset=model.objects.filter(projectsimulated=0, status__in=[0,1,2]).order_by('-id'),
         serializer_class=getProjectSerializer(model, staffmodel)
     ))
 
@@ -317,7 +320,7 @@ class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = StockData.objects.all()
     serializer_class = StockDataSerializer
 
-    pagination_class = LargeResultsSetPagination
+    pagination_class = ResultsSetPagination
     # Todo: sort by nested fields
     filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
     filter_class = StockDataFilter
@@ -336,7 +339,7 @@ class ProductViewSet(mixins.RetrieveModelMixin,
     queryset = Product.objects.prefetch_related('nature').prefetch_related('defaultsupplier')
     serializer_class = ProductSerializer
 
-    pagination_class = LargeResultsSetPagination
+    pagination_class = ResultsSetPagination
 
     filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
     filter_fields = ('resourcenatureid', 'resourcenatureid__name')
@@ -481,7 +484,6 @@ def get_project_data(request, id, company, format=None):
             return 1
 
     if request.method == 'GET':
-        print(company)
         data = request.data
         # project_id = request.GET.get('projectid') # api/getpr?projectid=...
         cn = pyodbc.connect(
