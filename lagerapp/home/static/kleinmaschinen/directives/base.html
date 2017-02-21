@@ -1,35 +1,37 @@
-<!--<button ng-click="lagerVm.swap_direction()">swap Layout</button>-->
+<!--<button ng-click="maschinenVm.swap_direction()">swap Layout</button>-->
 <div layout="row" layout-align="start" flex="30">
     <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_one_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
         'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
     <md-input-container flex>
         <label>Firma/Kunde</label>
-        <md-select ng-model="lagerVm.selectedCustomer"  class="md-no-underline">
+        <md-select ng-model="maschinenVm.selectedCustomer"  class="md-no-underline">
               <md-option value="01">Solid SA</md-option>
               <md-option value="04">Sofico</md-option>
               <md-option value="05">Solid Bau</md-option>
         </md-select>
     </md-input-container>
 </div>
-<div layout="row" layout-align="start center" flex="30">
+<div layout="row" layout-align="start center" flex="50">
     <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
         'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
-    <md-autocomplete flex ng-disabled="lagerVm.isDisabled" md-no-cache="false" md-delay="600"
-                     md-selected-item="lagerVm.selectedProject"
-                     md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
-                     md-search-text="lagerVm.searchProject"
-                     md-selected-item-change="lagerVm.selectedProjectChange(item)"
-                     md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
-                     md-item-text="item.id+', '+item.description"
-                     md-min-length="0"
-                     placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
+    <md-autocomplete flex ng-disabled="maschinenVm.isDisabled"
+         md-no-cache="false"
+         md-delay="600"
+         md-selected-item="maschinenVm.selectedProject"
+         md-search-text-change="maschinenVm.searchTextChange(maschinenVm.searchProject)"
+         md-search-text="maschinenVm.searchProject"
+         md-selected-item-change="maschinenVm.selectedProjectChange(item)"
+         md-items="item in maschinenVm.queryProject(maschinenVm.searchProject)"
+         md-item-text="item.id+', '+item.description"
+         md-min-length="0"
+         placeholder="Bitte wählen Sie eine Kolonne aus" md-select-on-match="true">
         <md-item-template>
-        <span md-highlight-text="lagerVm.searchProject"
-              md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
+            <span md-highlight-text="maschinenVm.searchProject"
+            md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
                 + ' ' +item.manager.lastname }}</span>
         </md-item-template>
         <md-not-found>
-            Keine Übereinstimmung mit "{{ lagerVm.searchProject }}" gefunden.
+            Keine Übereinstimmung mit "{{ maschinenVm.searchProject }}" gefunden.
         </md-not-found>
     </md-autocomplete>
 </div>
@@ -46,14 +48,14 @@
             <div>
                 <p class="input-group" flex="50" style="padding-left:5px;">
                     <input placeholder="Datum" type="text" class="form-control"
-                           uib-datepicker-popup="dd.MM.yyyy" ng-model="lagerVm.dt"
-                           is-open="lagerVm.popup.opened" datepicker-options="lagerVm.dateOptions"
+                           uib-datepicker-popup="dd.MM.yyyy" ng-model="maschinenVm.dt"
+                           is-open="maschinenVm.popup.opened" datepicker-options="maschinenVm.dateOptions"
                            ng-required="true"
-                           date-disabled="lagerVm.disabled(date, mode)" current-text="Heute"
+                           date-disabled="maschinenVm.disabled(date, mode)" current-text="Heute"
                            clear-text="Leeren"
                            close-text="Schließen"/>
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="lagerVm.open_datepicker()">
+                        <button type="button" class="btn btn-default" ng-click="maschinenVm.open_datepicker()">
                             <i class="glyphicon glyphicon-calendar"></i></button>
                     </span>
                 </p>
@@ -61,22 +63,22 @@
             <div>
                 <md-input-container style="margin:8px">
                     <label>Abholer</label>
-                    <input ng-model="lagerVm.abholer">
+                    <input ng-model="maschinenVm.abholer">
                 </md-input-container>
             </div>
 
-            <div layout="row" style="margin:8px" ng-repeat="row in lagerVm.selectedProducts" layout-align="space-around center">
+            <div layout="row" style="margin:8px" ng-repeat="row in maschinenVm.selectedProducts" layout-align="space-around center">
                 <div flex="5">
-                    <md-button class="md-icon-button" aria-label="Remove Row" ng-click="lagerVm.deleteRow(row.id)">
+                    <md-button class="md-icon-button" aria-label="Remove Row" ng-click="maschinenVm.deleteRow(row.id)">
                         <md-icon md-svg-src="static/img/icons/ic_clear_black_24px.svg"></md-icon>
                     </md-button>
                 </div>
                 <div flex="50">
                     <md-autocomplete md-no-cache="false" md-selected-item="row.article" md-delay="600" md-min-length="1"
-                                     md-search-text-change="lagerVm.searchTextChange(row.searchProd)"
+                                     md-search-text-change="maschinenVm.searchTextChange(row.searchProd)"
                                      md-search-text="row.searchProd"
-                                     md-selected-item-change="lagerVm.selectedProductChange(row)"
-                                     md-items="item in lagerVm.queryStock(row.searchProd)"
+                                     md-selected-item-change="maschinenVm.selectedProductChange(row)"
+                                     md-items="item in maschinenVm.queryStock(row.searchProd)"
                                      md-item-text="item.prodid.id+', '+item.prodid.name1"
                                      placeholder="Bitte wählen Sie einen Artikel aus.">
                         <md-item-template>
@@ -108,7 +110,7 @@
                 </div>
             </div>
             <div>
-                <md-button class="md-fab md-mini md-primary" aria-label="Add Row" ng-click="lagerVm.addRow()">
+                <md-button class="md-fab md-mini md-primary" aria-label="Add Row" ng-click="maschinenVm.addRow()">
                     <md-icon md-svg-src="static/img/icons/ic_add_white_24px.svg"></md-icon>
                 </md-button>
             </div>
@@ -128,20 +130,20 @@
                 <div layout="row">
                     <div flex="60">
                         <div>Bauleiter:
-                            {{ lagerVm.selectedProject.manager.firstname }} {{ lagerVm.selectedProject.manager.lastname }}</div>
+                            {{ maschinenVm.selectedProject.manager.firstname }} {{ maschinenVm.selectedProject.manager.lastname }}</div>
                         <div>Polier:
-                            {{ lagerVm.selectedProject.leader.firstname }} {{ lagerVm.selectedProject.leader.lastname }}</div>
+                            {{ maschinenVm.selectedProject.leader.firstname }} {{ maschinenVm.selectedProject.leader.lastname }}</div>
                         <div>Abholer:
-                            {{ lagerVm.abholer }} </div>
-                        <div>Baustelle : {{ lagerVm.selectedProject.id }} -
-                            {{ lagerVm.selectedProject.description | limitTo: 30}}{{ lagerVm.selectedProject.description.length>30 ? '...' : '' }}
+                            {{ maschinenVm.abholer }} </div>
+                        <div>Baustelle : {{ maschinenVm.selectedProject.id }} -
+                            {{ maschinenVm.selectedProject.description | limitTo: 30}}{{ maschinenVm.selectedProject.description.length>30 ? '...' : '' }}
                         </div>
-                        <div>Lager : {{ lagerVm.stock.name }}</div>
+                        <div>Lager : {{ maschinenVm.stock.name }}</div>
                     </div>
                     <div flex="40">
                         <div>Erfasst:</div>
                         <div>Lagerausgang Nr.:</div>
-                        <div>Datum: {{ lagerVm.dt |date:'d. MMM yyyy' }}</div>
+                        <div>Datum: {{ maschinenVm.dt |date:'d. MMM yyyy' }}</div>
                     </div>
                 </div>
             </md-subheader>
@@ -156,7 +158,7 @@
                 <th class="col-md-1">Verpackung</th>
                 </thead>
                 <tbody>
-                <tr ng-repeat="item in lagerVm.selectedProducts" ng-show="item.article && item.quantity">
+                <tr ng-repeat="item in maschinenVm.selectedProducts" ng-show="item.article && item.quantity">
                     <td> {{ item.article.prodid.id }}</td>
                     <td> {{ item.article.prodid.name1 }}</td>
                     <td> {{ item.quantity * item.selectedpacking.quantity | number : 3}}</td>
@@ -171,30 +173,30 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>{{ lagerVm.getTotal() | currency:""}} €</td>
+                    <td>{{ maschinenVm.getTotal() | currency:""}} €</td>
                 </tr>
                 </tbody>
             </table>
         </md-content>
         <div>
-            <!--<md-button class="md-icon-button md-primary" aria-label="Save" ng-click="lagerVm.save()">
+            <!--<md-button class="md-icon-button md-primary" aria-label="Save" ng-click="maschinenVm.save()">
                 <md-icon md-svg-icon="static/img/icons/ic_save_black_48px.svg"></md-icon>
             </md-button>-->
             <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_4_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
                 'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
-            <md-button class="md-raised" ng-click="lagerVm.save()">Speichern</md-button>
+            <md-button class="md-raised" ng-click="maschinenVm.save()">Speichern</md-button>
         </div>
     </div>
 </div>
 <br/><br/>
 <section  class="demo-container md-whiteframe-z1">
-    <md-toolbar ng-show="lagerVm.projectDocs.length!=0" class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
+    <md-toolbar ng-show="maschinenVm.projectDocs.length!=0" class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
         <h2 class="md-toolbar-tools">
           <span>30 Tage Übersicht:</span>
         </h2>
     </md-toolbar>
 
-    <div flex="65" ng-repeat="bestellung in lagerVm.projectDocs | orderBy: '-docdate'" style="padding:8px">
+    <div flex="65" ng-repeat="bestellung in maschinenVm.projectDocs | orderBy: '-docdate'" style="padding:8px">
         <div class="panel" ng-class="{'panel-primary': !bestellung.edit, 'panel-edit' : bestellung.edit }">
             <div class="panel-heading">Lagerausgang Nr.: {{ bestellung.id }}
                 ({{ bestellung.docdate |date:'d. MMM yyyy' }}) Baustelle: {{ bestellung.modulerefid }} Abholer: {{ bestellung.remark }}
@@ -204,8 +206,8 @@
                         Optionen <span class="caret"></span>
                     </a>
                     <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                        <li><a ng-click="lagerVm.delete_doc(bestellung)">Bestellung löschen</a></li>
-                        <li><a ng-click="lagerVm.edit_doc(bestellung)">Bestellung bearbeiten</a></li>
+                        <li><a ng-click="maschinenVm.delete_doc(bestellung)">Bestellung löschen</a></li>
+                        <li><a ng-click="maschinenVm.edit_doc(bestellung)">Bestellung bearbeiten</a></li>
                     </ul>
                 </li>
             </div>
@@ -246,7 +248,7 @@
                                     Optionen <span class="caret"></span>
                                 </a>
                                 <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                                    <li><a ng-click="lagerVm.delete_docdata(bestellung, item.rowid)">Eintrag
+                                    <li><a ng-click="maschinenVm.delete_docdata(bestellung, item.rowid)">Eintrag
                                         löschen</a></li>
                                 </ul>
                             </li></span>
@@ -256,9 +258,9 @@
                 </table>
 
                 <div class="well col-md-8 pull-left" ng-hide="bestellung.edit">
-                    <span ng-show="lagerVm.files[bestellung.id].pdf">
-                        <a target="_blank" href="{{ lagerVm.files[bestellung.id].pdf }}">
-                            <img ng-src="static/pdficon.png" width="32">Lagerausgang.pdf</a>
+                    <span ng-show="maschinenVm.files[bestellung.id].pdf">
+                        <a target="_blank" href="{{ maschinenVm.files[bestellung.id].pdf }}">
+                            <img ng-src="static/pdficon.png" width="32"> Lagerausgang-{{ bestellung.id }}.pdf</a>
                     </span>
                 </div>
 
@@ -266,19 +268,19 @@
                 <div ng-hide="bestellung.edit" class="btn-group col-md-4 pull-right" role="group" aria-label="...">
                     <div class="btn-group-vertical" role="group" aria-label="...">
                         <button type="button" class="btn btn-default"
-                                ng-click="lagerVm.refresh_documents(bestellung)">
+                                ng-click="maschinenVm.refresh_documents(bestellung)">
                             <img ng-src="static/pdficon.png" width="24"> erstellen
                         </button>
                     </div>
                 </div>
 
 
-                <button ng-show="bestellung.edit" ng-click="lagerVm.save_doc(bestellung)"
+                <button ng-show="bestellung.edit" ng-click="maschinenVm.save_doc(bestellung)"
                         type="button" class="btn btn-default">Speichern
                 </button>
             </div>
         </div>
     </div>
 </section>
-    <!--<button ng-click="lagerVm.deleteconsumed('10007979')">consumedproduct löschen</button>-->
-    <!--<pre>{{ lagerVm.show |json }}</pre>-->
+    <!--<button ng-click="maschinenVm.deleteconsumed('10007979')">consumedproduct löschen</button>-->
+    <!--<pre>{{ maschinenVm.show |json }}</pre>-->

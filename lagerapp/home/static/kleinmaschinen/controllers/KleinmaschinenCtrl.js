@@ -1,4 +1,4 @@
-angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', '$timeout', '$q', '$scope',
+angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$http', '$timeout', '$q', '$scope',
     'stockService', 'projectService', 'bestellungenService', 'staffService', '$window', 'alertService', 'sessionService',
     function ($http, $timeout, $q, $scope, stockService,  projectService, bestellungenService,
               staffService, $window, alertService, sessionService) {
@@ -27,6 +27,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             vm.selectedCustomer = companyid;
         });
         vm.abholer = "";
+        vm.searchProject = "";
         vm.packings = {};
         vm.files = {};
         vm.simulateQuery = false;
@@ -268,7 +269,7 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
             return $q(function (resolve, reject) {
                 var kwargs = {
                     company: vm.selectedCustomer,
-                    search: query
+                    search: "Kolonne "+query
                 };
                 console.log(kwargs);
                 projectService.project_list(kwargs).then(function (response) {
@@ -383,5 +384,5 @@ angular.module('baseApp.lagerausgang').controller('LagerausgangCtrl', ['$http', 
                 vm.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
             });
         });
-        console.log('Lagerausgang loaded');
+        console.log('Kleinmaschinen Controller geladen');
     }]);

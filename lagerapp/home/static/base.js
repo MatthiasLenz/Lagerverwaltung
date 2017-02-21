@@ -1,10 +1,10 @@
 angular.module('baseApp.bestellen', []);
 angular.module('baseApp.lagerausgang', []);
-angular.module('baseApp.bestellenprojekt', []);
+angular.module('baseApp.kleinmaschinen', []);
 angular.module('baseApp.Services', ['ngResource']);
 var baseApp = angular.module('baseApp', ['ui.bootstrap', 'ngResource', 'ngMaterial', 'baseApp.Services',
     'docsTimeDirective', 'baseApp.bestellen', 'angular-loading-bar', 'ngAnimate', 'baseApp.lagerausgang',
-    'baseApp.bestellenprojekt']);
+    'baseApp.kleinmaschinen']);
 
 baseApp.config(["$locationProvider", function ($locationProvider) {
     //disable this, if the app is being used by html5 incompatible browsers.
