@@ -1,6 +1,6 @@
-angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$http', '$timeout', '$q', '$scope',
+angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$http', '$timeout', '$q', '$scope', 'installationService',
     'stockService', 'projectService', 'bestellungenService', 'staffService', '$window', 'alertService', 'sessionService',
-    function ($http, $timeout, $q, $scope, stockService,  projectService, bestellungenService,
+    function ($http, $timeout, $q, $scope, installationService, stockService,  projectService, bestellungenService,
               staffService, $window, alertService, sessionService) {
         var vm = this;
         window.show = this;
@@ -23,6 +23,14 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
                 vm.consumed = response;
             })
         };
+        vm.selectedType="";
+        installationService.getTitles().then(function(titles){
+            vm.titles = titles;
+        });
+        vm.getMachines = function(){
+            return installationService.getMachines(vm.selectedType);
+        };
+
         sessionService.getCompany().then(function(companyid){
             vm.selectedCustomer = companyid;
         });
@@ -65,7 +73,6 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         vm.getTotal = getTotal;
         vm.save = save;
         vm.make = make;
-        vm.selectedMachines = [{id: 0, quantity: null, article: null}];
         vm.addRow = addRow;
         vm.deleteRow = deleteRow;
         vm.direction = "row";
@@ -237,7 +244,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
             vm.searchProject = "";
         }
         function getTotal() {
-            var total = 0;
+            var total = 0;/* ToDo
             for (var i = 0; i < vm.selectedMachines.length; i++) {
                 var row = vm.selectedMachines[i];
                 if (row.quantity && row.article) {
@@ -245,7 +252,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
                     var price = row.article.prodid.netpurchaseprice;
                     total += quantity * price;
                 }
-            }
+            }*/
             return total;
         }
         function queryStaff(query) {

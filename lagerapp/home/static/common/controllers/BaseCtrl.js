@@ -1,6 +1,6 @@
 angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 'tokenService',
-    'sessionService', 'stockService', 'bestellungenService', 'supplierService',
-    function ($q, $location, $scope, tokenService, sessionService, stockService, bestellungenService, supplierService) {
+    'sessionService', 'stockService', 'bestellungenService', 'supplierService', 'installationService',
+    function ($q, $location, $scope, tokenService, sessionService, stockService, bestellungenService, supplierService, installationService) {
         $scope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
             $scope.successPath = $location.path();
             vm.setState($scope.successPath.substring(1));
@@ -16,7 +16,8 @@ angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 't
                 best_init = bestellungenService.init();
                 supp_init = supplierService.init();
                 stock_init = stockService.init();
-                $q.all([best_init, supp_init, stock_init]).then(function () {
+                inst_init = installationService.init();
+                $q.all([best_init, supp_init, stock_init, inst_init]).then(function () {
                     //ensure that all services are initialized before setting  state which loads the directive
                     sessionService.getConfig().then(function (config_data) {
                         vm.config_data = config_data;
