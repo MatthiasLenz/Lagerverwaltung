@@ -5,6 +5,7 @@ from django.db import models
     Wichtig, wenn man in serializer related fields benutzen möchte, dann muss man dafür hier im model ein field anlegen. In der rest framework beschreibung wird das nicht gemacht,
     vielleicht macht es einen Unterschied, wenn man nicht managed = false einstellt.
 """
+
 class ProjectBase(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)
     description = models.CharField(db_column='Description', max_length=255, blank=True)
@@ -516,3 +517,24 @@ class PurchaseDocuments(models.Model):
     pdf = models.CharField(max_length=128, blank=True, null=True)
     doc = models.CharField(max_length=128, blank=True, null=True)
     odt = models.CharField(max_length=128, blank=True, null=True)
+
+
+class Installation(models.Model):
+    id = models.CharField(db_column='ID', max_length=15, primary_key=True)
+    name1 = models.CharField(db_column='Name1', max_length=60, blank=True)
+    name2 = models.CharField(db_column='Name2', max_length=60, blank=True)
+    model = models.CharField(db_column='Model', max_length=60, blank=True)
+    chassisnum = models.CharField(db_column='ChassisNum', max_length=30, blank=True)
+    licenseplate = models.CharField(db_column='LicensePlate', max_length=30, blank=True)
+    purchasevalue = models.FloatField(db_column='PurchaseValue', blank=True, null=True)
+    availibility = models.SmallIntegerField(db_column='Availability', blank=True, null=True)
+    availibilitystatus = models.CharField(db_column='AvalibilityStatus', max_length=40, blank=True)
+    rentperdayresourceid = models.ForeignKey(Product, db_column='RentPerDayResourceID', blank=True, null=True)
+    title = models.NullBooleanField(db_column='Title')
+    titlegrade = models.SmallIntegerField(db_column='TitleGrade', blank=True, null=True)
+    def __unicode__(self):
+        return self.id
+    class Meta:
+        managed = False
+        db_table = 'Installation'
+        app_label = 'hit_01_maintenance'

@@ -1,11 +1,12 @@
 # encoding=UTF-8
 from basemodels import Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, UserData, \
-    PurchaseDocuments, StockMovement, Company
+    PurchaseDocuments, StockMovement, Company, Installation
 from models import Project01, Staff01
 from serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, getSupplierSerializer, \
     StockMovementSerializer, ProductSerializer, NatureSerializer, FastProductSerializer, ProductSupplierSerializer, \
     ProductPackingSerializer, PurchaseDocumentsSerializer, getStaffSerializer, getDeliveryNoteSerializer, \
-    getDeliveryNoteDataSerializer, getPurchaseDocDataSerializer, getPurchaseDocSerializer, getProjectSerializer,CompanySerializer
+    getDeliveryNoteDataSerializer, getPurchaseDocDataSerializer, getPurchaseDocSerializer, getProjectSerializer,CompanySerializer,\
+    InstallationSerializer
 from rest_framework import viewsets, mixins, pagination, filters, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -94,6 +95,15 @@ def getDeliveryNoteDataViewSet(model):
                                                                              serializer_class=getDeliveryNoteDataSerializer(
                                                                                  model)))
 
+class InstallationViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    pagination_class = None
+    serializer_class = InstallationSerializer
+    queryset = Installation.objects.filter(id__startswith=('15')).order_by('id')
+    filter_backends = (filters.DjangoFilterBackend, filters.SearchFilter)
+    filter_fields = ('rentperdayresourceid','title',)
+    search_fields = ('id', 'name1', 'name2',)
 
 class PurchaseDocViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)

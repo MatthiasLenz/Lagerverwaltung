@@ -1,7 +1,7 @@
 from datetime import date
 from rest_framework import serializers
 from basemodels import UserData, Stock, StockData, Product, Nature, ProductSupplier, \
-    ProductPacking, StockMovement, PurchaseDocuments, Company
+    ProductPacking, StockMovement, PurchaseDocuments, Company, Installation
 from models import Supplier01, PurchaseDoc01,  Project01
 
 from django.contrib.auth.models import User, Group
@@ -282,3 +282,10 @@ class MinPurchaseDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseDoc01
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'status', 'docdate')
+
+
+class InstallationSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Installation
+        fields = ('id','name1','name2','chassisnum','licenseplate','purchasevalue','availibility','availibilitystatus',
+                  'rentperdayresourceid','title','titlegrade')

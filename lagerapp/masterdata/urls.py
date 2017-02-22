@@ -5,6 +5,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 import models
 # Create a router and register our viewsets with it.
 router = DefaultRouter(trailing_slash=False)
+router.register(r'installation', views.InstallationViewSet)
 router.register(r'stock', views.StockViewSet)
 router.register(r'stockdata', views.StockDataViewSet)
 router.register(r'stockmovement', views.StockMovementViewSet)
