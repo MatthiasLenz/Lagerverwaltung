@@ -21,7 +21,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 def getProjectSerializer(model, staffmodel):
     fields = ('id', 'description', 'customer', 'address', 'country', 'zipcode', 'city', 'manager', 'leader',
-              'leaderid', 'managerid','status')
+              'leaderid', 'managerid','status','start_project','end_project')
     return type(model.__name__ + 'Serializer', (ProjectSerializer,), dict(
             Meta=type("Meta", (),{'fields': fields, 'model': model}),
             manager=getStaffSerializer(staffmodel)(read_only=True, allow_null=True),

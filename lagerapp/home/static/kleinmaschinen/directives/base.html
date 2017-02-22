@@ -4,18 +4,18 @@
         'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
     <md-input-container flex>
         <label>Firma/Kunde</label>
-        <md-select ng-model="maschinenVm.selectedCustomer"  class="md-no-underline">
+        <md-select ng-model="maschinenVm.selectedCustomer"  class="md-no-underline" ng-change="maschinenVm.changeCustomer">
               <md-option value="01">Solid SA</md-option>
               <md-option value="04">Sofico</md-option>
               <md-option value="05">Solid Bau</md-option>
         </md-select>
     </md-input-container>
 </div>
-<div layout="row" layout-align="start center" flex="50">
+<div layout="row" layout-align="start center" flex="70">
     <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
         'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
     <md-autocomplete flex ng-disabled="maschinenVm.isDisabled"
-         md-no-cache="false"
+         md-no-cache="true"
          md-delay="600"
          md-selected-item="maschinenVm.selectedProject"
          md-search-text-change="maschinenVm.searchTextChange(maschinenVm.searchProject)"
@@ -32,6 +32,23 @@
         </md-item-template>
         <md-not-found>
             Keine Übereinstimmung mit "{{ maschinenVm.searchProject }}" gefunden.
+        </md-not-found>
+    </md-autocomplete>
+    <md-autocomplete flex ng-disabled="maschinenVm.isDisabled"
+         md-no-cache="true"
+         md-delay="600"
+         md-selected-item="maschinenVm.selectedType"
+         md-search-text="maschinenVm.searchType"
+         md-items="item in maschinenVm.queryType(maschinenVm.searchType)"
+         md-item-text="item.display"
+         md-min-length="0"
+         placeholder="Bitte wählen Sie einen Gerätetyp aus" md-select-on-match="true">
+        <md-item-template>
+            <span md-highlight-text="maschinenVm.searchType"
+            md-highlight-flags="^i">{{ item.display}}</span>
+        </md-item-template>
+        <md-not-found>
+            Keine Übereinstimmung mit "{{ maschinenVm.searchType }}" gefunden.
         </md-not-found>
     </md-autocomplete>
 </div>
@@ -67,46 +84,31 @@
                 </md-input-container>
             </div>
 
-            <div layout="row" style="margin:8px" ng-repeat="row in maschinenVm.selectedProducts" layout-align="space-around center">
-                <div flex="5">
+            <div layout="row" style="margin:8px" ng-repeat="row in maschinenVm.selectedMachines" layout-align="start center">
+                <div flex="10">
                     <md-button class="md-icon-button" aria-label="Remove Row" ng-click="maschinenVm.deleteRow(row.id)">
                         <md-icon md-svg-src="static/img/icons/ic_clear_black_24px.svg"></md-icon>
                     </md-button>
                 </div>
                 <div flex="50">
-                    <md-autocomplete md-no-cache="false" md-selected-item="row.article" md-delay="600" md-min-length="1"
-                                     md-search-text-change="maschinenVm.searchTextChange(row.searchProd)"
-                                     md-search-text="row.searchProd"
+                    <md-autocomplete md-no-cache="True" md-selected-item="row.value" md-delay="600"
+                                     md-search-text-change="maschinenVm.searchTextChange(row.searchMachine)"
+                                     md-search-text="row.searchMachine"
                                      md-selected-item-change="maschinenVm.selectedProductChange(row)"
-                                     md-items="item in maschinenVm.queryStock(row.searchProd)"
-                                     md-item-text="item.prodid.id+', '+item.prodid.name1"
-                                     placeholder="Bitte wählen Sie einen Artikel aus.">
+                                     md-items="item in maschinenVm.queryStock(row.searchMachine)"
+                                     md-item-text="item.prodid.id"
+                                     md-min-length="0"
+                                     placeholder="Bitte wählen Sie ein Gerät aus.">
                         <md-item-template>
-                            <span md-highlight-text="row.searchProd"
+                            <span md-highlight-text="row.searchMachine"
                                   md-highlight-flags="^i">{{ item.prodid.id+', '+item.prodid.name1 }}
                             </span>
                             <md-tooltip md-delay="0" md-autohide="true">{{ item.prodid.id+', '+item.prodid.name1 }}</md-tooltip>
                         </md-item-template>
                         <md-not-found>
-                            Keine Übereinstimmung mit "{{ row.searchProd }}" gefunden.
+                            Keine Übereinstimmung mit "{{ row.searchMachine }}" gefunden.
                         </md-not-found>
                     </md-autocomplete>
-                </div>
-                <div flex="15">
-                    <input type="number" step="0.01" class="form-control" placeholder="Menge" ng-model="row.quantity">
-                </div>
-                <div flex="15">
-                    <md-input-container style="margin:0px">
-                        <label>Einheit</label>
-                        <md-select ng-model="row.selectedpacking" >
-                            <md-option ng-repeat="packing in row.packings" ng-value="{{ packing }}">
-                                {{ packing.name }}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
-                </div>
-                <div flex="10">
-                    <i ng-show="row.article && row.quantity && row.selectedpacking" class="material-icons" style="color:darkgreen" ;>check</i>
                 </div>
             </div>
             <div>

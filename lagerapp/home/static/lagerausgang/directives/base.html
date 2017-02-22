@@ -14,7 +14,7 @@
 <div layout="row" layout-align="start center" flex="30">
     <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
         'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
-    <md-autocomplete flex ng-disabled="lagerVm.isDisabled" md-no-cache="false" md-delay="600"
+    <md-autocomplete flex ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
                      md-selected-item="lagerVm.selectedProject"
                      md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
                      md-search-text="lagerVm.searchProject"
@@ -72,7 +72,7 @@
                     </md-button>
                 </div>
                 <div flex="50">
-                    <md-autocomplete md-no-cache="false" md-selected-item="row.article" md-delay="600" md-min-length="1"
+                    <md-autocomplete md-no-cache="false" md-selected-item="row.article" md-delay="600" md-min-length="0"
                                      md-search-text-change="lagerVm.searchTextChange(row.searchProd)"
                                      md-search-text="row.searchProd"
                                      md-selected-item-change="lagerVm.selectedProductChange(row)"
@@ -258,7 +258,7 @@
                 <div class="well col-md-8 pull-left" ng-hide="bestellung.edit">
                     <span ng-show="lagerVm.files[bestellung.id].pdf">
                         <a target="_blank" href="{{ lagerVm.files[bestellung.id].pdf }}">
-                            <img ng-src="static/pdficon.png" width="32">Lagerausgang.pdf</a>
+                            <img ng-src="static/pdficon.png" width="32">Lagerausgang-{{ bestellung.id }}.pdf</a>
                     </span>
                 </div>
 

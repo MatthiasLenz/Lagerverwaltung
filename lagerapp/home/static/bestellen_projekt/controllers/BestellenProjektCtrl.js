@@ -39,7 +39,7 @@ angular.module('baseApp.bestellenprojekt').controller('BestellenProjektCtrl', ['
         vm.getTotal = getTotal;
         vm.save = save;
         vm.make = make;
-        vm.selectedProducts = [{id: 0, quantity: null, article: null}];
+        vm.selectedMachines = [{id: 0, quantity: null, article: null}];
         vm.addRow = addRow;
         vm.deleteRow = deleteRow;
         vm.direction = "row";
@@ -101,15 +101,15 @@ angular.module('baseApp.bestellenprojekt').controller('BestellenProjektCtrl', ['
                 alertService.showAlert('Bitte wählen Sie eine Baustelle aus.');
                 return 0;
             }
-            if (vm.selectedProducts.length==0 || !vm.selectedProducts[0].article){
+            if (vm.selectedMachines.length==0 || !vm.selectedMachines[0].article){
                 alertService.showAlert('Keine Artikel ausgewählt.');
                 return 0;
             }
             var manager = vm.selectedProject.manager ? vm.selectedProject.manager.id : '';
             var leader = vm.selectedProject.leader ? vm.selectedProject.leader.id : '';
             var articles = [];
-            for (var i = 0; i < vm.selectedProducts.length; i++) {
-                article = vm.selectedProducts[i];
+            for (var i = 0; i < vm.selectedMachines.length; i++) {
+                article = vm.selectedMachines[i];
                 var packing = article.selectedpacking.quantity!=1 ? "Verpackung: "+ article.quantity+' '+article.selectedpacking.name : "";
                 articles.push({
                     "rowid": null,
@@ -142,7 +142,7 @@ angular.module('baseApp.bestellenprojekt').controller('BestellenProjektCtrl', ['
                     /*success:*/ function(response) {
                         purchasedoc = response;
                         return projectService.consumedproduct_create(vm.selectedProject, {
-                            docdate: vm.dt, articles: vm.selectedProducts,
+                            docdate: vm.dt, articles: vm.selectedMachines,
                             purchaseref: purchasedoc.id, supplierid: purchasedoc.supplierid
                         })
                     },
@@ -185,15 +185,15 @@ angular.module('baseApp.bestellenprojekt').controller('BestellenProjektCtrl', ['
         }
         function clear(){
             vm.selectedProject = null;
-            vm.selectedProducts = [{id: 0, quantity: null, article: null}];
+            vm.selectedMachines = [{id: 0, quantity: null, article: null}];
             vm.supplier = null;
             vm.searchAbholer = "";
             vm.searchProject = "";
         }
         function getTotal() {
             var total = 0;
-            for (var i = 0; i < vm.selectedProducts.length; i++) {
-                var row = vm.selectedProducts[i];
+            for (var i = 0; i < vm.selectedMachines.length; i++) {
+                var row = vm.selectedMachines[i];
                 if (row.quantity && row.article) {
                     var quantity = Math.round(row.quantity*row.selectedpacking.quantity * 1000) / 1000;
                     var price = row.article.prodid.netpurchaseprice;
@@ -260,20 +260,20 @@ angular.module('baseApp.bestellenprojekt').controller('BestellenProjektCtrl', ['
                     });
             }
         }
-        vm.show=vm.selectedProducts;
+        vm.show=vm.selectedMachines;
         function addRow() {
-            var newRowID = vm.selectedProducts.length + 1;
-            vm.selectedProducts.push({id: newRowID, quantity: null, article: null, selectedpacking:null});
+            var newRowID = vm.selectedMachines.length + 1;
+            vm.selectedMachines.push({id: newRowID, quantity: null, article: null, selectedpacking:null});
         }
 
         function deleteRow(rowid) {
-            for (var i = 0; i < vm.selectedProducts.length; i++) {
-                if (rowid == vm.selectedProducts[i].id) {
-                    vm.selectedProducts.splice(i, 1);
+            for (var i = 0; i < vm.selectedMachines.length; i++) {
+                if (rowid == vm.selectedMachines[i].id) {
+                    vm.selectedMachines.splice(i, 1);
                 }
             }
 
-            vm.selectedProducts
+            vm.selectedMachines
         }
 
         function createFilterFor(query) {

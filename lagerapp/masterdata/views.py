@@ -150,7 +150,7 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
 
 def getProjectViewSet(model, staffmodel):
     return type(model.__name__ + 'ViewSet', (ProjectViewSet,), dict(
-        queryset=model.objects.filter(projectsimulated=0, status__in=[0,1,2]).order_by('-id'),
+        queryset=model.objects.filter(projectsimulated=0, status__in=[0,1,2]).order_by('-start_project'),
         serializer_class=getProjectSerializer(model, staffmodel)
     ))
 
@@ -324,7 +324,7 @@ class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     # Todo: sort by nested fields
     filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
     filter_class = StockDataFilter
-    search_fields = ('prodid__id', 'prodid__name1', 'prodid__defaultsupplier__id')
+    search_fields = ('prodid__id', 'prodid__name1', 'prodid__defaultsupplier__id', 'prodid__nature__id')
 
 
 class ProductViewSet(mixins.RetrieveModelMixin,
