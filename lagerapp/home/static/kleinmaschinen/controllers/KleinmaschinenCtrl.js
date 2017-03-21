@@ -27,8 +27,8 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         installationService.getTitles().then(function(titles){
             vm.titles = titles;
         });
-        vm.getMachines = function(){
-            return installationService.getMachines(vm.selectedType);
+        vm.getMachines = function(selectedType){
+            return installationService.getMachines(selectedType);
         };
 
         sessionService.getCompany().then(function(companyid){
@@ -72,6 +72,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         vm.searchTextChange = searchTextChange;
         vm.getTotal = getTotal;
         vm.save = save;
+        vm.selectedMachines = [{id: 0, price: null, installation: null, selectedType: ""}];
         vm.make = make;
         vm.addRow = addRow;
         vm.deleteRow = deleteRow;
@@ -132,37 +133,18 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         function changeCustomer(){
 
         }
-        function save() {
+        function save() { //vm.selectedmachines is undefined
             if (!vm.selectedProject){
-                alertService.showAlert('Bitte wählen Sie eine Baustelle aus.');
+                alertService.showAlert('Bitte wählen Sie eine Kolonne aus.');
                 return 0;
             }
-            if (vm.selectedMachines.length==0 || !vm.selectedMachines[0].article){
-                alertService.showAlert('Keine Artikel ausgewählt.');
-                return 0;
-            }
-            if (!vm.selectedMachines[0].quantity){
-                alertService.showAlert('Bitte geben Sie die Menge an.');
+            if (vm.selectedMachine == null){
+                alertService.showAlert('Keine Gerät ausgewählt.');
                 return 0;
             }
             var manager = vm.selectedProject.manager ? vm.selectedProject.manager.id : '';
             var leader = vm.selectedProject.leader ? vm.selectedProject.leader.id : '';
-            var articles = [];
-            for (var i = 0; i < vm.selectedMachines.length; i++) {
-                article = vm.selectedMachines[i];
-                var packing = article.selectedpacking.quantity!=1 ? "Verpackung: "+ article.quantity+' '+article.selectedpacking.name : "";
-                articles.push({
-                    "rowid": null,
-                    "prodid": article.article.prodid.id, "name": article.article.prodid.name1,
-                    "unit": article.article.prodid.unit1,
-                    "quantity": Math.round(article.quantity*article.selectedpacking.quantity * 1000) / 1000,
-                    "price": article.article.prodid.netpurchaseprice,
-                    "amount": article.quantity * article.article.prodid.netpurchaseprice,
-                    "packing": packing,
-                    "comment":""
-                });
-            }
-
+            vm.selectedMachine["rowid"] = null;
             data = {
                 "doctype": 3, "module": 9, "status": 4,
                 "stockid": vm.stock.id,
@@ -173,43 +155,25 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
                 "supplierid": supplierid,
                 "modulerefid": vm.selectedProject.id,
                 "docdate": vm.dt,
-                "data": articles,
+                "data": [vm.selectedMachine],
                 "deliverynotes": []
             };
             var purchasedoc = null;
             //1: create purchasedoc, 2: create consumed product for selected project, 3: make PDF document of purchasedoc
             bestellungenService.internalpurchasedoc.create(data)
-                .then(
+                    .then(
                     /*success:*/ function(response) {
-                        purchasedoc = response;
-                        return projectService.consumedproduct_create(vm.selectedProject, {
-                            company: vm.selectedCustomer, docdate: vm.dt, articles: vm.selectedMachines,
-                            purchaseref: purchasedoc.id, supplierid: purchasedoc.supplierid
-                        })
-                    },
-                    /*error:*/ function(error){ return $q.reject("purchasedoc_error"); }
-                )
-                //.then(
-                //    /*success:*/ function(response) {
-                //       return bestellungenService.deliverynote.create(response)
-                //  },
-                //    /*error:*/ function(error) {
-                //        if (error == "deliverynote_error"){
-                //            return $q.reject(error);
-                //        }
-                //        return $q.reject("consumedproduct_error"); }
-                //)
-                .then(
-                    /*success:*/ function(response) {
+                        //anpassen für richtiges dokument
                         console.log(response);
                         return make(purchasedoc, 'pdf', purchasedoc.remark);
                     },
                     /*error:*/ function(error) {
-                        if (error == "purchasedoc_error"){
+                        if (error == "internalpurchasedoc_error"){
                             return $q.reject(error);
                         }
-                        return $q.reject("deliverynote_error"); }
+                        return $q.reject("make purchasedoc"); }
                 )
+                // Update Installation
                 .then(
                     /*success:*/ function(response) {
                         refreshDocs();
@@ -238,21 +202,20 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         }
         function clear(){
             vm.selectedProject = null;
-            vm.selectedMachines = [{id: 0, value:null}];
+            vm.selectedMachine = null;
+            vm.selectedMachines = [{id: 0, price: null, installation: null, selectedType: ""}];
             vm.abholer = "";
             vm.searchAbholer = "";
             vm.searchProject = "";
         }
         function getTotal() {
-            var total = 0;/* ToDo
+            var total = 0;
             for (var i = 0; i < vm.selectedMachines.length; i++) {
                 var row = vm.selectedMachines[i];
-                if (row.quantity && row.article) {
-                    var quantity = Math.round(row.quantity*row.selectedpacking.quantity * 1000) / 1000;
-                    var price = row.article.prodid.netpurchaseprice;
-                    total += quantity * price;
+                if (row.installation && row.installation.purchasevalue) {
+                    total += row.installation.purchasevalue;
                 }
-            }*/
+            }
             return total;
         }
         function queryStaff(query) {
@@ -360,7 +323,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         vm.show=vm.selectedMachines;
         function addRow() {
             var newRowID = vm.selectedMachines.length + 1;
-            vm.selectedMachines.push({id: newRowID, quantity: null, article: null, selectedpacking:null});
+            vm.selectedMachines.push({id: newRowID, price: null, installation: null, selectedType: ""});
         }
 
         function deleteRow(rowid) {

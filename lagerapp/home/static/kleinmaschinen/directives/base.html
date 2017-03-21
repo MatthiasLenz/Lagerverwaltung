@@ -35,9 +35,6 @@
         </md-not-found>
     </md-autocomplete>
     <span flex="10"></span>
-    <md-select flex placeholder="Bitte wählen Sie einen Gerätetyp aus." ng-model="maschinenVm.selectedType">
-      <md-option ng-value="title.id" ng-repeat="title in maschinenVm.titles">{{ title.id }} {{title.name1}}</md-option>
-    </md-select>
 </div>
 <br/>
 <div layout="row" >
@@ -65,29 +62,37 @@
                 </p>
             </div>
             <div>
-                <md-input-container style="margin:8px">
+                <md-input-container style="margin:8px;">
                     <label>Abholer</label>
-                    <input ng-model="maschinenVm.abholer">
+                    <input title="Abholer" ng-model="maschinenVm.abholer">
                 </md-input-container>
             </div>
 
-            <!--<div layout="row" style="margin:8px" ng-repeat="row in maschinenVm.selectedMachines" layout-align="start center">
-                <div flex="10">
+            <div layout="row" style="margin:8px;" ng-repeat="row in maschinenVm.selectedMachines" layout-align="space-around center">
+                <div flex="5">
                     <md-button class="md-icon-button" aria-label="Remove Row" ng-click="maschinenVm.deleteRow(row.id)">
                         <md-icon md-svg-src="static/img/icons/ic_clear_black_24px.svg"></md-icon>
                     </md-button>
-                </div>-->
-                <div flex="50">
-                    <md-select flex placeholder="Bitte wählen Sie ein Gerät aus." ng-model="maschinenVm.selectedMachine">
-                      <md-option ng-value="machine" ng-repeat="machine in maschinenVm.getMachines()">{{ machine.id }} {{machine.name1}}</md-option>
+                </div>
+                <div flex="20">
+                    <md-select style="margin:0px;" flex placeholder="Gerätetyp" ng-model="row.selectedType">
+                        <md-option ng-value="title.id" ng-repeat="title in maschinenVm.titles">{{ title.id }} {{title.name1}}</md-option>
                     </md-select>
                 </div>
-            <!--</div>
+                <div flex="50">
+                    <md-select style="margin:0px;" flex placeholder="Bitte wählen Sie ein Gerät aus." ng-model="row.installation">
+                      <md-option ng-value="machine" ng-repeat="machine in maschinenVm.getMachines(row.selectedType)">{{ machine.id }} {{machine.name1}}</md-option>
+                    </md-select>
+                </div>
+                <div flex="15">
+                    <input type="number" step="0.01" class="form-control" placeholder="Preis" ng-model="row.installation['purchasevalue']">
+                </div>
+            </div>
             <div>
                 <md-button class="md-fab md-mini md-primary" aria-label="Add Row" ng-click="maschinenVm.addRow()">
                     <md-icon md-svg-src="static/img/icons/ic_add_white_24px.svg"></md-icon>
                 </md-button>
-            </div>-->
+            </div>
             <br/><br/><br/><br/>
         </md-content>
 
@@ -103,46 +108,33 @@
             <md-subheader class="md-no-sticky" space-between>
                 <div layout="row">
                     <div flex="60">
-                        <div>Bauleiter:
-                            {{ maschinenVm.selectedProject.manager.firstname }} {{ maschinenVm.selectedProject.manager.lastname }}</div>
-                        <div>Polier:
-                            {{ maschinenVm.selectedProject.leader.firstname }} {{ maschinenVm.selectedProject.leader.lastname }}</div>
+                        <div>Kolonne: {{ maschinenVm.selectedProject.id }} -
+                            {{ maschinenVm.selectedProject.description | limitTo: 30}}{{ maschinenVm.selectedProject.description.length>30 ? '...' : '' }}</div>
                         <div>Abholer:
                             {{ maschinenVm.abholer }} </div>
-                        <div>Baustelle : {{ maschinenVm.selectedProject.id }} -
-                            {{ maschinenVm.selectedProject.description | limitTo: 30}}{{ maschinenVm.selectedProject.description.length>30 ? '...' : '' }}
-                        </div>
-                        <div>Lager : {{ maschinenVm.stock.name }}</div>
                     </div>
                     <div flex="40">
-                        <div>Erfasst:</div>
-                        <div>Lagerausgang Nr.:</div>
                         <div>Datum: {{ maschinenVm.dt |date:'d. MMM yyyy' }}</div>
                     </div>
                 </div>
             </md-subheader>
             <table class="table">
                 <thead>
-                <th class="col-md-1">Artikelnr.</th>
-                <th class="col-md-2">Bezeichnung</th>
-                <th class="col-md-1">Menge</th>
-                <th class="col-md-1">Einheit</th>
-                <th class="col-md-1">Preis</th>
-                <th class="col-md-1">Gesamt</th>
-                <th class="col-md-1">Verpackung</th>
+                <th class="col-md-2">ID</th>
+                <th class="col-md-4">Name</th>
+                <th class="col-md-2">Seriennummer</th>
+                <th class="col-md-1">Artikelnummer</th>
+                <th class="col-md-2">Preis</th>
                 </thead>
                 <tbody>
-                <tr ng-repeat="item in maschinenVm.selectedProducts" ng-show="item.article && item.quantity">
-                    <td> {{ item.article.prodid.id }}</td>
-                    <td> {{ item.article.prodid.name1 }}</td>
-                    <td> {{ item.quantity * item.selectedpacking.quantity | number : 3}}</td>
-                    <td> {{ item.article.prodid.unit1 }}</td>
-                    <td> {{ item.article.prodid.netpurchaseprice |currency:""}} €</td>
-                    <td> {{ item.article.prodid.netpurchaseprice * item.quantity * item.selectedpacking.quantity| currency:""}} €</td>
-                    <td ng-show="item.selectedpacking.quantity!=1">{{ item.selectedpacking.name }}: {{ item.quantity}}  </td>
+                <tr ng-repeat="item in maschinenVm.selectedMachines" ng-show="item.installation.id && item.installation.purchasevalue">
+                    <td> {{ item.installation.id }}</td>
+                    <td> {{ item.installation.name1 }}</td>
+                    <td> {{ item.installation.chassisnum}}</td>
+                    <td> {{ item.installation.rentperdayresourceid.id }}</td>
+                    <td> {{ item.installation.purchasevalue |currency:""}} €</td>
                 </tr>
                 <tr>
-                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -160,8 +152,9 @@
                 'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
             <md-button class="md-raised" ng-click="maschinenVm.save()">Speichern</md-button>
         </div>
-    </div>
+    </section>
 </div>
+
 <br/><br/>
 <section  class="demo-container md-whiteframe-z1">
     <md-toolbar ng-show="maschinenVm.projectDocs.length!=0" class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">

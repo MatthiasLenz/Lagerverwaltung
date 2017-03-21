@@ -1,10 +1,14 @@
 angular.module('baseApp.Services').
-factory("installationService", function ($resource,$cacheFactory) {
+factory("installationService", function ($resource,$cacheFactory,tokenService) {
+    function getToken() {
+        return "Token " + token;
+    }
     var resourceCache = $cacheFactory('Installation');
     var machines = [];
     var resource = $resource(
         "/api/installation/:id", {id: "@id"},
-        {query: {method: 'GET', cache: resourceCache, isArray: true}}
+        {query: {method: 'GET', cache: resourceCache, isArray: true}},
+        {update: {method: 'PATCH', headers: {"Authorization": getToken}}}
     );
     function getTitles(){
         return resource.query({title:2}).$promise;
@@ -25,9 +29,18 @@ factory("installationService", function ($resource,$cacheFactory) {
         });
         return result;
     }
+    function update(id, values){
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return resource.update(id, values).$promise
+        })
+    }
     return {
         init: init,
         getTitles: getTitles,
-        getMachines: getMachines
+        getMachines: getMachines,
+        update: update
     };
 });
