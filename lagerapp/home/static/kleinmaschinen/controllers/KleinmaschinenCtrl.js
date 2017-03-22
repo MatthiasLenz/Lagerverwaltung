@@ -72,7 +72,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         vm.searchTextChange = searchTextChange;
         vm.getTotal = getTotal;
         vm.save = save;
-        vm.selectedMachines = [{id: 0, price: null, installation: null, selectedType: ""}];
+        vm.selectedMachines = [{id: 0, installation: null, selectedType: ""}];
         vm.make = make;
         vm.addRow = addRow;
         vm.deleteRow = deleteRow;
@@ -138,13 +138,31 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
                 alertService.showAlert('Bitte wählen Sie eine Kolonne aus.');
                 return 0;
             }
-            if (vm.selectedMachine == null){
-                alertService.showAlert('Keine Gerät ausgewählt.');
+            if (vm.selectedMachines.length == null){
+                alertService.showAlert('Kein Gerät ausgewählt.');
                 return 0;
             }
             var manager = vm.selectedProject.manager ? vm.selectedProject.manager.id : '';
             var leader = vm.selectedProject.leader ? vm.selectedProject.leader.id : '';
-            vm.selectedMachine["rowid"] = null;
+            var machinedata = [];
+            vm.selectedMachines.forEach(function(item){
+                var installation = item.installation;
+                var rpdresid = installation.rentperdayresourceid;
+                var prodid = rpdresid==null ? rpdresid.substr(rpdresid.lastIndexOf('/') + 1) : "V-12-9001";
+                machinedata.push({
+                    rowid: null,
+                    amount: installation.purchasevalue,
+                    name: installation.name1,
+                    packing: "",
+                    price: installation.purchasevalue,
+                    prodid: prodid,
+                    quantity: 1,
+                    unit: "",
+                    comment: installation.id+" "+installation.name1 + (installation.chassisnum!="" ? " S/N: " + installation.chassisnum : ""),
+                    chassisnum: installation.chassisnum
+                })
+            });
+
             data = {
                 "doctype": 3, "module": 9, "status": 4,
                 "stockid": vm.stock.id,
@@ -155,55 +173,65 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
                 "supplierid": supplierid,
                 "modulerefid": vm.selectedProject.id,
                 "docdate": vm.dt,
-                "data": [vm.selectedMachine],
+                "data": machinedata,
                 "deliverynotes": []
             };
             var purchasedoc = null;
+            var pdfurl = null;
             //1: create purchasedoc, 2: create consumed product for selected project, 3: make PDF document of purchasedoc
-            bestellungenService.internalpurchasedoc.create(data)
-                    .then(
-                    /*success:*/ function(response) {
-                        //anpassen für richtiges dokument
-                        console.log(response);
+            bestellungenService.internalpurchasedoc.create(data)    //create purchasedoc entry
+                .then(  //patch installation for each selected machine
+                    function(response) { /*success:*/
+                        purchasedoc = response;
+                        var update_promises = [];
+                        vm.selectedMachines.forEach(function(item){
+                            update_promises.push(installationService.update(item.installation.id,
+                                { availabilitystatus: "Benutzt in Projekt " + vm.selectedProject.id, availability: 0 }));
+                        });
+                        return $q.all(update_promises);
+                },
+                    function(error) { /*error:*/
+                    return $q.reject("purchasedoc_error"); }
+                )
+                .then(  //make pdf
+                    function(response) { /*success:*/
+                        var pdfurl = response;
                         return make(purchasedoc, 'pdf', purchasedoc.remark);
-                    },
-                    /*error:*/ function(error) {
-                        if (error == "internalpurchasedoc_error"){
-                            return $q.reject(error);
-                        }
-                        return $q.reject("make purchasedoc"); }
+                },
+                    function(error) { /*error:*/
+                    return $q.reject("patchinstallation_error"); }
                 )
                 // Update Installation
                 .then(
-                    /*success:*/ function(response) {
+                    function(response) { /*success:*/
                         refreshDocs();
                         clear();
-                        alertService.showAlert('Lagerausgang erfolgreich eingetragen.').then(function () {
+                        alertService.showAlert('Geräteausgabe erfolgreich eingetragen.').then(function () {
                             $window.open(response.data, '_blank');
                         });
                     },
-                    /*error:*/ function(error) {
+                    function(error) { /*error:*/
                         switch (error){
                             case "purchasedoc_error":
-                                alertService.showAlert('Beim Eintragen des Lagerausgangs ist ein Fehler aufgetreten.');
+                                alertService.showAlert('Beim Erstellen der Bestellung ist ein Fehler aufgetreten.');
                                 break;
-                            case "consumedproduct_error":
-                                alertService.showAlert('Beim Eintragen ins Projekt ist ein Fehler aufgetreten.');
-                                bestellungenService.internalpurchasedoc.delete(purchasedoc); //clean up
+                            case "patchinstallation_error":
+                                alertService.showAlert('Bestellung eingetragen. Beim Eintragen der Projektreferenz im Gerät ist ein Fehler aufgetreten.');
                                 break;
                             default:
-                                alertService.showAlert('Daten in Lagerausgang und Projekt eingetragen. Beim Erstellen des Dokuments ist ein Fehler aufgetreten.');
+                                alertService.showAlert('Bestellung eingetragen. Beim Erstellen des Dokuments ist ein Fehler aufgetreten.');
                                 refreshDocs();
                                 break;
                         }
                         return $q.reject("make_error");
                     }
+
                 )
         }
         function clear(){
             vm.selectedProject = null;
             vm.selectedMachine = null;
-            vm.selectedMachines = [{id: 0, price: null, installation: null, selectedType: ""}];
+            vm.selectedMachines = [{id: 0, installation: null, selectedType: ""}];
             vm.abholer = "";
             vm.searchAbholer = "";
             vm.searchProject = "";
@@ -323,7 +351,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         vm.show=vm.selectedMachines;
         function addRow() {
             var newRowID = vm.selectedMachines.length + 1;
-            vm.selectedMachines.push({id: newRowID, price: null, installation: null, selectedType: ""});
+            vm.selectedMachines.push({id: newRowID, installation: null, selectedType: ""});
         }
 
         function deleteRow(rowid) {
@@ -383,7 +411,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
 
         }
         function make(doc, type, abholer) {
-            return bestellungenService.makeinternal(doc, type, abholer).then(function (docurl) {
+            return bestellungenService.makekleingeraete(doc, type, abholer).then(function (docurl) {
                 bestellungenService.purchasedoc.file(doc.id).then(function (item) {
                     vm.files[item.purchasedocid] = {pdf: item.pdf};
                 })

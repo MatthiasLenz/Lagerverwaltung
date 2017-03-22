@@ -257,6 +257,19 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             });
         });
     }
+    function makekleingeraete(doc, type, abholer){
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return $http({
+                method: "POST",
+                url: "/api/" + companyid + "/kleingeraetemakepdf",
+                data: {"doc": doc, "type": type, "abholer": abholer},
+                headers: {"Authorization": getToken}
+            });
+        });
+    }
     var documents = $resource(
         "/api/purchasedocuments/:id", {id: "@purchasedocid"}, {
             delete: {method: 'DELETE', headers: {"Authorization": getToken}, cache: documentCache},
@@ -317,6 +330,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             delete: deliverynote_delete
         },
         make: make,
-        makeinternal: makeinternal
+        makeinternal: makeinternal,
+        makekleingeraete: makekleingeraete
     };
 });

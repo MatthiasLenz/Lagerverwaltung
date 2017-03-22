@@ -7,14 +7,16 @@ factory("installationService", function ($resource,$cacheFactory,tokenService) {
     var machines = [];
     var resource = $resource(
         "/api/installation/:id", {id: "@id"},
-        {query: {method: 'GET', cache: resourceCache, isArray: true}},
-        {update: {method: 'PATCH', headers: {"Authorization": getToken}}}
+        {
+            query: {method: 'GET', cache: resourceCache, isArray: true},
+            update: {method: 'PATCH', headers: {"Authorization": getToken}}
+        }
     );
     function getTitles(){
-        return resource.query({title:2}).$promise;
+        return resource.query({titlegrade:3}).$promise;
     }
     function init(){
-        resource.query({title:3}).$promise.then(function (result) {
+        resource.query({title:'False'}).$promise.then(function (result) {
             result.forEach(function (item) {
                 machines.push(item);
             });
@@ -34,7 +36,7 @@ factory("installationService", function ($resource,$cacheFactory,tokenService) {
             return response;
         }).then(function (tokendata) {
             token = tokendata.token;
-            return resource.update(id, values).$promise
+            return resource.update({id: id}, values).$promise;
         })
     }
     return {

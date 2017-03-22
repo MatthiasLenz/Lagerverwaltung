@@ -71,6 +71,22 @@ def lagerausgangmakepdf(request, companyid):
         create_purchase_document(data['id'], doctype, fileurl)
         return Response(fileurl)
 
+@api_view(['POST'])
+def kleingeraetemakepdf(request, companyid):
+    """ Build a data dictionary and use py3o.template server to render a document file from an ods template.
+        Return the url of the generated file. Optional: Upload the generated pdf document to a webserver via FTP. """
+    with open('settings.json') as settings_file:
+        #ftpsettings = settings["ftp"]
+        settings = json.load(settings_file)
+        document_folder = settings["lagerausgang"]["folder"]
+        data = merge_data(request)
+        document_folder = document_folder + data['modulerefid'] + '/'
+        doctype = request.data['type']
+        docname = "lagerausgang_{}.{}".format(data['id'], doctype)
+        renderdoc2(data, document_folder, docname, companyid, doctype)
+        fileurl = 'http://%s/static/Lagerausgang/%s/%s' % (settings['server'], data['modulerefid'], docname)
+        create_purchase_document(data['id'], doctype, fileurl)
+        return Response(fileurl)
 
 def create_purchase_document(id, doctype, fileurl):
     try:
@@ -132,6 +148,44 @@ def renderdoc1(data_input, folder, name, companyid, targetformat):
                 'bez_kostenstelle': data_input['subject'], 'id':data_input['id'],
                 'date': data_input['docdate'], 'recipient':'%s'%(data_input['responsible']),
                 'polier': data_input['leader'],
+                'abholer': data_input['abholer']}
+        data = dict(items=items, info=info)
+        fields = {
+            "targetformat": targetformat,
+            "datadict": json.dumps(data, encoding='windows-1252'),
+            "image_mapping": "{}",
+        }
+        r = requests.post(url, data=fields, files=files)
+        if r.status_code == 400:
+            pass # ToDo: Error Response
+        else:
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+            chunk_size = 1024
+            outname = "{}{}".format(folder, name)
+            i = 1
+            with open(outname, 'wb+') as fd:
+
+                for chunk in r.iter_content(chunk_size):
+                    fd.write(chunk)
+
+import requests
+import json
+def renderdoc2(data_input, folder, name, companyid, targetformat):
+    url = 'http://192.168.0.199:8765/form'
+    template_path = os.path.abspath("masterdata/kleingeraete_template{}.odt".format(companyid))
+    with open(template_path, "rb") as template_file:
+        files = {'tmpl_file': template_file}
+        items = []
+        for item in data_input['data']:
+            comment = item['comment'] if item['comment'] else ''
+            items.append(
+                {'id': item['prodid'], 'name': item['comment'], 'price': ('%.2f' % item['price']).replace(".",",")})
+        # company specific
+        info = {'kostenstelle': data_input['modulerefid'],
+                'bez_kostenstelle': data_input['subject'],
+                'id':data_input['id'],
+                'date': data_input['docdate'],
                 'abholer': data_input['abholer']}
         data = dict(items=items, info=info)
         fields = {

@@ -102,7 +102,7 @@ class InstallationViewSet(viewsets.ModelViewSet):
     serializer_class = InstallationSerializer
     queryset = Installation.objects.filter(id__startswith=('15')).order_by('id')
     filter_backends = (filters.DjangoFilterBackend, filters.SearchFilter)
-    filter_fields = ('rentperdayresourceid','title',)
+    filter_fields = ('rentperdayresourceid','title','titlegrade')
     search_fields = ('id', 'name1', 'name2',)
 
 class PurchaseDocViewSet(viewsets.ModelViewSet):

@@ -287,5 +287,5 @@ class MinPurchaseDocSerializer(serializers.ModelSerializer):
 class InstallationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Installation
-        fields = ('id','name1','name2','chassisnum','licenseplate','purchasevalue','availibility','availibilitystatus',
+        fields = ('id','name1','name2','chassisnum','licenseplate','purchasevalue','availability','availabilitystatus',
                   'rentperdayresourceid','title','titlegrade')

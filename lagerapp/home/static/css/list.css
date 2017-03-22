@@ -1,3 +1,6 @@
+.format.ng-empty.ng-touched{
+    background-color: yellow !important;
+}
 .fixed {
     height: 100%;
     overflow: hidden;
