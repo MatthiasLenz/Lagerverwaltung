@@ -7,6 +7,7 @@ angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 't
         });
         var vm = this; //ViewModel
         vm.login = tokenService.getToken;
+        vm.logout = tokenService.deleteCookie;
         vm.state = null;
         vm.config_data = {};
         vm.modules = {Bestellen:false, Lagerausgang:false, Projektbestellung:false, Kleinmaschinen:false};

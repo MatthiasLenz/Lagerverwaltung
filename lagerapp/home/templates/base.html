@@ -48,8 +48,9 @@
 
 <script src="{% static "lib/underscore-min.js" %}"></script>            <!--Version: 1.8.3 -->
 <script src="{% static "lib/angular.min.js" %}"></script>               <!--Version: 1.5.3 -->
+<script src="{% static "lib/angular-cookies.min.js" %}"></script>       <!--Version: 1.5.3 -->
 <script src="{% static "lib/angular-locale_de-de.min.js" %}"></script>  <!--Version: 1.5.3 -->
-<script src="{% static "lib/angular-resource.min.js" %}"></script>          <!--Version: 1.2.1 -->
+<script src="{% static "lib/angular-resource.min.js" %}"></script>      <!--Version: 1.2.1 -->
 <script src="{% static "lib/angular-animate.min.js" %}"></script>       <!--Version: 1.5.3 -->
 <script src="{% static "lib/angular-aria.min.js" %}"></script>          <!--Version: 1.5.3 -->
 <script src="{% static "lib/angular-locale_de-de.min.js" %}"></script>  <!--Version: 1.5.5 -->
@@ -99,12 +100,12 @@
 
     <div ng-controller="BaseCtrl as cc">
         <div class="nav navbar-nav pull-right" id="top">
-            <span ng-hide="cc.config_data"><button type="button" class="btn btn-default" ng-click="cc.login()">
-                Login
+            <span ><button type="button" class="btn btn-default" ng-click="cc.logout()">
+                Logout
             </button></span>
-            <span ng-show="cc.config_data"><button type="button" class="btn btn-default">
-                {{ cc.config_data.userdata.first_name }} {{ cc.config_data.userdata.last_name }}
-            </button></span>
+            <span ng-show="cc.config_data.userdata"><button type="button" class="btn btn-default">
+                {{ cc.config_data.userdata.first_name }} {{ cc.config_data.userdata.last_name }}</button>
+            </span>
         </div>
         <head-content></head-content>
         <form role="form" class="form-inline">

@@ -2,7 +2,7 @@ angular.module('baseApp.bestellen', []);
 angular.module('baseApp.lagerausgang', []);
 angular.module('baseApp.kleinmaschinen', []);
 angular.module('baseApp.Services', ['ngResource']);
-var baseApp = angular.module('baseApp', ['ui.bootstrap', 'ngResource', 'ngMaterial', 'baseApp.Services',
+var baseApp = angular.module('baseApp', ['ui.bootstrap', 'ngResource', 'ngMaterial', 'ngCookies', 'baseApp.Services',
     'docsTimeDirective', 'baseApp.bestellen', 'angular-loading-bar', 'ngAnimate', 'baseApp.lagerausgang',
     'baseApp.kleinmaschinen']);
 
