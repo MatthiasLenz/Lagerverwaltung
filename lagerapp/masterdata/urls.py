@@ -78,4 +78,5 @@ urlpatterns += format_suffix_patterns([url(r'^api/productall/', views.CompletePr
     url(r'^api/companylogo$', views.companylogo, name='companylogo'),
     url(r'^api/getconfig$', views.getconfig, name='getconfig'),
     url(r'^api/sendmail/?$', views.sendmail, name='sendmail'),
+    url(r'^api/01/rental/(?P<id>[0-9A-Za-z-]+)$', views.rental, name='rental-detail', kwargs={'company':'01'}),
     ])

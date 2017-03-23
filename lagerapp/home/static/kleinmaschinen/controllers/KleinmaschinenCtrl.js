@@ -178,6 +178,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
             };
             var purchasedoc = null;
             var pdfurl = null;
+            var pdf = null;
             //1: create purchasedoc, 2: create consumed product for selected project, 3: make PDF document of purchasedoc
             bestellungenService.internalpurchasedoc.create(data)    //create purchasedoc entry
                 .then(  //patch installation for each selected machine
@@ -195,31 +196,47 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
                 )
                 .then(  //make pdf
                     function(response) { /*success:*/
-                        var pdfurl = response;
+                        pdfurl = response;
                         return make(purchasedoc, 'pdf', purchasedoc.remark);
                 },
                     function(error) { /*error:*/
                     return $q.reject("patchinstallation_error"); }
                 )
-                // Update Installation
-                .then(
+                .then(  //create rental for each selected machine
+                    function(response) { /*success:*/
+                        pdf = response;
+                        var update_promises = [];
+                        vm.selectedMachines.forEach(function(item){
+                            update_promises.push(installationService.create_rental(vm.selectedProject.id,
+                                {date: vm.dt, installationid: item.installation.id, installationname: item.installation.name1}
+                            ));
+                        });
+                        return $q.all(update_promises);
+                },
+                    function(error) { /*error:*/
+                    return $q.reject("makepdf_error"); }
+                )
+                .then(  //finish
                     function(response) { /*success:*/
                         refreshDocs();
                         clear();
                         alertService.showAlert('Geräteausgabe erfolgreich eingetragen.').then(function () {
-                            $window.open(response.data, '_blank');
+                            $window.open(pdf.data, '_blank');
                         });
                     },
                     function(error) { /*error:*/
                         switch (error){
                             case "purchasedoc_error":
-                                alertService.showAlert('Beim Erstellen der Bestellung ist ein Fehler aufgetreten.');
+                                alertService.showAlert('Fehler beim Erstellen der Bestellung');
                                 break;
                             case "patchinstallation_error":
-                                alertService.showAlert('Bestellung eingetragen. Beim Eintragen der Projektreferenz im Gerät ist ein Fehler aufgetreten.');
+                                alertService.showAlert('Bestellung eingetragen. Fehler beim Eintragen der Projektreferenz im Gerät.');
+                                break;
+                            case "makepdf_error":
+                                alertService.showAlert('Bestellung eingetragen. Fehler beim Erstellen des Dokuments.');
                                 break;
                             default:
-                                alertService.showAlert('Bestellung eingetragen. Beim Erstellen des Dokuments ist ein Fehler aufgetreten.');
+                                alertService.showAlert('Bestellung eingetragen. Fehler beim Erstellen des Verleihs.');
                                 refreshDocs();
                                 break;
                         }
@@ -229,12 +246,10 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
                 )
         }
         function clear(){
-            vm.selectedProject = null;
             vm.selectedMachine = null;
             vm.selectedMachines = [{id: 0, installation: null, selectedType: ""}];
             vm.abholer = "";
             vm.searchAbholer = "";
-            vm.searchProject = "";
         }
         function getTotal() {
             var total = 0;
@@ -393,7 +408,6 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
             else{
                 vm.projectDocs = null;
             }
-
         }
         function initDocs() {
             var dt = new Date();

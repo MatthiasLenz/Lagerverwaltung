@@ -11,7 +11,7 @@
         </md-select>
     </md-input-container>
 </div>
-<div layout="row" layout-align="start center" flex="55">
+<div layout="row" layout-align="start center" flex="35">
     <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
         'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
     <md-autocomplete flex ng-disabled="maschinenVm.isDisabled"
@@ -190,25 +190,19 @@
                     <thead>
                     <th class="col-md-4">Name</th>
                     <th class="col-md-1">Anzahl</th>
-                    <th class="col-md-1">Einheit</th>
                     <th class="col-md-1">Preis</th>
-                    <th class="col-md-1">Kosten</th>
-                    <th class="col-md-2">Verpackung</th>
-                    <th class="col-md-3">Bemerkung</th>
+                    <th class="col-md-4">Bemerkung</th>
                     </thead>
                     <tbody>
                     <tr class="text-muted" ng-repeat="(key, item) in bestellung.data">
                         <td> {{ item.name }}</td>
+                        <td> {{ item.quantity }}</td>
                         <td> <span ng-show="bestellung.edit">
                                 <input type="number" step="0.01" class="form-control" style="width:100px;"
-                                       placeholder="{{ item.quantity }}"
-                                       ng-model="item.quantity"></span>
-                            <span ng-show="!bestellung.edit">{{ item.quantity }}</span>
+                                       placeholder="{{ item.price }}"
+                                       ng-model="item.price"></span>
+                            <span ng-show="!bestellung.edit">{{ item.price }}</span>
                         </td>
-                        <td> {{ item.unit }}</td>
-                        <td> {{ item.price |currency:""}} €</td>
-                        <td> {{ item.quantity*item.price |currency:""}} €</td>
-                        <td> {{ item.packing }}</td>
                         <td><span ng-show="bestellung.edit">
                             <textarea type="text" class="form-control" ng-model="item.comment"
                                       placeholder="Bemerkung (optional)" ng-maxlength="255"

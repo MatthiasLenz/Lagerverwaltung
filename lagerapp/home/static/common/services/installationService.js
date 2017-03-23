@@ -1,5 +1,5 @@
 angular.module('baseApp.Services').
-factory("installationService", function ($resource,$cacheFactory,tokenService) {
+factory("installationService", function ($resource,$cacheFactory,tokenService,sessionService,$http) {
     function getToken() {
         return "Token " + token;
     }
@@ -39,10 +39,39 @@ factory("installationService", function ($resource,$cacheFactory,tokenService) {
             return resource.update({id: id}, values).$promise;
         })
     }
+    function create_rental(projectid, kwargs){
+        var tokendata = null;
+        return tokenService.getToken()
+            .then(function (response) {
+                tokendata = response;
+                return sessionService.getCompany();
+            })
+            .then(function(loggedin_company){
+                var company = "";
+                //use company user is logged in with or specified company (in Lagerausgang)
+                if ("company" in kwargs){
+                    company = kwargs["company"];
+                }
+                else{
+                    company = loggedin_company;
+                }
+                return $http({
+                    method: 'POST',
+                    url: '/api/' + company + '/rental/' + projectid,
+                    data: kwargs,
+                    dataType: 'json',
+                    headers: {
+                        "Authorization": "Token "+tokendata.token,
+                        "Content-Type": "application/json"
+                    }
+                })
+            });
+    }
     return {
         init: init,
         getTitles: getTitles,
         getMachines: getMachines,
-        update: update
+        update: update,
+        create_rental: create_rental
     };
 });

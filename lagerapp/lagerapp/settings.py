@@ -83,6 +83,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #'djangosecure',
+    #'sslserver',
     #'debug_toolbar',
 )
 
@@ -101,7 +103,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    #'djangosecure.middleware.SecurityMiddleware',
 )
+#SECURE_SSL_REDIRECT = False
 #'lagerapp.middleware.profile_middleware.ProfileMiddleware', //conflict with debug toolbar
 
 ROOT_URLCONF = 'lagerapp.urls'

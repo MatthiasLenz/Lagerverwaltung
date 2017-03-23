@@ -552,30 +552,60 @@ def get_project_data(request, id, company, format=None):
         return Response('OK')
 
     elif request.method == 'DELETE':
+        try:
+            data = request.data
+            purchasedocid = data['purchasedocid']
+            cn = pyodbc.connect(
+                r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_purchase;UID=hitoffice;PWD=%s' % (
+                dbserver, company, dbpassword))
+            cursor = cn.cursor()
+            cursor.execute("SELECT * FROM purchasedocdata WHERE purchasedocid=?", purchasedocid)
+            results = to_named_rows(cursor.fetchall(), cursor.description)
+            dataids = [row['DataID'] for row in results]
+            cn = pyodbc.connect(
+                r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=%s' % (
+                dbserver, company, id.replace('-', '_'), dbpassword))
+            cursor = cn.cursor()
+            for rowid in dataids:
+                cursor.execute("DELETE FROM ConsumedProductData WHERE RowID=?",
+                               rowid)  # rowid entspricht purchasedocdata dataid
+            cursor.commit()
+            # Determine ConsumedProduct ID
+            cursor.execute("SELECT ID FROM ConsumedProductData WHERE RowID=?", dataids[0])
+            consumedproductid = cursor.fetchall()[0][0]
+            cursor.execute("DELETE FROM ConsumedProduct WHERE ID=?", consumedproductid)
+            cursor.commit()
+            cursor.close()
+        except:
+            return Response({'data': 'Error'}, status='HTTP_500_INTERNAL_SERVER_ERROR')
+        return Response('')
+
+@api_view(['POST', 'DELETE'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticatedOrReadOnly,))
+def rental(request, id, company, format=None):
+    #enter rental without model (reason: legacy model is inconvenient)
+    #projectid, installationid, date,
+    dbserver = settings.DBSERVER
+    dbpassword = settings.DBPASSWORD
+
+    if request.method == 'POST':
+        print("try create rentalsdata")
+        cn = pyodbc.connect(
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_service;UID=hitoffice;PWD=%s' % (
+                dbserver, company, dbpassword))
         data = request.data
-        purchasedocid = data['purchasedocid']
-        cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_purchase;UID=hitoffice;PWD=%s' % (
-            dbserver, company, dbpassword))
+        print(type(data['installationname']))
+        print(data['installationname'])
+        installationname = data['installationname']
         cursor = cn.cursor()
-        cursor.execute("SELECT * FROM purchasedocdata WHERE purchasedocid=?", purchasedocid)
-        results = to_named_rows(cursor.fetchall(), cursor.description)
-        dataids = [row['DataID'] for row in results]
-        cn = pyodbc.connect(
-            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=%s' % (
-            dbserver, company, id.replace('-', '_'), dbpassword))
-        cursor = cn.cursor()
-        for rowid in dataids:
-            cursor.execute("DELETE FROM ConsumedProductData WHERE RowID=?",
-                           rowid)  # rowid entspricht purchasedocdata dataid
-        cursor.commit()
-        # Determine ConsumedProduct ID
-        cursor.execute("SELECT ID FROM ConsumedProductData WHERE RowID=?", dataids[0])
-        consumedproductid = cursor.fetchall()[0][0]
-        cursor.execute("DELETE FROM ConsumedProduct WHERE ID=?", consumedproductid)
+        query = u"Insert into rentalsdata (RowID, ID, RowType, Date, InstallationID, Quantity, Name, Discount, Comment, Unit, ProdID)\
+            Values ((select max(rowid)+1 from rentalsdata), (select TOP 1 ID from Rentals where projectid='{0}'), 0, '{1}',\
+             '{2}', 1, '{3}', 1, '', '', '')".format(id, data['date'], data['installationid'], installationname)
+        cursor.execute(query)
         cursor.commit()
         cursor.close()
-        return Response('')
+        return Response('OK')
 
 @api_view(['GET', ])
 @authentication_classes((TokenAuthentication,))
