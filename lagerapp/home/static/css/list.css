@@ -1,3 +1,9 @@
+button.textleft {
+    text-align:left;
+}
+button.nomargin {
+    margin: 0px;
+}
 td.name-col {
     overflow: hidden;
     text-overflow: ellipsis;

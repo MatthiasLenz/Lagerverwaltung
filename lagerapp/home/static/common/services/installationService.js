@@ -75,6 +75,7 @@ factory("installationService", function ($resource,$cacheFactory,tokenService,se
         getTitles: getTitles,
         getMachines: getMachines,
         getMachine: getMachine,
+        machines: machines,
         update: update,
         create_rental: create_rental
     };
