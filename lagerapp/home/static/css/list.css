@@ -1,3 +1,13 @@
+td.name-col {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 90px;
+}
+
+.spacer{
+    margin:5px;
+}
 .format.ng-empty.ng-touched{
     background-color: yellow !important;
 }
@@ -10,15 +20,26 @@
     height: 900px;
     overflow-y: scroll;
 }
-.panel-edit {
+#overview .panel-edit {
     border-color: #BDA639;
 }
+#overview .panel {
+    margin-bottom:0px;
+}
+#overview .panel-edit > .panel-heading {
+    background-image: -webkit-linear-gradient(top, #fcf8e3 0, #faf2cc 100%) !important;
+    background-image: -o-linear-gradient(top, #fcf8e3 0, #faf2cc 100%) !important;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fcf8e3), to(#faf2cc))!important;
+    background-image: linear-gradient(to bottom, #F1DE79 0, #BDA639 100%)!important;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffcf8e3', endColorstr='#fffaf2cc', GradientType=0)!important;
+    background-repeat: repeat-x;
+}
 
-.panel-edit > .panel-heading {
-    background-image: -webkit-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
-    background-image: -o-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#fcf8e3), to(#faf2cc));
-    background-image: linear-gradient(to bottom, #F1DE79 0, #BDA639 100%);
+#overview .panel-select > .panel-heading {
+    background-image: -webkit-linear-gradient(top, #b5dcff 0, #a5d4ff 100%);
+    background-image: -o-linear-gradient(top, #b5dcff 0, #a5d4ff 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#b5dcff), to(#a5d4ff));
+    background-image: linear-gradient(to bottom, #93bcf0 0, #86c9f8 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffcf8e3', endColorstr='#fffaf2cc', GradientType=0);
     background-repeat: repeat-x;
 }

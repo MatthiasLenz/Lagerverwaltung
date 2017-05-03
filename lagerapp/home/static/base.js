@@ -1,5 +1,6 @@
 angular.module('baseApp.bestellen', []);
 angular.module('baseApp.lagerausgang', []);
+angular.module('baseApp.lagerausgang1', []);
 angular.module('baseApp.kleinmaschinen', []);
 angular.module('baseApp.Services', ['ngResource']);
 var baseApp = angular.module('baseApp', ['ui.bootstrap', 'ngResource', 'ngMaterial', 'ngCookies', 'baseApp.Services',

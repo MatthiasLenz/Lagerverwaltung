@@ -88,8 +88,9 @@
 <script src="{% static "bestellungen/directives/deliverynote.js" %}"></script>
 <script src="{% static "lagerausgang/directives/base.js" %}"></script>
 <script src="{% static "lagerausgang/controllers/LagerausgangCtrl.js" %}"></script>
-<script src="{% static "kleinmaschinen/directives/base.js" %}"></script>
-<script src="{% static "kleinmaschinen/controllers/KleinmaschinenCtrl.js" %}"></script>
+
+<!--script src="{% static "kleinmaschinen/directives/base.js" %}"></script-->
+<!--script src="{% static "kleinmaschinen/controllers/KleinmaschinenCtrl.js" %}"></script-->
 {% verbatim %}
     <base href="/">
     </head>
@@ -140,8 +141,8 @@
             </li>
             <li ng-if="cc.modules.Lagerausgang" ng-class="{active: cc.isActive('lagerausgang_state')}">
                 <a href="" ng-click="cc.setState('lagerausgang_state')">Lagerausgang</a></li>
-            <li ng-if="cc.modules.Kleinmaschinen" ng-class="{active: cc.isActive('kleinmaschinen_state')}">
-                <a href="" ng-click="cc.setState('kleinmaschinen_state')">Kleinmaschinenverleih</a></li>
+            <!--li ng-if="cc.modules.Kleinmaschinen" ng-class="{active: cc.isActive('kleinmaschinen_state')}">
+                <a href="" ng-click="cc.setState('kleinmaschinen_state')">Kleinmaschinenverleih</a></--li-->
         </ul>
         <br/>
 
@@ -151,7 +152,8 @@
             <div ng-switch-when="purchasedoc1_state"> <bestellungen1></bestellungen1>   </div>
             <div ng-switch-when="purchasedoc2_state"> <deliverynote></deliverynote>     </div>
             <div ng-switch-when="lagerausgang_state"> <lagerausgang></lagerausgang>     </div>
-            <div ng-switch-when="kleinmaschinen_state"> <kleinmaschinen></kleinmaschinen>     </div>
+            <!--div ng-switch-when="kleinmaschinen_state"> <kleinmaschinen></kleinmaschinen>     </div-->
+
             <!--<div ng-switch-when="bestellenprojekt_state"><bestellenprojekt></bestellenprojekt></div>-->
         </div>
     </div>

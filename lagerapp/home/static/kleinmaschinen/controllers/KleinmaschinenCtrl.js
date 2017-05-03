@@ -66,7 +66,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         vm.queryStock = queryStock;
         vm.queryProject = queryProject;
         vm.projectDocs = [];
-        initDocs();
+        refreshDocs();
         vm.selectedProjectChange = selectedProjectChange;
         vm.selectedProductChange = selectedProductChange;
         vm.searchTextChange = searchTextChange;
@@ -88,7 +88,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         };
         vm.delete_doc = function (doc) {
             bestellungenService.internalpurchasedoc.delete(doc).then(function () {
-                initDocs();
+                refreshDocs();
             });
         };
         vm.edit_doc = function (doc) {
@@ -121,11 +121,11 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
         vm.refresh_documents = function (doc) {
             bestellungenService.purchasedoc.delete_documents(doc.id).then(function () {
                 make(doc, 'pdf', doc.remark).then(function (response) {
-                    initDocs();
+                    refreshDocs();
                 });
             }, function (error) {
                 make(doc, 'pdf', doc.remark).then(function () {
-                    initDocs();
+                    refreshDocs();
                 });
             });
         };
@@ -242,7 +242,6 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
                         }
                         return $q.reject("make_error");
                     }
-
                 )
         }
         function clear(){
@@ -409,21 +408,7 @@ angular.module('baseApp.kleinmaschinen').controller('KleinmaschinenCtrl', ['$htt
                 vm.projectDocs = null;
             }
         }
-        function initDocs() {
-            var dt = new Date();
-            dt.setMonth(dt.getMonth() - 1);
-            dt = dt.toISOString().slice(0, 10);
-                bestellungenService.internalpurchasedoc.list({
-                    status: 4,
-                    min_date: dt
-                }).then(function (data) {
-                    vm.projectDocs = data;
-                })
-                .catch(function(error){
-                    console.log(error);
-                })
 
-        }
         function make(doc, type, abholer) {
             return bestellungenService.makekleingeraete(doc, type, abholer).then(function (docurl) {
                 bestellungenService.purchasedoc.file(doc.id).then(function (item) {

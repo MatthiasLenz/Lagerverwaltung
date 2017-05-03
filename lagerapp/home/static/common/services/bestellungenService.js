@@ -2,13 +2,22 @@ angular.module('baseApp.Services').
 factory("bestellungenService", function ($resource, $cacheFactory, tokenService, $q, $http, sessionService) {
     var purchasedocCache = $cacheFactory('PurchaseDoc');
     var documentCache = $cacheFactory('Documents');
+    var lagerausgangCache = $cacheFactory('Lagerausgang');
     var token;
     var companies = null;
     var stockid = sessionService.getStock;
     function getToken() {
         return "Token " + token;
     }
+    function getCompanyFromProjectID(projectid){
+        if (projectid === 'TEST3') {
 
+        }
+        return "0"+projectid.charAt(0);
+    }
+    function getCompanyFromPurchasedocID(purchasedocid){
+        return "0"+purchasedocid.charAt(0);
+    }
     var deliverynote = {};
     var purchasedoc = {};
     var purchasedocdata = {};
@@ -41,8 +50,12 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
                     delete: {method: 'DELETE', headers: {"Authorization": getToken}}
                 });
             purchasedocsupplier[companies[i]] = $resource(
-                "/api/" + companies[i] + "/purchasedocsupplier/:id", {id: "@id"}, {}
-            );
+                "/api/" + companies[i] + "/purchasedocsupplier/:id", {id: "@id"}, {
+                });
+            productsupplier = $resource(
+                "/api/productsupplier/:id", {id: "@id"},{
+                    query: {method: 'GET', isArray: false }
+                });
         }
     }
 
@@ -85,10 +98,55 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         return purchasedoc[companyid].get(id).$promise;
     }
     function internalpurchasedoc_get(id) {
-        return internalpurchasedoc[companyid].get(id).$promise;
+        company = getCompanyFromPurchasedocID(id.id);
+        return internalpurchasedoc[company].get(id).$promise;
     }
     function purchasedoc_list(kwargs) {
         return purchasedoc[companyid].query({'status': kwargs.status, 'supplierid': kwargs.supplierid}).$promise;
+    }
+    var lagerausgang = $resource(
+        "/api/lagerausgang/:id", {id: "@id"}, {
+            create: {method: 'POST', headers: {"Authorization": getToken}},
+            delete: {method: 'DELETE', headers: {"Authorization": getToken}, cache: lagerausgangCache},
+            update: {method: 'PATCH', headers: {"Authorization": getToken}}
+        }
+    );
+
+    function lagerausgang_list(kwargs) {
+        return lagerausgang.query(kwargs).$promise;
+    }
+
+    function lagerausgang_update(id, data) {
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return lagerausgang.update(id, data).$promise;
+        }).then(function (response) {
+            clearCache();
+            return response;
+        });
+    }
+    function lagerausgang_create(data) { //(stockid, projectid1, projectid2, purchasedocid1, purchasedocid2, docdate, responsible, pdf, abholer)
+        return tokenService.getToken()
+            .then(function (tokendata) {
+                token = tokendata.token;
+                return lagerausgang.create(data).$promise;
+            }).then(function (response) {
+                clearCache();
+                return response;
+            });
+    }
+    function lagerausgang_delete(id) {
+        //return a promise for purchasedoc_delete
+        return tokenService.getToken().then(function (response) {
+            return response;
+        }).then(function (tokendata) {
+            token = tokendata.token;
+            return lagerausgang.delete({}, {"id": id}).$promise;
+        }).then(function (response) {
+            clearCache();
+        });
     }
 
     function internalpurchasedoc_list(kwargs) {
@@ -102,9 +160,11 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
                 return purchasedoc[companyid].create(data).$promise;
             }).then(function (response) {
                 clearCache();
+                return response;
             });
     }
     function internalpurchasedoc_create(data) {
+        companyid = getCompanyFromProjectID(data.modulerefid);
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
@@ -116,6 +176,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
     function purchasedoc_delete(doc) {
+
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
@@ -160,6 +221,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         });
     }
     function internalpurchasedoc_update(id, data) {
+        companyid = getCompanyFromProjectID(data.modulerefid);
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
@@ -244,7 +306,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             });
         });
     }
-    function makeinternal(doc, type, abholer){
+    function makeinternal(doc, type, kunde){
         return tokenService.getToken().then(function (response) {
             return response;
         }).then(function (tokendata) {
@@ -252,8 +314,8 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return $http({
                 method: "POST",
                 url: "/api/" + companyid + "/lagerausgangmakepdf",
-                data: {"doc": doc, "type": type, "abholer": abholer},
-                headers: {"Authorization": getToken}
+                data: {doc: doc, type: type, kunde: kunde},
+                headers: {Authorization: getToken}
             });
         });
     }
@@ -299,8 +361,17 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             return purchasedocsupplier[companyid].query({}).$promise;
         });
     }
+
+    function get_productsupplier(prodid) {
+        return tokenService.getToken().then(function (tokendata) {
+            token = tokendata.token;
+            return productsupplier.query({prodid:prodid}).$promise;
+        });
+    }
+
     return {
         init: init,
+        get_productsupplier: get_productsupplier,
         internalpurchasedoc: {
             get: internalpurchasedoc_get,
             list: internalpurchasedoc_list,
@@ -329,6 +400,13 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
             create: deliverynote_create,
             delete: deliverynote_delete
         },
+        lagerausgang: {
+            list: lagerausgang_list,
+            update : lagerausgang_update,
+            create: lagerausgang_create,
+            delete: lagerausgang_delete
+        },
+
         make: make,
         makeinternal: makeinternal,
         makekleingeraete: makekleingeraete

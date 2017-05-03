@@ -1,8 +1,9 @@
 from datetime import date
 from rest_framework import serializers
+from django.db import models
 from basemodels import UserData, Stock, StockData, Product, Nature, ProductSupplier, \
-    ProductPacking, StockMovement, PurchaseDocuments, Company, Installation
-from models import Supplier01, PurchaseDoc01,  Project01
+    ProductPacking, StockMovement, PurchaseDocuments, Company, Installation, Lagerausgang
+from models import Supplier01, PurchaseDoc01
 
 from django.contrib.auth.models import User, Group
 
@@ -97,7 +98,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     nature = serializers.SlugRelatedField(read_only=True, slug_field='name')
     supplier = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productsupplier-detail")
-    packing = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productpacking-detail")
+    packing = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productpacking-detail", lookup_field="pk")
     # defaultsupplier = serializers.SlugRelatedField(read_only=True, allow_null=True, slug_field='namea')
     defaultsupplier = getSupplierSerializer(Supplier01)(read_only=True, allow_null=True)
     #ToDo: getter for ProductSerializer
@@ -106,7 +107,8 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'url', 'id', 'name1', 'detailedname1', 'title', 'marked', 'unit1', 'grosspurchaseprice', 'netpurchaseprice',
             'stockcur', 'stockavail', 'salesmargin', 'salesprice', 'taxcodeinvoice',
-            'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid', 'nature', 'supplier', 'packing')
+            'taxcodecreditnote', 'shopprice', 'defaultsupplier', 'resourcenatureid', 'nature', 'supplier', 'packing',
+            'producttype')
 
 
 # Need to generate a fake request for our hyperlinked results
@@ -233,7 +235,7 @@ class PurchaseDocDataSerializer(serializers.ModelSerializer):
     Meta = None
 
 def getPurchaseDocDataSerializer(model):
-    fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'packing', 'comment')
+    fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'packing', 'comment', 'dataid', 'projectid')
     return type(model.__name__+"Serializer", (PurchaseDocDataSerializer,), dict(Meta=type("Meta",(),{'fields' : fields, 'model': model})))
 
 class PurchaseDocSerializer(serializers.ModelSerializer):
@@ -277,6 +279,10 @@ class PurchaseDocumentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseDocuments
 
+class LagerausgangSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lagerausgang
+
 class MinPurchaseDocSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=False, max_length=15, allow_blank=True)
     class Meta:
@@ -284,8 +290,9 @@ class MinPurchaseDocSerializer(serializers.ModelSerializer):
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'status', 'docdate')
 
 
-class InstallationSerializer(serializers.HyperlinkedModelSerializer):
+class InstallationSerializer(serializers.ModelSerializer):
+    prodid = ProductSerializer(read_only=True, allow_null=True)
     class Meta:
         model = Installation
         fields = ('id','name1','name2','chassisnum','licenseplate','purchasevalue','availability','availabilitystatus',
-                  'rentperdayresourceid','title','titlegrade')
+                  'availabilitystatusold','rentperdayresourceid','title','titlegrade','prodid')

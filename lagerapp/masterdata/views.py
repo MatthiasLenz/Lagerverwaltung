@@ -1,12 +1,13 @@
 # encoding=UTF-8
+import traceback
 from basemodels import Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, UserData, \
-    PurchaseDocuments, StockMovement, Company, Installation
+    PurchaseDocuments, StockMovement, Company, Installation, Lagerausgang
 from models import Project01, Staff01
 from serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, getSupplierSerializer, \
     StockMovementSerializer, ProductSerializer, NatureSerializer, FastProductSerializer, ProductSupplierSerializer, \
     ProductPackingSerializer, PurchaseDocumentsSerializer, getStaffSerializer, getDeliveryNoteSerializer, \
     getDeliveryNoteDataSerializer, getPurchaseDocDataSerializer, getPurchaseDocSerializer, getProjectSerializer,CompanySerializer,\
-    InstallationSerializer
+    InstallationSerializer, LagerausgangSerializer
 from rest_framework import viewsets, mixins, pagination, filters, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -153,8 +154,9 @@ def getInternalPurchaseDocViewSet(model, datamodel, deliverynote_model, delivery
 
 
 class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter, filters.DjangoFilterBackend,)
     pagination_class = get_pagination(30)
+    filter_fields = ('id',)
     search_fields = ('id', 'description', 'managerid', 'leaderid')
 
 
@@ -277,7 +279,10 @@ class ProductSupplierViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
+    lookup_value_regex = '[-A-Za-z0-9.]*'
     queryset = ProductSupplier.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('prodid',)
     serializer_class = ProductSupplierSerializer
 
 
@@ -315,15 +320,15 @@ class NatureViewSet(mixins.RetrieveModelMixin,
 class StockDataFilter(filters.FilterSet):
     # in_price = django_filters.NumberFilter(name="price", lookup_type='gte')
     # max_price = django_filters.NumberFilter(name="price", lookup_type='lte')
+    type = ListFilter(name='prodid__producttype')
     class Meta:
         model = StockData
-        fields = ['prodid__nature', 'prodid__defaultsupplier', 'stockid']
+        fields = ['prodid__nature', 'prodid__defaultsupplier', 'prodid__id', 'stockid', 'type']
 
 
-class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    This viewset automatically provides `list` and `detail` actions.
-    """
+class StockDataViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     lookup_value_regex = '[-A-Za-z0-9.]+'
     # queryset = StockData.objects.filter(stockid = 0).filter(prodid__name1 = u'Schlaufenanker für Konsolgerüst')
     # queryset = StockData.objects.filter(stockid = 0)
@@ -334,7 +339,7 @@ class StockDataViewSet(viewsets.ReadOnlyModelViewSet):
     # Todo: sort by nested fields
     filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
     filter_class = StockDataFilter
-    search_fields = ('prodid__id', 'prodid__name1', 'prodid__defaultsupplier__id', 'prodid__nature__id')
+    search_fields = ('^prodid__id', 'prodid__name1', 'prodid__defaultsupplier__id', 'prodid__nature__name')
 
 
 class ProductViewSet(mixins.RetrieveModelMixin,
@@ -434,6 +439,21 @@ class PurchaseDocumentsView(viewsets.ModelViewSet):
     serializer_class = PurchaseDocumentsSerializer
     pagination_class = None
 
+class LagerausgangFilter(filters.FilterSet):
+    min_date = DateFilter(name="docdate", lookup_type='gte')
+    max_date = DateFilter(name="docdate", lookup_type='lte')
+    class Meta:
+        fields = ['stockid', 'projectid1', 'projectid2', 'purchasedocid1', 'purchasedocid2', 'responsible', 'abholer', 'min_date', 'max_date']
+        model = Lagerausgang
+
+class LagerausgangView(viewsets.ModelViewSet):
+    filter_backends = (filters.DjangoFilterBackend,filters.OrderingFilter,)
+    filter_class = LagerausgangFilter
+    queryset = Lagerausgang.objects.all()
+    serializer_class = LagerausgangSerializer
+    pagination_class = None
+
+
 
 from genshi.core import Markup
 
@@ -515,9 +535,10 @@ def get_project_data(request, id, company, format=None):
         try:
             print("try create consumedproduct")
             data = request.data
+
             docdate = data['docdate']
-            articles = data['articles']
-            purchaseref = data['purchaseref']
+            articles = data['data']
+            purchaseref = data['id']
             supplierid = data['supplierid']
             print("try connect")
             cn = pyodbc.connect(
@@ -532,53 +553,63 @@ def get_project_data(request, id, company, format=None):
             print("success")
             print(consumedproductid, datarowid)
             cursor = cn.cursor()
+
+            cn_purchase = pyodbc.connect(
+                r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_purchase;UID=hitoffice;PWD=%s' % (
+                    dbserver, company, dbpassword))
+            cursor_purchase = cn_purchase.cursor()
+
             cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)",
-                           consumedproductid, docdate, '')
+                           consumedproductid, docdate[0:10], '')
             cn.commit()
-            for a in articles:
-                article = a['article']['prodid']
-                quantity = a['quantity']
-                test = cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
+            multiplier = -1 if id in ('1-7800', '4-7800', '5-7800') else 1
+
+            for article in articles:
+                cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
                                SupplierID, PurchaseRef) Values \
-                               (?,?,?,?,?,?,?,?,?,?,?)", consumedproductid, datarowid, article['id'], article['name1'],
-                                      article['unit1'], quantity,
-                                      article['netpurchaseprice'], round(article['netpurchaseprice'] * quantity, 2), '',
-                                      supplierid, purchaseref)
+                               (?,?,?,?,?,?,?,?,?,?,?)", consumedproductid, datarowid, article['prodid'], article['name'],
+                                      article['unit'], multiplier*article['quantity'], article['price'], multiplier*round(article['price'] * article['quantity'], 2),
+                                      article['comment'], supplierid, purchaseref)
+                command = "Update PurchaseDocData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
+                print(command)
+                cursor_purchase.execute(command)
                 datarowid += 1
-            cursor.commit()
-            cursor.close()
-        except:
-            return Response({'data': 'Error'}, status='HTTP_500_INTERNAL_SERVER_ERROR')
+            cn.commit()
+            cn_purchase.commit()
+            cn.close()
+        except Exception, e:
+            print(e.message)
+            print(traceback.format_exc())
+            return Response({'data': 'Error'}, status='500 Internal Server Error')
         return Response('OK')
 
     elif request.method == 'DELETE':
         try:
             data = request.data
-            purchasedocid = data['purchasedocid']
-            cn = pyodbc.connect(
-                r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_purchase;UID=hitoffice;PWD=%s' % (
-                dbserver, company, dbpassword))
-            cursor = cn.cursor()
-            cursor.execute("SELECT * FROM purchasedocdata WHERE purchasedocid=?", purchasedocid)
-            results = to_named_rows(cursor.fetchall(), cursor.description)
-            dataids = [row['DataID'] for row in results]
+            purchaseref = data['id']
+            articles = data['data']
+            #dataids = []
+            #for article in articles:
+            #    if "dataid" in article:
+            #        dataids.append(article["dataid"])
             cn = pyodbc.connect(
                 r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_pro_%s;UID=hitoffice;PWD=%s' % (
                 dbserver, company, id.replace('-', '_'), dbpassword))
             cursor = cn.cursor()
-            for rowid in dataids:
-                cursor.execute("DELETE FROM ConsumedProductData WHERE RowID=?",
-                               rowid)  # rowid entspricht purchasedocdata dataid
-            cursor.commit()
-            # Determine ConsumedProduct ID
-            cursor.execute("SELECT ID FROM ConsumedProductData WHERE RowID=?", dataids[0])
-            consumedproductid = cursor.fetchall()[0][0]
-            cursor.execute("DELETE FROM ConsumedProduct WHERE ID=?", consumedproductid)
-            cursor.commit()
-            cursor.close()
-        except:
-            return Response({'data': 'Error'}, status='HTTP_500_INTERNAL_SERVER_ERROR')
-        return Response('')
+            cursor.execute("DELETE FROM ConsumedProductData WHERE PurchaseRef=?", purchaseref)
+            #for dataid in dataids:
+            #    print("DELETE FROM ConsumedProductData WHERE RowID="+str(dataid))
+            #    cursor.execute("DELETE FROM ConsumedProductData WHERE RowID=?",dataid)  # consumedproductdata rowid entspricht purchasedocdata dataid
+            cn.commit()
+            cn.close()
+        except Exception, e:
+            print(e.message)
+            print(traceback.format_exc())
+            return Response({'data': 'Error'}, status='500 INTERNAL_SERVER_ERROR')
+        return Response('OK')
+
+
+
 
 @api_view(['POST', 'DELETE'])
 @authentication_classes((TokenAuthentication,))
@@ -606,6 +637,13 @@ def rental(request, id, company, format=None):
         cursor.commit()
         cursor.close()
         return Response('OK')
+    if request.method == 'DELETE':
+        print("try delete rentalsdata")
+        data = request.data
+        print(data)
+        #cn = pyodbc.connect(
+        #    r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_service;UID=hitoffice;PWD=%s' % (
+        #        dbserver, company, dbpassword))
 
 @api_view(['GET', ])
 @authentication_classes((TokenAuthentication,))

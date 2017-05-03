@@ -31,6 +31,9 @@ factory("installationService", function ($resource,$cacheFactory,tokenService,se
         });
         return result;
     }
+    function getMachine(id){
+        return resource.get(id).$promise;
+    }
     function update(id, values){
         return tokenService.getToken().then(function (response) {
             return response;
@@ -71,6 +74,7 @@ factory("installationService", function ($resource,$cacheFactory,tokenService,se
         init: init,
         getTitles: getTitles,
         getMachines: getMachines,
+        getMachine: getMachine,
         update: update,
         create_rental: create_rental
     };

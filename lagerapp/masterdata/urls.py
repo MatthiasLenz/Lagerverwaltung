@@ -14,6 +14,7 @@ router.register(r'product', views.ProductViewSet, base_name='product')
 router.register(r'productpacking', views.ProductPackingViewSet, base_name='productpacking')
 router.register(r'productsupplier', views.ProductSupplierViewSet, base_name='productsupplier')
 router.register(r'purchasedocuments', views.PurchaseDocumentsView)
+router.register(r'lagerausgang', views.LagerausgangView)
 # router for company 01 api
 router01 = DefaultRouter(trailing_slash=False)
 router01.register(r'supplier', views.getSupplierViewSet(models.Supplier01), base_name='supplier01')

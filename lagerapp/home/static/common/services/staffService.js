@@ -15,8 +15,15 @@ factory("staffService", function ($resource, $cacheFactory, sessionService) {
         })
     }
     function staff_list(kwargs) {
+        var company = "";
+        if ("company" in kwargs){
+            company = kwargs["company"];
+        }
+        else{
+            company = companyid;
+        }
         return sessionService.getCompany().then(function(companyid){
-            return resource[companyid].query({'search': kwargs.search}).$promise;
+            return resource[company].query({'search': kwargs.search}).$promise;
         })
     }
     return {

@@ -31,12 +31,13 @@ SECRET_KEY = private_settings['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-if DEBUG:
-    import logging
+#if DEBUG:
+import logging
 
-    l = logging.getLogger('django.db.backends')
-    # l.setLevel(logging.DEBUG)
-    l.addHandler(logging.StreamHandler())
+l = logging.getLogger('django.db.backends')
+#l.setLevel(logging.DEBUG)
+l.addHandler(logging.StreamHandler())
+
 
 LOGGING = {
     'disable_existing_loggers': False,
@@ -55,7 +56,7 @@ LOGGING = {
             # root level logger.
             'handlers': ['console'],
             'level': 'DEBUG',
-            'propagate': False,  # this tells logger to send logging message
+            'propagate': True,  # this tells logger to send logging message
             # to its parent (will send if set to True)
         },
         'sql_server.pyodbc': {
@@ -65,9 +66,10 @@ LOGGING = {
         'django.db.backends.sqlite3': {
             'level': 'DEBUG',
             'handlers': ['console'],
-        },
+        }
     },
 }
+
 ALLOWED_HOSTS = ["localhost"]
 
 # Application definition
@@ -185,7 +187,6 @@ class HitRouter(object):
         if model._meta.app_label == 'hit':
             return 'hit'
         # go to default
-
         return None
 
     def db_for_write(self, model, **hints):

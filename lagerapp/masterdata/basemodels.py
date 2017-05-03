@@ -452,7 +452,7 @@ class PurchaseDocDataBase(models.Model):
     budgetamount = models.FloatField(db_column='BudgetAmount', default=0)
     taxcode = models.CharField(db_column='TaxCode', max_length=6, blank=True)
     resourcememo = models.TextField(db_column='ResourceMemo', blank=True)
-
+    dataid = models.IntegerField(db_column='DataID', blank=True, null=True )
     def save(self, *args, **kwargs):
         self.netprice = self.price
         if not self.rowid:
@@ -518,6 +518,16 @@ class PurchaseDocuments(models.Model):
     doc = models.CharField(max_length=128, blank=True, null=True)
     odt = models.CharField(max_length=128, blank=True, null=True)
 
+class Lagerausgang(models.Model):
+    stockid = models.CharField(max_length=15, blank=True, null=True)
+    projectid1 = models.CharField(max_length=15, blank=True, null=True)
+    projectid2 = models.CharField(max_length=15, blank=True, null=True)
+    purchasedocid1 = models.CharField(max_length=15, blank=True, null=True)
+    purchasedocid2 = models.CharField(max_length=15, blank=True, null=True)
+    docdate = models.DateTimeField(blank=True, null=True)
+    responsible = models.CharField(max_length=15, blank=True)
+    pdf = models.CharField(max_length=128, blank=True, null=True)
+    abholer =  models.CharField(max_length=128, blank=True, null=True)
 
 class Installation(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)
@@ -529,9 +539,11 @@ class Installation(models.Model):
     purchasevalue = models.FloatField(db_column='PurchaseValue', blank=True, null=True)
     availability = models.SmallIntegerField(db_column='Availability', blank=True, null=True)
     availabilitystatus = models.CharField(db_column='AvalibilityStatus', max_length=40, blank=True)
+    availabilitystatusold = models.CharField(db_column='FZ_STATUSOLD', max_length=40, blank=True)
     rentperdayresourceid = models.ForeignKey(Product, db_column='RentPerDayResourceID', blank=True, null=True)
     title = models.NullBooleanField(db_column='Title')
     titlegrade = models.SmallIntegerField(db_column='TitleGrade', blank=True, null=True)
+    prodid = models.ForeignKey(Product, db_column='FZ_PRODID', blank=True, null=True, related_name='supplier')
     def __unicode__(self):
         return self.id
     class Meta:

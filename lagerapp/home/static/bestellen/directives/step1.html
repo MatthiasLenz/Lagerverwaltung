@@ -47,7 +47,7 @@
             <td><span ng-class="{hide:stockitem.prodid.title}">
                     <button ng-click="bestellen.selectprod(stockitem.prodid)">{{ stockitem.prodid.name1 }}</button>
                 </span>
-                <span ng-if="{stockitem.prodid.title}">
+                <span ng-if="stockitem.prodid.title">
                 {{ stockitem.prodid.name1 }}
                 </span>
             </td>

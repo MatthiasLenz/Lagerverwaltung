@@ -27,8 +27,7 @@
          placeholder="Bitte wählen Sie eine Kolonne aus" md-select-on-match="true">
         <md-item-template>
             <span md-highlight-text="maschinenVm.searchProject"
-            md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
-                + ' ' +item.manager.lastname }}</span>
+            md-highlight-flags="^i">{{ item.id+', '+item.description }}</span>
         </md-item-template>
         <md-not-found>
             Keine Übereinstimmung mit "{{ maschinenVm.searchProject }}" gefunden.
@@ -102,7 +101,6 @@
             </div>
             <br/><br/><br/><br/>
         </md-content>
-
     </section>
     <div layout-margin></div>
     <section layout="column" flex="50" class="demo-container md-whiteframe-z1">

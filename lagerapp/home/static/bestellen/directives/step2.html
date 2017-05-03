@@ -8,16 +8,12 @@ Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}
     <div class="panel" ng-class="{'panel-primary': supplier.default, 'panel-info' : !supplier.default }">
         <div class="panel-heading">{{ supplier.name }}<span ng-show="supplier.default"> (Standardlieferant)</span></div>
         <div class="panel-body">
-            <p><b>Preis: {{ supplier.purchaseprice | currency:""}} €</b></p>
-
-            <p>{{ supplier.address }}</p>
-
-            <p>{{ supplier.zipcode }} {{ supplier.city }}</p>
-
-            <p>{{ supplier.phone }}</p>
-
-            <p ng-hide="supplier.opendoc==undefined"><span class="label label-success">offene Bestellung</span></p>
-            <p ng-show="supplier.comment && supplier.comment!=''">Kommentar: {{ supplier.comment }}</p>
+            <b>Preis: {{ supplier.purchaseprice | currency:""}} €</b><br/>
+            {{ supplier.address }}<br/>
+            {{ supplier.zipcode }} {{ supplier.city }}<br/>
+            {{ supplier.phone }}<br/>
+            <span ng-hide="supplier.opendoc==undefined"><span class="label label-success">offene Bestellung</span></span><br/>
+            <span ng-show="supplier.comment && supplier.comment!=''">Kommentar: {{ supplier.comment }}</span><br/>
             <button ng-click="bestellen.selectsupp(supplier)">auswählen</button>
         </div>
     </div>
@@ -28,13 +24,9 @@ Artikel: {{ bestellen.selectedprod.id }} {{ bestellen.selectedprod.name1 }}
         <div class="panel-heading">{{ supplier.name }}<span ng-show="supplier.default"> (Standardlieferant)</span></div>
         <div class="panel-body">
             <p><b>Preis: {{ supplier.purchaseprice | currency:""}} €</b></p>
-
             <p>{{ supplier.address }}</p>
-
             <p>{{ supplier.zipcode }} {{ supplier.city }}</p>
-
             <p>{{ supplier.phone }}</p>
-
             <p ng-hide="supplier.opendoc==undefined"><span class="label label-success">offene Bestellung</span></p>
             <span ng-show="supplier.comment && supplier.comment!=''">Kommentar: {{ supplier.comment }}</span>
         </div>
