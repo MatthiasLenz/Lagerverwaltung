@@ -8,8 +8,12 @@ factory("supplierService", function ($resource, $cacheFactory, sessionService) {
                 return companyid;
             })
     }
-    var companies = ['01', '04', '05']; //Todo: make it dynamic
+    var companies = ['01', '04', '05'];
     var supplierCache = $cacheFactory('Supplier');
+    var origGet = supplierCache.get;
+    supplierCache.get = function(key){
+        return origGet(key);
+    };
     var resource = {};
     for (var i = 0; i < companies.length; i++) {
         resource[companies[i]] = $resource(
@@ -17,7 +21,7 @@ factory("supplierService", function ($resource, $cacheFactory, sessionService) {
         );
     }
     function supplier_get(id) {
-        return resource[companyid].get(id).$promise;
+        return resource[companyid].query(id).$promise;
     }
     function supplier_list(kwargs) {
         return resource[companyid].query({'search': kwargs.search}).$promise;

@@ -4,7 +4,6 @@ angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 't
         $scope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
             $scope.successPath = $location.path();
             vm.setState($scope.successPath.substring(1));
-            console.log("das ist die fehlerquelle "+ newUrl + " " + oldUrl);
         });
         var vm = this; //ViewModel
         vm.login = tokenService.getToken;

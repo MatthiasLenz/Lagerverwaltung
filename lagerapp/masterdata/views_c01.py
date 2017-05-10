@@ -20,6 +20,7 @@ def merge_data(request):
     data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
     return data
 
+
 @api_view(['POST'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
@@ -52,7 +53,7 @@ def makepdf(request):
     os.rename(document_folder + 'bestellung.' + doctype, document_folder + docname)
     # with open(document_folder+"bestellung.pdf", 'rb') as f:
     #    url = ftpupload(ftpsettings, f, "bestellung.pdf")
-    fileurl = 'http://%s/static/bestellungen/%s/%s' % (settings['server'], data['supplier']['id'], docname)
+    fileurl = 'http://%s/static/Bestellung/%s' % (settings['server'], docname)
     try:
         obj = PurchaseDocuments.objects.get(purchasedocid=data['id'])
         setattr(obj, doctype, fileurl)
@@ -60,6 +61,32 @@ def makepdf(request):
     except PurchaseDocuments.DoesNotExist:
         PurchaseDocuments.objects.create(purchasedocid=data['id'], pdf=fileurl)
     return Response('')
+
+@api_view(['POST'])
+def makepdf1(request):
+    """ Build a data dictionary and use py3o.template server to render a document file from an ods template.
+        Return the url of the generated file. Optional: Upload the generated pdf document to a webserver via FTP. """
+    print("makepdf")
+
+    with open('settings.json') as settings_file:
+        settings = json.load(settings_file)
+        ftpsettings = settings["ftp"]
+        purchase = settings["purchase"]
+        document_folder = settings["purchase"]["folder"]
+        data = dict(request.data['doc'])
+        dt = parse_datetime(data['docdate'])
+        data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
+        data.update(purchase)
+        docname = '%s-Bestellung-%s.pdf' % (data['company'].replace(" ", "_"), data['id'])
+        renderdoc(data, document_folder, docname, 'pdf')
+        fileurl = 'http://%s/static/Bestellung/%s' % (settings['server'], docname)
+        try:
+            obj = PurchaseDocuments.objects.get(purchasedocid=data['id'])
+            setattr(obj, 'pdf', fileurl)
+            obj.save()
+        except PurchaseDocuments.DoesNotExist:
+            PurchaseDocuments.objects.create(purchasedocid=data['id'], pdf=fileurl)
+        return Response(fileurl)
 
 @api_view(['POST'])
 def lagerausgangmakepdf(request, companyid):
@@ -71,11 +98,9 @@ def lagerausgangmakepdf(request, companyid):
         #ftpsettings = settings["ftp"]
         settings = json.load(settings_file)
         document_folder = settings["lagerausgang"]["folder"]
-
         data = dict(request.data["doc"])
         dt = parse_datetime(data['docdate'])
         data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
-
         doctype = request.data['type']
         customer = request.data['kunde']
         docname = "lagerausgang_{}.{}".format(data['id'], doctype)
@@ -83,23 +108,6 @@ def lagerausgangmakepdf(request, companyid):
         renderdoc1(data, document_folder, docname, customer, doctype)
         fileurl = 'http://%s/static/Lagerausgang/%s' % (settings['server'], docname)
         #create_purchase_document(data['id'], doctype, fileurl)
-        return Response(fileurl)
-
-@api_view(['POST'])
-def kleingeraetemakepdf(request, companyid):
-    """ Build a data dictionary and use py3o.template server to render a document file from an ods template.
-        Return the url of the generated file. Optional: Upload the generated pdf document to a webserver via FTP. """
-    with open('settings.json') as settings_file:
-        #ftpsettings = settings["ftp"]
-        settings = json.load(settings_file)
-        document_folder = settings["lagerausgang"]["folder"]
-        data = merge_data(request)
-        document_folder = document_folder + data['modulerefid'] + '/'
-        doctype = request.data['type']
-        docname = "lagerausgang_{}.{}".format(data['id'], doctype)
-        renderdoc2(data, document_folder, docname, companyid, doctype)
-        fileurl = 'http://%s/static/Lagerausgang/%s/%s' % (settings['server'], data['modulerefid'], docname)
-        create_purchase_document(data['id'], doctype, fileurl)
         return Response(fileurl)
 
 def create_purchase_document(id, doctype, fileurl):
@@ -110,43 +118,72 @@ def create_purchase_document(id, doctype, fileurl):
     except PurchaseDocuments.DoesNotExist:
         PurchaseDocuments.objects.create(purchasedocid=id, pdf=fileurl)
 
-def renderdoc(data_input, outputfile):
+def renderdoc(data_input, folder, name, targetformat):
     #t = Template(os.path.abspath("masterdata/bestellung_template.odt"),
      #            outputfile)
     #t.set_image_path('staticimage.logo', os.path.abspath("masterdata/logo.png"))
+    print("renderdoc")
+    url = 'http://192.168.0.199:8765/form'
+    template_path = os.path.abspath("masterdata/bestellung_template01.odt")
+    print(template_path)
+    with open(template_path, "rb") as template_file:
+        print("open template")
+        files = {'tmpl_file': template_file}
+        supplier = data_input['supplier']
+        try:
+            responsible = Staff01.objects.get(id=data_input['responsible'])
+        except Staff01.DoesNotExist:
+            responsible = type('Staff', (object,), {'firstname':'','lastname':'', 'mobile':''})
+        print("get staff")
+        items = []
+        total = '%.2f' % sum(item['amount'] for item in data_input['data'])
+        for item in data_input['data']:
+            if item['packing'] != '':
+                item['packing'] = 'Verpackt als: %s' % item['packing']
+            items.append(
+                {'id': item['prodid'], 'name': item['name'], 'unit': item['unit'], 'quantity': '%.3f' % item['quantity'],
+                 'price': '%.2f' % item['price'], 'amount': '%.2f' % item['amount'], 'packing': item['packing'],
+                 'comment': item['comment']})
+        print("loop data")
 
-    supplier = data_input['supplier']
-    try:
-        responsible = Staff01.objects.get(id=data_input['responsible'])
-    except Staff01.DoesNotExist:
-        responsible = {'firstname':'','lastname':'', 'mobile':''}
-    items = []
-    total = '%.2f' % sum(item['amount'] for item in data_input['data'])
-    for item in data_input['data']:
-        if item['packing'] != '':
-            item['packing'] = 'Verpackt als: %s' % item['packing']
-        items.append(
-            {'id': item['prodid'], 'name': item['name'], 'unit': item['unit'], 'quantity': '%.3f' % item['quantity'],
-             'price': '%.2f' % item['price'], 'amount': '%.2f' % item['amount'], 'packing': item['packing'],
-             'comment': item['comment']})
-    recipient = {'address': format_py3o_context_value(
-        '%s\n%s\n\n%s %s' % (supplier['namea'], supplier['address'], supplier['zipcode'], supplier['city']))}
-    sender = {'address': data_input['adr_kurz'], 'info': 'info'}
-    # company specific
-    info = {'kostenstelle': data_input['kostenstelle'],
-            'bez_kostenstelle': data_input['bez_kostenstelle'],
-            'id': data_input['id'], 'date': data_input['docdate'],
-            'bauleiter': '%s %s' % (responsible['firstname'], responsible['lastname']),
-            'bauleitertel': responsible['mobile'],
-            'polier': '', 'lieferadresse': data_input['adr_lang'],
-            'infotext': format_py3o_context_value(unicode(data_input['infotext']))}
-    data = dict(items=items, recipient=recipient, sender=sender, info=info, total=total)
-    #t.render(data)
+        recipient = {'name': supplier['namea'], 'street': supplier['address'], 'city': supplier['zipcode'] + ' ' + supplier['city'] }
+        print()
+        sender = {'address': data_input['adr_kurz'], 'info': 'info'}
+        # company specific
+        info = {'kostenstelle': data_input['kostenstelle'],
+                'bez_kostenstelle': data_input['bez_kostenstelle'],
+                'id': data_input['id'], 'date': data_input['docdate'],
+                'bauleiter': '%s %s' % (responsible.firstname, responsible.lastname),
+                'bauleitertel': "(%s)"%responsible.mobile,
+                'polier': '', 'lieferadresse': data_input['adr_lang'],
+                'infotext': format_py3o_context_value(unicode(data_input['infotext']))}
+        data = dict(items=items, recipient=recipient, sender=sender, info=info, total=total)
+        fields = {
+            "targetformat": targetformat,
+            "datadict": json.dumps(data, encoding='windows-1252'),
+            "image_mapping": "{}",
+            "ignore_undefined_variables": "on"
+        }
+        print(fields)
+        print("post request")
+        r = requests.post(url, data=fields, files=files)
+        if r.status_code == 400:
+            print(r.json())
+            pass  # ToDo: Error Response
+        else:
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+            chunk_size = 1024
+            outname = "{}{}".format(folder, name)
+            print(outname)
+            i = 1
+            with open(outname, 'wb+') as fd:
+                for chunk in r.iter_content(chunk_size):
+                    fd.write(chunk)
 
 import requests
 import json
 def renderdoc1(data_input, folder, name, customer, targetformat):
-    print("renderdoc1")
     url = 'http://192.168.0.199:8765/form'
     template_path = os.path.abspath("masterdata/lagerausgang_template01.odt")
     with open(template_path, "rb") as template_file:
@@ -195,52 +232,12 @@ def renderdoc1(data_input, folder, name, customer, targetformat):
         fields = {
             "targetformat": targetformat,
             "datadict": json.dumps(data, encoding='windows-1252'),
-            "image_mapping": "{}",
+            "image_mapping": "{}"
         }
         print("post request")
         r = requests.post(url, data=fields, files=files)
         if r.status_code == 400:
             print(r.json())
-            pass # ToDo: Error Response
-        else:
-            if not os.path.exists(folder):
-                os.makedirs(folder)
-            chunk_size = 1024
-            outname = "{}{}".format(folder, name)
-            i = 1
-            with open(outname, 'wb+') as fd:
-
-                for chunk in r.iter_content(chunk_size):
-                    fd.write(chunk)
-
-import requests
-import json
-def renderdoc2(data_input, folder, name, companyid, targetformat):
-    url = 'http://192.168.0.199:8765/form'
-    template_path = os.path.abspath("masterdata/kleingeraete_template{}.odt".format(companyid))
-    with open(template_path, "rb") as template_file:
-        files = {'tmpl_file': template_file}
-        items = []
-        for item in data_input['data']:
-            comment = item['comment'] if item['comment'] else ''
-            items.append(
-                {'id': item['prodid'], 'name': item['comment'], 'price': ('%.2f' % item['price']).replace(".",",")})
-        # company specific
-        info = {'kostenstelle': data_input['modulerefid'],
-                'kolonne': '1-7802-38',
-                'user': 'Platzhalter',
-                'bez_kostenstelle': data_input['subject'],
-                'id':data_input['id'],
-                'date': data_input['docdate'],
-                'abholer': data_input['abholer']}
-        data = dict(items=items, items2=[], info=info)
-        fields = {
-            "targetformat": targetformat,
-            "datadict": json.dumps(data, encoding='windows-1252'),
-            "image_mapping": "{}",
-        }
-        r = requests.post(url, data=fields, files=files)
-        if r.status_code == 400:
             pass # ToDo: Error Response
         else:
             if not os.path.exists(folder):

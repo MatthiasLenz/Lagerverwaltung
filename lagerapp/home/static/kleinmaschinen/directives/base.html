@@ -7,19 +7,28 @@
         <input ng-model="maschinenVm.search">
      </md-input-container>
 </div>
-<br/>
-<div class="" flex="60">
-    <div layout="row" style="margin:8px;" layout-align="start start">
-        <md-button class="textleft nomargin" flex="15" ng-click="maschinenVm.order=maschinenVm.order==='id'?'-id':'id'"><b>ID</b></md-button>
-        <md-button class="textleft nomargin" flex="30" ng-click="maschinenVm.order=maschinenVm.order==='name1'?'-name1':'name1'"><b>Bezeichnung</b></md-button>
-        <md-button class="textleft nomargin" flex="25" ng-click="maschinenVm.order=maschinenVm.order==='chassisnum'?'-chassisnum':'chassisnum'"><b>Seriennummer</b></md-button>
-        <md-button class="textleft nomargin" flex="25" ng-click="maschinenVm.order=maschinenVm.order==='availabilitystatus'?'-availabilitystatus':'availabilitystatus'"><b>Ort</b></md-button>
+
+<div layout="column" flex="40">
+    <div layout="row"  layout-align="start start" class="table-header">
+        <a class="header margin" flex="25" ng-click="maschinenVm.order=maschinenVm.order==='id'?'-id':'id'"><b>ID</b></a>
+        <a class="header nomargin" flex="25" ng-click="maschinenVm.order=maschinenVm.order==='name1'?'-name1':'name1'"><b>Bezeichnung</b></a>
+        <a class="header nomargin" flex="20"><b>Seriennummer</b></a>
+        <a class="header nomargin" flex="30" ng-click="maschinenVm.order=maschinenVm.order==='availabilitystatus'?'-availabilitystatus':'availabilitystatus'"><b>Besitzer</b></a>
     </div>
-    <div layout="row" style="margin:8px;" ng-repeat="machine in maschinenVm.machines | filter: maschinenVm.search | orderBy: maschinenVm.order as results" layout-align="start start" class="" >
-        <div flex="15">{{ machine.id }}</div>
-        <div flex="30" title="{{machine.name1}}">{{machine.name1 | limitTo:30}}{{ machine.name1.length>30 ? '...' : ''}}</div>
-        <div flex="25">{{ machine.chassisnum }}</div>
-        <div flex="25">{{ machine.availabilitystatus }}</div>
+    <div layout="row" flex
+         ng-repeat="machine in maschinenVm.machines | filter: maschinenVm.search | orderBy: maschinenVm.order as results"
+         layout-align="start start" ng-class-even="'even'" ng-class-odd="'odd'">
+        <div flex="25" style="padding-left:6px;"><a class="nolink" ng-click="maschinenVm.select(machine)">{{ machine.id }}</a></div>
+        <div flex="25" style="padding-left:6px;" title="{{machine.name1}}">
+            <a class="nolink" ng-click="maschinenVm.select(machine)">{{machine.name1 | limitTo:30}}{{ machine.name1.length>30 ? '...' : ''}}</a>
+            <span ng-if="machine.select"><br/><br/><md-button class="md-raised md-primary" ng-click="maschinenVm.reset(machine)">zurück auf Lager</md-button></span>
+        </div>
+        <div flex="20">{{ machine.chassisnum }}</div>
+        <div flex="30" style="padding-left:6px;">{{ maschinenVm.extractProject(machine.availabilitystatus) }}
+        </div>
+        <!--div flex="5"  style="padding-left:6px;" ng-click="maschinenVm.select(machine)">
+            <md-icon flex="initial" md-svg-src="static/img/icons/ic_settings_black_18px.svg" ng-style="{'font-size': '18px', 'height': '18px', 'width': '18px', 'fill':'rgb(63,81,181)'}"></md-icon>
+        </div-->
     </div>
     <div class="" ng-if="results.length === 0" style="margin:8px;">
         <br/>

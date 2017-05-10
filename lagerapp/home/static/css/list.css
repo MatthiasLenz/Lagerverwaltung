@@ -1,8 +1,36 @@
+body {
+    height: 1800px !important;
+    background-color: #efefef !important;
+}
+
+.table-header{
+    background-color: #D8F0BC;
+    padding: 5px;
+}
+.even {
+    background-color: #EFF8E3;
+    margin: 0px;
+    padding: 2px;
+}
+.odd {
+    background-color: #fbfcf9;
+    margin: 0px;
+    padding: 2px;
+}
 button.textleft {
     text-align:left;
 }
 button.nomargin {
     margin: 0px;
+}
+a.margin {
+     margin-left: 8px;
+}
+a.header {
+    color: black;
+}
+a.nolink {
+     color: black;
 }
 td.name-col {
     overflow: hidden;
@@ -26,11 +54,20 @@ td.name-col {
     height: 900px;
     overflow-y: scroll;
 }
+#overview section {
+    background-color: darkseagreen;
+}
+#overview section h2{
+    margin-top: 1rem;
+}
 #overview .panel-edit {
     border-color: #BDA639;
 }
 #overview .panel {
     margin-bottom:0px;
+}
+#overview .panel-heading {
+    padding: 5px;
 }
 #overview .panel-edit > .panel-heading {
     background-image: -webkit-linear-gradient(top, #fcf8e3 0, #faf2cc 100%) !important;
@@ -49,7 +86,6 @@ td.name-col {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffcf8e3', endColorstr='#fffaf2cc', GradientType=0);
     background-repeat: repeat-x;
 }
-
 #top {
     margin-right: 80px;
 }

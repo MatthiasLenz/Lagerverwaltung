@@ -1,9 +1,8 @@
 angular.module('baseApp.lagerausgang')
     .controller('LagerausgangCtrl', ['$log', '$http', '$timeout', '$q', '$scope', 'stockService', 'projectService', 'bestellungenService',
-        'staffService', 'alertService', 'sessionService','installationService',
+        'staffService', 'alertService', 'sessionService','installationService', 'utilityService',
     function ($log, $http, $timeout, $q, $scope, stockService,  projectService, bestellungenService,
-              staffService, alertService, sessionService, installationService) {
-        var tests;
+              staffService, alertService, sessionService, installationService, utilityService) {
         var vm = this;
         window.show = this;
 
@@ -28,20 +27,9 @@ angular.module('baseApp.lagerausgang')
             moveTop(document.getElementById("overview"));
         };
         vm.randomid = "";
-        function get_randomid() {
-            // Math.random should be unique because of its seeding algorithm.
-            // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-            // after the decimal.
-            return Math.random().toString(36).substr(2, 9);
-        }
 
         vm.deleteconsumed = deleteconsumed;
 
-        tests = (function () {
-            return {
-                p: ""
-            }
-        }());
         function deleteconsumed(purchasedocid) {
             $http({
                 method: 'DELETE',
@@ -139,20 +127,15 @@ angular.module('baseApp.lagerausgang')
             });
             doc.edit = !temp;
         }
-        vm.displayPDF = "";
+
         vm.select_doc = select_doc;
         function select_doc(doc) {
-            refreshDoc(doc).then(function(){
-                vm.displayPDF = doc.pdf;
-            });
             var temp = doc.select;
-            //vm.projectDocs.forEach(function (item) {
-            //    item.select = false;
-            //});
             vm.lagerausgang.forEach(function (item) {
                 item.select = false;
             });
             doc.select = !temp;
+            refreshDoc(doc);
         }
 
         vm.save_doc = save_doc;
@@ -284,7 +267,7 @@ angular.module('baseApp.lagerausgang')
         vm.refresh_documents = refresh_documents;
         function refresh_documents(doc) {
             var docid = doc.id;
-            vm.randomid = get_randomid();
+            vm.randomid = utilityService.randomid();
             //alte PDF entfernen und neue PDF erstellen
             doc.pdf = '';
             bestellungenService.lagerausgang.update({id:doc.id}, {pdf:''}).then(function () {
@@ -295,7 +278,7 @@ angular.module('baseApp.lagerausgang')
                 doc.pdf = pdf;
                 vm.lagerausgang.forEach(function (item) {
                     //keep document selected after refresh
-                    if (item.id == docid){
+                    if (item.id === docid){
                         item.select = true;
                     }
                 });
