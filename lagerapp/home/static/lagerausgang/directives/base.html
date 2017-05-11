@@ -1,98 +1,105 @@
 <!--<button ng-click="lagerVm.swap_direction()">swap Layout</button>-->
-<div layout="row" layout-align="start" flex="30">
-    <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_one_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
-        'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
-    <md-input-container flex>
-        <label>an Firma/Kunde</label>
-        <md-select ng-model="lagerVm.selectedCustomer"  ng-change="lagerVm.changeCustomer()" class="md-no-underline">
-              <md-option value="01">Solid SA</md-option>
-              <md-option value="04">Sofico</md-option>
-              <md-option value="05">Solid Bau</md-option>
-        </md-select>
-    </md-input-container>
-</div>
-<div layout="row" layout-align="start center" flex="70">
-    <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
-        'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
-    <md-autocomplete flex="30" ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
-                     md-selected-item="lagerVm.selectedProject"
-                     md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
-                     md-search-text="lagerVm.searchProject"
-                     md-selected-item-change="lagerVm.selectedProjectChange(item)"
-                     md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
-                     md-item-text="item.id+', '+item.description"
-                     md-min-length="0"
-                     placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
-        <md-item-template>
-        <span md-highlight-text="lagerVm.searchProject"
-              md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
-                + ' ' +item.manager.lastname }}</span>
-        </md-item-template>
-        <md-not-found>
-            Keine Übereinstimmung mit "{{ lagerVm.searchProject }}" gefunden.
-        </md-not-found>
-    </md-autocomplete>
-    <div class="spacer"> </div>
-    <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
-        'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
-    <md-autocomplete flex="30" ng-disabled="lagerVm.isDisabled"
-         md-no-cache="true"
-         md-delay="600"
-         md-selected-item="lagerVm.selectedKolonne"
-         md-search-text-change="lagerVm.searchTextChange(lagerVm.searchKolonne)"
-         md-search-text="lagerVm.searchKolonne"
-         md-selected-item-change="lagerVm.selectedKolonneChange(item)"
-         md-items="item in lagerVm.queryKolonne(lagerVm.searchKolonne)"
-         md-item-text="item.id+', '+item.description"
-         md-min-length="0"
-         placeholder="Bitte wählen Sie eine Kolonne aus" md-select-on-match="true">
-        <md-item-template>
-            <span md-highlight-text="lagerVm.searchKolonne"
-            md-highlight-flags="^i">{{ item.id+', '+item.description }}</span>
-        </md-item-template>
-        <md-not-found>
-            Keine Übereinstimmung mit "{{ lagerVm.searchKolonne }}" gefunden.
-        </md-not-found>
-    </md-autocomplete>
-    <div class="spacer"></div>
-    <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
-        'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
-    <md-autocomplete flex="30" ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
-                     md-selected-item="lagerVm.selectedStaff"
-                     md-search-text-change="lagerVm.searchTextChange(lagerVm.searchStaff)"
-                     md-search-text="lagerVm.searchStaff"
-                     md-selected-item-change="lagerVm.selectedStaffChange(item)"
-                     md-items="item in lagerVm.queryStaff(lagerVm.searchStaff)"
-                     md-item-text="item.lastname+', '+item.firstname"
-                     md-min-length="0"
-                     placeholder="Bitte wählen Sie einen Abholer aus" md-select-on-match="true">
-        <md-item-template>
-        <span md-highlight-text="lagerVm.searchStaff"
-              md-highlight-flags="^i">{{ item.lastname + ', ' +item.firstname +', '+ item.id}}</span>
-        </md-item-template>
-        <md-not-found>
-            Keine Übereinstimmung mit "{{ lagerVm.searchStaff }}" gefunden.
-        </md-not-found>
-    </md-autocomplete>
-    <div class="spacer"></div>
-    <div class="input-group" flex="30" style="padding-left:5px;">
-        <input placeholder="Datum" type="text" class="form-control"
-               uib-datepicker-popup="dd.MM.yyyy" ng-model="lagerVm.dt"
-               is-open="lagerVm.popup.opened" datepicker-options="lagerVm.dateOptions"
-               ng-required="true"
-               date-disabled="lagerVm.disabled(date, mode)" current-text="Heute"
-               clear-text="Leeren"
-               close-text="Schließen"/>
-        <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="lagerVm.open_datepicker()">
-                <i class="glyphicon glyphicon-calendar"></i></button>
-        </span>
-    </div>
-</div>
-<br/>
+<section class="demo-container md-whiteframe-z1">
+    <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
+        <div class="md-toolbar-tools">
+            <span><md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_one_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
+            'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>Empfänger</span>
+        </div>
+    </md-toolbar>
+    <md-content style="padding:8px;">
+        <div layout="row" layout-align="start" flex="30">
+            <md-input-container flex>
+                <label>an Firma/Kunde</label>
+                <md-select ng-model="lagerVm.selectedCustomer"  ng-change="lagerVm.changeCustomer()" class="md-no-underline">
+                      <md-option value="01">Solid SA</md-option>
+                      <md-option value="04">Sofico</md-option>
+                      <md-option value="05">Solid Bau</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+        <div layout="row" layout-align="start center" flex="80">
+            <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
+                'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
+            <md-autocomplete flex="30" ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
+                             md-selected-item="lagerVm.selectedProject"
+                             md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
+                             md-search-text="lagerVm.searchProject"
+                             md-selected-item-change="lagerVm.selectedProjectChange(item)"
+                             md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
+                             md-item-text="item.id+', '+item.description"
+                             md-min-length="0"
+                             placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
+                <md-item-template>
+                <span md-highlight-text="lagerVm.searchProject"
+                      md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
+                        + ' ' +item.manager.lastname }}</span>
+                </md-item-template>
+                <md-not-found>
+                    Keine Übereinstimmung mit "{{ lagerVm.searchProject }}" gefunden.
+                </md-not-found>
+            </md-autocomplete>
+            <div class="spacer"> </div>
+            <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
+                'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
+            <md-autocomplete flex="30" ng-disabled="lagerVm.isDisabled"
+                 md-no-cache="true"
+                 md-delay="600"
+                 md-selected-item="lagerVm.selectedKolonne"
+                 md-search-text-change="lagerVm.searchTextChange(lagerVm.searchKolonne)"
+                 md-search-text="lagerVm.searchKolonne"
+                 md-selected-item-change="lagerVm.selectedKolonneChange(item)"
+                 md-items="item in lagerVm.queryKolonne(lagerVm.searchKolonne)"
+                 md-item-text="item.id+', '+item.description"
+                 md-min-length="0"
+                 placeholder="Bitte wählen Sie eine Kolonne aus" md-select-on-match="true">
+                <md-item-template>
+                    <span md-highlight-text="lagerVm.searchKolonne"
+                    md-highlight-flags="^i">{{ item.id+', '+item.description }}</span>
+                </md-item-template>
+                <md-not-found>
+                    Keine Übereinstimmung mit "{{ lagerVm.searchKolonne }}" gefunden.
+                </md-not-found>
+            </md-autocomplete>
+            <div class="spacer"></div>
+            <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
+                'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
+            <md-autocomplete flex="30" ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
+                             md-selected-item="lagerVm.selectedStaff"
+                             md-search-text-change="lagerVm.searchTextChange(lagerVm.searchStaff)"
+                             md-search-text="lagerVm.searchStaff"
+                             md-selected-item-change="lagerVm.selectedStaffChange(item)"
+                             md-items="item in lagerVm.queryStaff(lagerVm.searchStaff)"
+                             md-item-text="item.lastname+', '+item.firstname"
+                             md-min-length="0"
+                             placeholder="Bitte wählen Sie einen Abholer aus" md-select-on-match="true">
+                <md-item-template>
+                <span md-highlight-text="lagerVm.searchStaff"
+                      md-highlight-flags="^i">{{ item.lastname + ', ' +item.firstname +', '+ item.id}}</span>
+                </md-item-template>
+                <md-not-found>
+                    Keine Übereinstimmung mit "{{ lagerVm.searchStaff }}" gefunden.
+                </md-not-found>
+            </md-autocomplete>
+            <div class="spacer"></div>
+            <div class="input-group" flex="30" style="padding-left:5px;">
+                <input placeholder="Datum" type="text" class="form-control"
+                       uib-datepicker-popup="dd.MM.yyyy" ng-model="lagerVm.dt"
+                       is-open="lagerVm.popup.opened" datepicker-options="lagerVm.dateOptions"
+                       ng-required="true"
+                       date-disabled="lagerVm.disabled(date, mode)" current-text="Heute"
+                       clear-text="Leeren"
+                       close-text="Schließen"/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="lagerVm.open_datepicker()">
+                        <i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </div>
+        </div>
+    </md-content>
+</section>
 <a scroll-on-click>zur Übersicht</a>
 <div layout="row" >
-    <section layout="column" flex="70" class="demo-container md-whiteframe-z1">
+    <section layout="column" flex="60" class="demo-container md-whiteframe-z1">
         <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3"><!--md-hue-3-->
             <div class="md-toolbar-tools">
                 <span><md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
@@ -197,10 +204,9 @@
             </fieldset>
             <br/>
         </md-content>
-
     </section>
     <div layout-margin></div>
-    <section layout="column" flex="50" class="demo-container md-whiteframe-z1">
+    <section layout="column" flex="40" class="demo-container md-whiteframe-z1">
         <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
             <div class="md-toolbar-tools">
                 <span>Vorschau</span>
@@ -283,180 +289,186 @@
 </div>
 <br/><br/>
 <div layout="row" id="overview">
-<section  class="demo-container md-whiteframe-z1" layout="column" flex="70">
-    <!--md-toolbar ng-show="lagerVm.projectDocs.length!=0" class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3"-->
-        <h2 class="md-toolbar-tools">
-          <span>90 Tage Übersicht:</span>
-        </h2>
-    <div layout="row" layout-align="start center" flex="70">
-        <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
-        'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
-        <md-autocomplete flex="30" ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
-                         md-selected-item="lagerVm.selectedProject"
-                         md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
-                         md-search-text="lagerVm.searchProject"
-                         md-selected-item-change="lagerVm.selectedProjectChange(item)"
-                         md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
-                         md-item-text="item.id+', '+item.description"
-                         md-min-length="0"
-                         placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
-            <md-item-template>
-            <span md-highlight-text="lagerVm.searchProject"
-                  md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
-                    + ' ' +item.manager.lastname }}</span>
-            </md-item-template>
-            <md-not-found>
-                Keine Übereinstimmung mit "{{ lagerVm.searchProject }}" gefunden.
-            </md-not-found>
-        </md-autocomplete>
-        <div class="spacer"> </div>
-        <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
+    <section  class="demo-container md-whiteframe-z1" layout="column" flex="60">
+    <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
+        <div class="md-toolbar-tools">
+            <span>Übersicht</span>
+        </div>
+    </md-toolbar>
+    <md-content style="padding:8px;">
+        <div layout="row" layout-align="start center">
+            <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
             'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
-        <md-autocomplete flex="30" ng-disabled="lagerVm.isDisabled"
-             md-no-cache="true"
-             md-delay="600"
-             md-selected-item="lagerVm.selectedKolonne"
-             md-search-text-change="lagerVm.searchTextChange(lagerVm.searchKolonne)"
-             md-search-text="lagerVm.searchKolonne"
-             md-selected-item-change="lagerVm.selectedKolonneChange(item)"
-             md-items="item in lagerVm.queryKolonne(lagerVm.searchKolonne)"
-             md-item-text="item.id+', '+item.description"
-             md-min-length="0"
-             placeholder="Bitte wählen Sie eine Kolonne aus" md-select-on-match="true">
-            <md-item-template>
-                <span md-highlight-text="lagerVm.searchKolonne"
-                md-highlight-flags="^i">{{ item.id+', '+item.description }}</span>
-            </md-item-template>
-            <md-not-found>
-                Keine Übereinstimmung mit "{{ lagerVm.searchKolonne }}" gefunden.
-            </md-not-found>
-        </md-autocomplete>
-    </div>
-    <div ng-repeat="bestellung in lagerVm.lagerausgang | orderBy: '-id'">
-        <div class="panel" ng-class="{'panel-edit' : bestellung.edit, 'panel-info': bestellung.select}"
-             ng-class-odd="{'panel-success' : !bestellung.edit && !bestellung.select}" ng-class-even="{'panel-default' : !bestellung.edit && !bestellung.select}">
-            <div ng-click="lagerVm.select_doc(bestellung)" class="panel-heading" scroll-on-click layout="row">
-                <div flex="5"> Nr. {{ bestellung.id }}</div>
-                <div flex="15"> Baustelle: {{ bestellung.projectid1 }}</div>
-                <div flex="15"> Kolonne: {{ bestellung.projectid2 }}</div>
-                <div flex="30"> Abholer: {{ bestellung.abholer }}</div>
-                <div flex="10"> {{ bestellung.docdate |date:'d. MMM yyyy' }}</div>
-            </div>
-            <div ng-show="bestellung.select" class="panel-body">
-                <table class="table">
-                    <thead>
-                    <th class="col-md-4">Name</th>
-                    <th class="col-md-1">Anzahl</th>
-                    <th class="col-md-1">Einheit</th>
-                    <th class="col-md-1">Preis</th>
-                    <th class="col-md-1">Kosten</th>
-                    <th class="col-md-2">Verpackung</th>
-                    <th class="col-md-3">Bemerkung</th>
-                    <th ng-if="bestellung.edit"></th>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td colspan="7">{{ bestellung.projectid1 }}, Bestelldok. {{ bestellung.purchasedoc1.id }}</td>
-                        <td ng-if="bestellung.edit"></td>
-                    </tr>
-                    <tr class="text-muted" ng-repeat="item in bestellung.purchasedoc1.data">
-                        <td class="name-col">{{ item.name }}</td>
-                        <td> {{ item.quantity }} </td>
-                        <td> {{ item.unit }}</td>
-                        <td> {{ item.price |currency:""}} €</td>
-                        <td> {{ item.quantity*item.price |currency:""}} €</td>
-                        <td> {{ item.packing }}</td>
-                        <td><span ng-show="bestellung.edit">
-                            <textarea type="text" class="form-control" ng-model="item.comment"
-                                      placeholder="Bemerkung (optional)" ng-maxlength="255"
-                                      maxlength="255"></textarea></span>
-                            <span ng-show="!bestellung.edit">{{ item.comment }}</span>
-                        </td>
-                        <td ng-if="bestellung.edit"><span>
-                            <li class="btn-group pull-right" uib-dropdown is-open="">
-                                <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
-                                   ng-disabled="disabled">
-                                    Optionen <span class="caret"></span>
-                                </a>
-                                <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                                    <li><a ng-click="lagerVm.delete_docdata(bestellung, item.rowid)">Eintrag
-                                        löschen</a></li>
-                                </ul>
-                            </li></span>
-                        </td>
-                    </tr>
-                    <tr ng-hide="!bestellung.projectid2">
-                        <td colspan="7">{{ bestellung.projectid2 }}, Bestelldok. {{ bestellung.purchasedoc2.id }}</td>
-                         <td ng-if="bestellung.edit"></td>
-                    </tr>
-                    <tr class="text-muted" ng-repeat="item in bestellung.purchasedoc2.data">
-                        <td class="name-col">{{ item.name }}</td>
-                        <td> {{ item.quantity }} </td>
-                        <td> {{ item.unit }}</td>
-                        <td> {{ item.price |currency:""}} €</td>
-                        <td> {{ item.quantity*item.price |currency:""}} €</td>
-                        <td> {{ item.packing }}</td>
-                        <td><span ng-show="bestellung.edit">
-                            <textarea type="text" class="form-control" ng-model="item.comment"
-                                      placeholder="Bemerkung (optional)" ng-maxlength="255"
-                                      maxlength="255"></textarea></span>
-                            <span ng-show="!bestellung.edit">{{ item.comment }}</span>
-                        </td>
-                        <td ng-if="bestellung.edit"><span>
-                            <li class="btn-group pull-right" uib-dropdown is-open="">
-                                <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
-                                   ng-disabled="disabled">
-                                    Optionen <span class="caret"></span>
-                                </a>
-                                <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                                    <li><a ng-click="lagerVm.delete_docdata(bestellung, item.rowid)">Eintrag
-                                        löschen</a></li>
-                                </ul>
-                            </li></span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <div class="well" layout="row" ng-hide="bestellung.edit">
-                    <span ng-show="bestellung.pdf">
-                        <a target="_blank" href="{{ bestellung.pdf }}">
-                            <img ng-src="static/pdficon.png" width="32">Lagerausgang-{{ bestellung.id }}.pdf</a>
-                        <embed ng-if="bestellung.select"  src="{{ bestellung.pdf +'?q='+lagerVm.randomid+ '#page=1&amp;zoom=90'}}"
-                               width="800" height="500" title="" ></embed>
-                    </span>
-                    <div ng-hide="bestellung.edit" class="btn-group col-md-4 pull-right" role="group" aria-label="...">
-                        <div class="btn-group-vertical" role="group" aria-label="...">
-                            <button type="button" class="btn btn-default"
-                                    ng-click="lagerVm.refresh_documents(bestellung)">
-                                <img ng-src="static/pdficon.png" width="24"> neu erstellen
-                            </button>
+            <md-autocomplete flex="40" ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
+                             md-selected-item="lagerVm.selectedProject"
+                             md-search-text-change="lagerVm.searchTextChange(lagerVm.searchProject)"
+                             md-search-text="lagerVm.searchProject"
+                             md-selected-item-change="lagerVm.selectedProjectChange(item)"
+                             md-items="item in lagerVm.queryProject(lagerVm.searchProject)"
+                             md-item-text="item.id+', '+item.description"
+                             md-min-length="0"
+                             placeholder="Bitte wählen Sie eine Baustelle aus" md-select-on-match="true">
+                <md-item-template>
+                <span md-highlight-text="lagerVm.searchProject"
+                      md-highlight-flags="^i">{{ item.id+', '+item.description + ', ' +item.manager.firstname
+                        + ' ' +item.manager.lastname }}</span>
+                </md-item-template>
+                <md-not-found>
+                    Keine Übereinstimmung mit "{{ lagerVm.searchProject }}" gefunden.
+                </md-not-found>
+            </md-autocomplete>
+            <div class="spacer"> </div>
+            <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
+                'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
+            <md-autocomplete flex="40" ng-disabled="lagerVm.isDisabled"
+                 md-no-cache="true"
+                 md-delay="600"
+                 md-selected-item="lagerVm.selectedKolonne"
+                 md-search-text-change="lagerVm.searchTextChange(lagerVm.searchKolonne)"
+                 md-search-text="lagerVm.searchKolonne"
+                 md-selected-item-change="lagerVm.selectedKolonneChange(item)"
+                 md-items="item in lagerVm.queryKolonne(lagerVm.searchKolonne)"
+                 md-item-text="item.id+', '+item.description"
+                 md-min-length="0"
+                 placeholder="Bitte wählen Sie eine Kolonne aus" md-select-on-match="true">
+                <md-item-template>
+                    <span md-highlight-text="lagerVm.searchKolonne"
+                    md-highlight-flags="^i">{{ item.id+', '+item.description }}</span>
+                </md-item-template>
+                <md-not-found>
+                    Keine Übereinstimmung mit "{{ lagerVm.searchKolonne }}" gefunden.
+                </md-not-found>
+            </md-autocomplete>
+        </div>
+        <div class="spacer"></div>
+        <div ng-repeat="bestellung in lagerVm.lagerausgang | orderBy: '-id'">
+            <div class="panel" ng-class="{'panel-edit' : bestellung.edit, 'panel-info': bestellung.select}"
+                 ng-class-odd="{'panel-success' : !bestellung.edit && !bestellung.select}" ng-class-even="{'panel-default' : !bestellung.edit && !bestellung.select}">
+                <div  class="panel-heading" scroll-on-click layout="row">
+                    <div flex="grow" layout="row" ng-click="lagerVm.select_doc(bestellung)">
+                        <div flex="10"> Nr. {{ bestellung.id }}</div>
+                        <div flex="15"> Baustelle: {{ bestellung.projectid1 }}</div>
+                        <div flex="20"> Kolonne: {{ bestellung.projectid2 }}</div>
+                        <div flex="30"> Abholer: {{ bestellung.abholer }}</div>
+                        <div flex="10"> {{ bestellung.docdate |date:'d. MMM yyyy' }}</div>
+                    </div>
+                    <li flex="10" class="btn-group pull-right" uib-dropdown is-open="">
+                        <a id="single-button" type="button" class="dropdown-toggle pull-right" uib-dropdown-toggle
+                           ng-disabled="disabled">
+                            Optionen <span class="caret"></span>
+                        </a>
+                        <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                            <li><a ng-click="lagerVm.delete_doc(bestellung)">Bestellung löschen</a></li>
+                            <li><a ng-click="lagerVm.edit_doc(bestellung)">Kommentar ändern</a></li>
+                        </ul>
+                    </li>
+                </div>
+                <div ng-show="bestellung.select" class="panel-body">
+                    <table class="table">
+                        <thead>
+                        <th class="col-md-4">Name</th>
+                        <th class="col-md-1">Anzahl</th>
+                        <th class="col-md-1">Einheit</th>
+                        <th class="col-md-1">Preis</th>
+                        <th class="col-md-1">Kosten</th>
+                        <th class="col-md-2">Verpackung</th>
+                        <th class="col-md-3">Bemerkung</th>
+                        <th ng-if="bestellung.edit"></th>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="7">{{ bestellung.projectid1 }}, Bestelldok. {{ bestellung.purchasedoc1.id }}</td>
+                            <td ng-if="bestellung.edit"></td>
+                        </tr>
+                        <tr class="text-muted" ng-repeat="item in bestellung.purchasedoc1.data">
+                            <td class="name-col">{{ item.name }}</td>
+                            <td> {{ item.quantity }} </td>
+                            <td> {{ item.unit }}</td>
+                            <td> {{ item.price |currency:""}} €</td>
+                            <td> {{ item.quantity*item.price |currency:""}} €</td>
+                            <td> {{ item.packing }}</td>
+                            <td><span ng-show="bestellung.edit">
+                                <textarea type="text" class="form-control" ng-model="item.comment"
+                                          placeholder="Bemerkung (optional)" ng-maxlength="255"
+                                          maxlength="255"></textarea></span>
+                                <span ng-show="!bestellung.edit">{{ item.comment }}</span>
+                            </td>
+                            <td ng-if="bestellung.edit"><span>
+                                <li class="btn-group pull-right" uib-dropdown is-open="">
+                                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                                       ng-disabled="disabled">
+                                        Optionen <span class="caret"></span>
+                                    </a>
+                                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                                        <li><a ng-click="lagerVm.delete_docdata(bestellung, item.rowid)">Eintrag
+                                            löschen</a></li>
+                                    </ul>
+                                </li></span>
+                            </td>
+                        </tr>
+                        <tr ng-hide="!bestellung.projectid2">
+                            <td colspan="7">{{ bestellung.projectid2 }}, Bestelldok. {{ bestellung.purchasedoc2.id }}</td>
+                             <td ng-if="bestellung.edit"></td>
+                        </tr>
+                        <tr class="text-muted" ng-repeat="item in bestellung.purchasedoc2.data">
+                            <td class="name-col">{{ item.name }}</td>
+                            <td> {{ item.quantity }} </td>
+                            <td> {{ item.unit }}</td>
+                            <td> {{ item.price |currency:""}} €</td>
+                            <td> {{ item.quantity*item.price |currency:""}} €</td>
+                            <td> {{ item.packing }}</td>
+                            <td><span ng-show="bestellung.edit">
+                                <textarea type="text" class="form-control" ng-model="item.comment"
+                                          placeholder="Bemerkung (optional)" ng-maxlength="255"
+                                          maxlength="255"></textarea></span>
+                                <span ng-show="!bestellung.edit">{{ item.comment }}</span>
+                            </td>
+                            <td ng-if="bestellung.edit"><span>
+                                <li class="btn-group pull-right" uib-dropdown is-open="">
+                                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
+                                       ng-disabled="disabled">
+                                        Optionen <span class="caret"></span>
+                                    </a>
+                                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
+                                        <li><a ng-click="lagerVm.delete_docdata(bestellung, item.rowid)">Eintrag
+                                            löschen</a></li>
+                                    </ul>
+                                </li></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="well" layout="row" ng-hide="bestellung.edit">
+                        <span ng-show="bestellung.pdf">
+                            <a target="_blank" href="{{ bestellung.pdf }}">
+                                <img ng-src="static/pdficon.png" width="32">Lagerausgang-{{ bestellung.id }}.pdf</a>
+                            <embed ng-if="bestellung.select"  src="{{ bestellung.pdf +'?q='+lagerVm.randomid+ '#page=1&amp;zoom=90'}}"
+                                   width="800" height="500" title="" ></embed>
+                        </span>
+                        <div ng-hide="bestellung.edit" class="btn-group col-md-4 pull-right" role="group" aria-label="...">
+                            <div class="btn-group-vertical" role="group" aria-label="...">
+                                <button type="button" class="btn btn-default"
+                                        ng-click="lagerVm.refresh_documents(bestellung)">
+                                    <img ng-src="static/pdficon.png" width="24"> neu erstellen
+                                </button>
+                            </div>
                         </div>
                     </div>
+                    <button ng-show="bestellung.edit" ng-click="lagerVm.save_doc(bestellung)"
+                            type="button" class="btn btn-default">Speichern
+                    </button>
                 </div>
 
-                <button ng-show="bestellung.edit" ng-click="lagerVm.save_doc(bestellung)"
-                        type="button" class="btn btn-default">Speichern
-                </button>
-                <li class="btn-group pull-right" uib-dropdown is-open="">
-                    <a id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
-                       ng-disabled="disabled">
-                        Optionen <span class="caret"></span>
-                    </a>
-                    <ul class="uib-dropdown-menu" aria-labelledby="single-button">
-                        <li><a ng-click="lagerVm.delete_doc(bestellung)">Bestellung löschen</a></li>
-                        <li><a ng-click="lagerVm.edit_doc(bestellung)">Kommentar ändern</a></li>
-                    </ul>
-                </li>
             </div>
-
         </div>
-    </div>
-</section>
-<div class="spacer"></div>
+    </md-content>
+    </section>
+    <div layout-margin></div>
+    <div flex="40"></div>
+</div>
 <!--section layout="column" flex="40">
     <embed ng-if="lagerVm.displayPDF!=''"  src="{{ lagerVm.displayPDF + '#page=1&amp;zoom=90'}}" width="800" height="500" internalinstanceid="41" title=""></embed>
 </section-->
-</div>
+
 <!--pre>{{ lagerVm.test }}</pre-->
     <!--<button ng-click="lagerVm.deleteconsumed('10007979')">consumedproduct löschen</button>-->

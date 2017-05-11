@@ -16,11 +16,11 @@
         <a class="header nomargin" flex="30" ng-click="maschinenVm.order=maschinenVm.order==='availabilitystatus'?'-availabilitystatus':'availabilitystatus'"><b>Besitzer</b></a>
     </div>
     <div layout="row" flex
-         ng-repeat="machine in maschinenVm.machines | filter: maschinenVm.search | orderBy: maschinenVm.order as results"
+         ng-repeat="machine in maschinenVm.machines | orFilter:maschinenVm.search | orderBy: maschinenVm.order as results"
          layout-align="start start" ng-class-even="'even'" ng-class-odd="'odd'">
         <div flex="25" style="padding-left:6px;"><a class="nolink" ng-click="maschinenVm.select(machine)">{{ machine.id }}</a></div>
         <div flex="25" style="padding-left:6px;" title="{{machine.name1}}">
-            <a class="nolink" ng-click="maschinenVm.select(machine)">{{machine.name1 | limitTo:30}}{{ machine.name1.length>30 ? '...' : ''}}</a>
+            <a class="nolink" ng-click="maschinenVm.select(machine)">{{machine.name1 | limitTo:30}}{{ machine.name1.length>30 ? '...' : '' }}</a>
             <span ng-if="machine.select"><br/><br/><md-button class="md-raised md-primary" ng-click="maschinenVm.reset(machine)">zurück auf Lager</md-button></span>
         </div>
         <div flex="20">{{ machine.chassisnum }}</div>

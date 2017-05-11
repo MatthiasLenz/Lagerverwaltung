@@ -124,8 +124,11 @@ angular.module('baseApp.lagerausgang')
             var temp = doc.edit;
             vm.lagerausgang.forEach(function (item) {
                 item.edit = false;
+                item.select = false;
             });
             doc.edit = !temp;
+            doc.select=true;
+            refreshDoc(doc);
         }
 
         vm.select_doc = select_doc;
