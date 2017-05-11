@@ -27,6 +27,9 @@ angular.module('baseApp.Services')
     };
 
     var machines = [];
+    var titles = {};
+
+
     var resource = $resource(
         "/api/installation/:id", {id: "@id"},
         {
@@ -44,8 +47,20 @@ angular.module('baseApp.Services')
                 machines.push(item);
             });
         });
+        resource.query({}).$promise.then(function (result) {
+            let title;
+            result.forEach(function (item) {
+                if (item.title){
+                    title = item.id;
+                    titles[title] = [];
+                }
+                else {
+                    titles[title].push(item);
+                }
+            });
+        });
     }
-    function getMachines(title){
+    function getMachines1(title){
         let result=[];
         machines.forEach(function(item){
             if (item["id"].substring(0,title.length)==title){
@@ -53,6 +68,9 @@ angular.module('baseApp.Services')
             }
         });
         return result;
+    }
+    function getMachines(title){
+        return titles[title];
     }
     function getMachine(id){
         return resource.get(id).$promise;

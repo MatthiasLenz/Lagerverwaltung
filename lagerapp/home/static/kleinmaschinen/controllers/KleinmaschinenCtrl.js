@@ -2,7 +2,6 @@ angular.module('baseApp.kleinmaschinen')
 .controller('KleinmaschinenCtrl', ['installationService', '$cacheFactory', 'alertService',
     function (installationService, $cacheFactory, alertService) {
     var vm = this;
-    window.vm = vm;
     console.log('Kleinmaschinen Controller geladen');
 
     vm.machines = installationService.machines;

@@ -1,9 +1,10 @@
 <!--<button ng-click="lagerVm.swap_direction()">swap Layout</button>-->
-<section class="demo-container md-whiteframe-z1">
+<a ng-click="lagerVm.moveTo('overview')">zur Übersicht</a>
+<section class="demo-container md-whiteframe-z1" id="top">
     <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
         <div class="md-toolbar-tools">
             <span><md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_one_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
-            'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>Empfänger</span>
+            'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>Empfänger auswählen</span>
         </div>
     </md-toolbar>
     <md-content style="padding:8px;">
@@ -97,25 +98,25 @@
         </div>
     </md-content>
 </section>
-<a scroll-on-click>zur Übersicht</a>
+
 <div layout="row" >
     <section layout="column" flex="60" class="demo-container md-whiteframe-z1">
         <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3"><!--md-hue-3-->
             <div class="md-toolbar-tools">
                 <span><md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
-                    'width': '48px','fill':'rgb(52,73,188)'}" ></md-icon> Artikel eintragen</span>
+                    'width': '48px','fill':'rgb(52,73,188)'}" ></md-icon> Artikel/Geräte eintragen</span>
             </div>
         </md-toolbar>
-        <md-content>
+        <md-content style="padding:8px;">
             <div flex="50">
-                <md-input-container style="padding-left:8px;">
-                    <label style="padding-left:8px;">Bemerkung</label>
+                <md-input-container>
+                    <label>Bemerkung</label>
                     <input type="text" ng-model="lagerVm.comment">
                 </md-input-container>
             </div>
             <fieldset class="standard">
-                <legend style="padding-left:8px;">Artikel</legend>
-                <div layout="row" style="margin:8px" ng-repeat="row in lagerVm.selectedProducts" layout-align="space-around center">
+                <legend>Artikel</legend>
+                <div layout="row"  ng-repeat="row in lagerVm.selectedProducts" layout-align="space-around center">
                     <div flex="5">
                         <md-button class="md-icon-button" aria-label="Remove Row" ng-click="lagerVm.deleteRow(lagerVm.selectedProducts, row.id)">
                             <md-icon md-svg-src="static/img/icons/ic_clear_black_24px.svg"></md-icon>
@@ -161,19 +162,19 @@
                     <!--md-button class="md-fab md-mini md-primary" aria-label="Add Row" ng-click="lagerVm.addRow()">
                         <md-icon md-svg-src="static/img/icons/ic_add_white_24px.svg"></md-icon>
                     </md-button-->
-                    <md-button style="padding-left:8px;" ng-click="lagerVm.addRow()">Artikel hinzufügen</md-button>
+                    <md-button  ng-click="lagerVm.addRow()">Artikel hinzufügen</md-button>
                 </div>
             </fieldset><br/>
             <fieldset class="standard" ng-if="lagerVm.show_kleingeraete">
-                <legend style="padding-left:8px;">Gerät</legend>
-                <div layout="row" style="margin:8px;" ng-repeat="row in lagerVm.selectedMachines" layout-align="space-around center">
+                <legend >Gerät</legend>
+                <div layout="row"  ng-repeat="row in lagerVm.selectedMachines" layout-align="space-around center">
                     <div flex="5">
                         <md-button class="md-icon-button" aria-label="Remove Row" ng-click="lagerVm.deleteRow(lagerVm.selectedMachines, row.id)">
                             <md-icon md-svg-src="static/img/icons/ic_clear_black_24px.svg"></md-icon>
                         </md-button>
                     </div>
                     <div flex="20">
-                        <md-select style="margin:0px;" flex placeholder="Gerätetyp" ng-model="row.selectedType">
+                        <md-select style="margin:0px;" flex placeholder="Gerätetyp" ng-model="row.selectedType" ng-change="row.installation=null">
                             <md-option ng-value="title" ng-repeat="title in lagerVm.titles">{{ title.id }} {{title.name1}}</md-option>
                         </md-select>
                     </div>
@@ -198,7 +199,7 @@
                     <!--md-button class="md-fab md-mini md-primary" aria-label="Add Row" ng-click="lagerVm.addRowMachines()">
                         <md-icon md-svg-src="static/img/icons/ic_add_white_24px.svg"></md-icon>
                     </md-button-->
-                    <md-button style="padding-left:8px;" ng-click="lagerVm.addRowMachines()">Gerät hinzufügen</md-button>
+                    <md-button ng-click="lagerVm.addRowMachines()">Gerät hinzufügen</md-button>
 
                 </div>
             </fieldset>
@@ -209,17 +210,18 @@
     <section layout="column" flex="40" class="demo-container md-whiteframe-z1">
         <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
             <div class="md-toolbar-tools">
-                <span>Vorschau</span>
+                <span><md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_3_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
+                'width': '48px','fill':'rgb(63,81,181)'}"></md-icon> Überprüfen & Speichern </span>
             </div>
         </md-toolbar>
-        <md-content>
+        <md-content style="padding:8px;">
             <md-subheader class="md-no-sticky" space-between>
                 <div layout="row">
                     <div flex="60">
                         <div>Baustelle : {{ lagerVm.selectedProject.id }} -
-                            {{ lagerVm.selectedProject.description | limitTo: 30}}{{ lagerVm.selectedProject.description.length>30 ? '...' : '' }}</div>
+                            {{ lagerVm.selectedProject.description | limitTo: 35}}{{ lagerVm.selectedProject.description.length>35 ? '...' : '' }}</div>
                         <div>Kolonne: {{ lagerVm.Kolonne.id }} -
-                            {{ lagerVm.selectedKolonne.description | limitTo: 30}}{{ lagerVm.selectedKolonne.description.length>30 ? '...' : '' }}</div>
+                            {{ lagerVm.selectedKolonne.description | limitTo: 35}}{{ lagerVm.selectedKolonne.description.length>35 ? '...' : '' }}</div>
                         <div>Lager: {{ lagerVm.stock.name }}</div>
                         <div>Lagerist: {{ lagerVm.user.userdata.first_name }} {{ lagerVm.user.userdata.last_name }}</div>
                         <div>Bemerkung: {{ lagerVm.comment }}</div>
@@ -248,7 +250,7 @@
                 <tbody>
                 <tr ng-repeat="item in lagerVm.selectedProducts" ng-show="item.article && item.quantity">
                     <td> {{ item.article.prodid.id }}</td>
-                    <td> {{ item.article.prodid.name1 | limitTo: 28}}{{ item.article.prodid.name1.length>28 ? '...' : '' }}</td>
+                    <td> {{ item.article.prodid.name1 | limitTo: 35}}{{ item.article.prodid.name1.length>35 ? '...' : '' }}</td>
                     <td> {{ item.quantity * item.selectedpacking.quantity | number : 3}}</td>
                     <td> {{ item.article.prodid.unit1 }}</td>
                     <td> {{ item.article.prodid.netpurchaseprice |currency:""}} €</td>
@@ -258,7 +260,7 @@
                 </tr>
                 <tr ng-repeat="item in lagerVm.selectedMachines" ng-show="item.installation.id && item.selectedType.prodid.netpurchaseprice">
                     <td> {{ item.selectedType.prodid.id}}</td>
-                    <td> {{ item.installation.name1 | limitTo: 28}}{{ item.installation.name1.length>28 ? '...' : '' }}</td>
+                    <td> {{ item.installation.name1 | limitTo: 35}}{{ item.installation.name1.length>35 ? '...' : '' }}</td>
                     <td>1</td>
                     <td>Stk.</td>
                     <td> {{ item.selectedType.prodid.netpurchaseprice |currency:""}} €</td>
@@ -281,22 +283,21 @@
             <!--<md-button class="md-icon-button md-primary" aria-label="Save" ng-click="lagerVm.save()">
                 <md-icon md-svg-icon="static/img/icons/ic_save_black_48px.svg"></md-icon>
             </md-button>-->
-            <md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_3_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
-                'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>
             <md-button class="md-raised" ng-click="lagerVm.save()">Speichern</md-button>
         </div>
     </div>
 </div>
-<br/><br/>
-<div layout="row" id="overview">
-    <section  class="demo-container md-whiteframe-z1" layout="column" flex="60">
+<br/><a ng-click="lagerVm.moveTo('top')">nach oben</a>
+<div >
+<section  class="demo-container md-whiteframe-z1" layout="column" id="overview" flex="100">
+
     <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
         <div class="md-toolbar-tools">
             <span>Übersicht</span>
         </div>
     </md-toolbar>
     <md-content style="padding:8px;">
-        <div layout="row" layout-align="start center">
+        <div layout="row" layout-align="start center" flex="60">
             <!--md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
             'width': '48px','fill':'rgb(63,81,181)'}"></md-icon-->
             <md-autocomplete flex="40" ng-disabled="lagerVm.isDisabled" md-no-cache="true" md-delay="600"
@@ -340,12 +341,12 @@
                 </md-not-found>
             </md-autocomplete>
         </div>
-        <div class="spacer"></div>
-        <div ng-repeat="bestellung in lagerVm.lagerausgang | orderBy: '-id'">
+        <br/>
+        <div flex="60" ng-repeat="bestellung in lagerVm.lagerausgang | orderBy: '-id'">
             <div class="panel" ng-class="{'panel-edit' : bestellung.edit, 'panel-info': bestellung.select}"
                  ng-class-odd="{'panel-success' : !bestellung.edit && !bestellung.select}" ng-class-even="{'panel-default' : !bestellung.edit && !bestellung.select}">
-                <div  class="panel-heading" scroll-on-click layout="row">
-                    <div flex="grow" layout="row" ng-click="lagerVm.select_doc(bestellung)">
+                <div  class="panel-heading" layout="row" id="{{ 'lagerausgang_' + bestellung.id }}">
+                    <div flex="grow" layout="row" ng-click="lagerVm.select_doc(bestellung)" style="outline: none;">
                         <div flex="10"> Nr. {{ bestellung.id }}</div>
                         <div flex="15"> Baustelle: {{ bestellung.projectid1 }}</div>
                         <div flex="20"> Kolonne: {{ bestellung.projectid2 }}</div>
@@ -461,11 +462,9 @@
 
             </div>
         </div>
+        <br/><br/><br/>
     </md-content>
-    </section>
-    <div layout-margin></div>
-    <div flex="40"></div>
-</div>
+</section>
 <!--section layout="column" flex="40">
     <embed ng-if="lagerVm.displayPDF!=''"  src="{{ lagerVm.displayPDF + '#page=1&amp;zoom=90'}}" width="800" height="500" internalinstanceid="41" title=""></embed>
 </section-->

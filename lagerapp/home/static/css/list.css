@@ -166,7 +166,7 @@ tbody:nth-child(even) {
     height: 0;
     border-top: 20px inset transparent;
     border-bottom: 20px inset transparent;
-    border-left: 20px solid #fff;
+    border-left: 20px solid #efefef;
     position: absolute;
     content: "";
     top: 0;

@@ -138,7 +138,9 @@ angular.module('baseApp.lagerausgang')
                 item.select = false;
             });
             doc.select = !temp;
-            refreshDoc(doc);
+            refreshDoc(doc).then(function(){
+                vm.moveTo('lagerausgang_' + doc.id);
+            });
         }
 
         vm.save_doc = save_doc;
@@ -310,7 +312,7 @@ angular.module('baseApp.lagerausgang')
                 alertService.showAlert('Bitte wählen Sie einen Abholer aus.');
                 return 0;
             }
-            if ((vm.selectedProducts.length===0 || !vm.selectedProducts[0].article ) && (vm.selectedMachines.length==0 || vm.selectedMachines[0].selectedType=="")){
+            if ((vm.selectedProducts.length===0 || !vm.selectedProducts[0].article ) && (vm.selectedMachines.length===0 || vm.selectedMachines[0].installation===null)){
                 alertService.showAlert('Keine Artikel oder Maschinen ausgewählt.'); //selectedMachines and selectedProducts empty
                 return 0;
             }
@@ -816,6 +818,10 @@ angular.module('baseApp.lagerausgang')
                 vm.files[item.purchasedocid] = {pdf: item.pdf, doc: item.doc, odt: item.odt};
             });
         });
+        vm.moveTo = function(id){
+            let element = document.getElementById(id);
+            moveTop(element);
+        };
         console.log('Lagerausgang loaded');
     }])
     .config(['$provide', function ($provide) {
