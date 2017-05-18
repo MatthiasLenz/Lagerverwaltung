@@ -156,7 +156,6 @@ angular.module('baseApp.lagerausgang')
             });
         }
 
-
         let reverse_create_purchasedoc = function(purchasedoc){
             purchasedoc["company"] = projectService.getCompanyFromID(purchasedoc["modulerefid"]);
             bestellungenService.internalpurchasedoc.delete(purchasedoc);

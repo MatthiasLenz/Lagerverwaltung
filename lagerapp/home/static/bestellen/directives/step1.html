@@ -9,7 +9,7 @@
     <div class="form-group">
         <label> Artikelgruppe </label>
         <select class="form-control" style="width:100px;" ng-model="step1.resourcenatureid"
-                ng-options="nature.id as nature.name group by nature.title for nature in step1.resourcenatureids"
+                ng-options="nature.id as nature.id +' '+nature.name group by nature.title for nature in step1.resourcenatureids"
                 ng-change="step1.resetAndUpdate()"></select>
     </div>
 </form>
@@ -45,7 +45,7 @@
             ng-class="{'text-muted': stockitem.prodid.supplier.length==0}">
             <td>{{ stockitem.prodid.nature }} </td>
             <td><span ng-class="{hide:stockitem.prodid.title}">
-                    <button ng-click="bestellen.selectprod(stockitem.prodid)">{{ stockitem.prodid.name1 }}</button>
+                    <a class="nolink" ng-click="bestellen.selectprod(stockitem.prodid)">{{ stockitem.prodid.name1 }}</a>
                 </span>
                 <span ng-if="stockitem.prodid.title">
                 {{ stockitem.prodid.name1 }}

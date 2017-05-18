@@ -1,6 +1,6 @@
 angular.module('baseApp.bestellen').
-controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenService', '$log',
-    function ($http, $scope, $q, $interval, bestellungenService, $log) {
+controller('Step2Ctrl', ['$http', '$scope', '$q', 'bestellungenService', '$log','utilityService',
+    function ($http, $scope, $q, bestellungenService, $log, utilityService) {
 
     var vm = this;
     vm.product = $scope.bestellen.selectedprod;
@@ -8,20 +8,10 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
     vm.purchasedocs = [];
     vm.loading = true;
     vm.no_suppliers = false;
-    $scope.$on('$destroy', function () {
-        // Make sure that the interval is destroyed too
-        $interval.cancel(dotIntervall);
-    });
+    vm.dots = utilityService.dots;
     function getPurchases() {
         return bestellungenService.purchasedoc.list({status: 0});
     }
-
-    var i = 0;
-    var dots = ['', '.', '..', '...', '....'];
-    var dotIntervall = $interval(function () {
-        i = (i + 1) % dots.length;
-        vm.dots = dots[i];
-    }, 600);
 
     function getProductSupplier(entry) {
         return $http.get(entry);
@@ -34,9 +24,9 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
         });
         console.log("get psupp");
         var supplierPromises = [];
-        var productSupplierPromises = [];
 
-        bestellungenService.get_productsupplier(vm.product.id).then(function(response){
+        bestellungenService.get_productsupplier(vm.product.id)
+        .then(function(response){
             let suppliers = response.results;
             suppliers.forEach(function (supplier) {
                 var suppdata = {};
@@ -67,14 +57,11 @@ controller('Step2Ctrl', ['$http', '$scope', '$q', '$interval', 'bestellungenServ
                     vm.suppliers.push(suppdata);
                 }
             });
-        });
-
-        //after loop through suppliers and creating productsupplier promises
-        $q.all(productSupplierPromises).then(function () { //after all supplier promises are resolved
-            //after all productsupplier promises are resolved
+            return response;
+        })
+        .then(function () {
             vm.loading = false;
-            $interval.cancel(dotIntervall);
-            if (vm.suppliers.length == 0) {
+            if (vm.suppliers.length === 0) {
                 vm.no_suppliers = true;
                 //sollte dieser übergeben werden, die fehlenden felder einfach nullen
             }

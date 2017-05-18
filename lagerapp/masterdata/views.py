@@ -484,6 +484,27 @@ from django.http import JsonResponse
 def to_named_rows(rows, description):
     return [{c[0]: row[index] for index, c in enumerate(description)} for row in rows]
 
+@api_view(['GET',])
+def get_stock_natures(request, company):
+    dbserver = settings.DBSERVER
+    dbpassword = settings.DBPASSWORD
+    if request.method == 'GET':
+        cn = pyodbc.connect(
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_masterdata;UID=hitoffice;PWD=%s' % (
+            dbserver, company, dbpassword))
+        cursor = cn.cursor()
+        cursor.execute("(select n.ID, n.Name, n.title from nature n where Title=1\
+                        union\
+                        select Distinct n.ID, n.Name, n.title from nature n inner join hit_01_masterdata..product p on p.resourcenatureid = n.id\
+                       inner join stockdata s on s.prodid = p.id) order by ID")
+        results = cursor.fetchall()
+        # convert strings to UTF-8
+        results = [[elem.decode('latin-1').encode('UTF-8') if type(elem) == str else elem for elem in row] for row in results]
+        columns = cursor.description
+        results = to_named_rows(results, columns)
+        cursor.close()
+        return Response({'data': results})
+
 
 @api_view(['GET', 'POST', 'DELETE'])
 @authentication_classes((TokenAuthentication,))
@@ -535,10 +556,9 @@ def get_project_data(request, id, company, format=None):
         try:
             print("try create consumedproduct")
             data = request.data
-
             docdate = data['docdate']
             articles = data['data']
-            purchaseref = data['id']
+            purchaseref = data['id'] if 'id' in data else data['orderid']
             supplierid = data['supplierid']
             print("try connect")
             cn = pyodbc.connect(
@@ -563,14 +583,17 @@ def get_project_data(request, id, company, format=None):
                            consumedproductid, docdate[0:10], '')
             cn.commit()
             multiplier = -1 if id in ('1-7800', '4-7800', '5-7800') else 1
+            #workaround for lagereingang / deliverynote
+            if 'deliverytype' in data and data['deliverytype'] == 'eingang':
+                multiplier = 1
 
             for article in articles:
                 cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
                                SupplierID, PurchaseRef) Values \
                                (?,?,?,?,?,?,?,?,?,?,?)", consumedproductid, datarowid, article['prodid'], article['name'],
                                       article['unit'], multiplier*article['quantity'], article['price'], multiplier*round(article['price'] * article['quantity'], 2),
-                                      article['comment'], supplierid, purchaseref)
-                command = "Update PurchaseDocData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
+                                      article['comment'] if 'comment' in article else '', supplierid, purchaseref)
+                command = "Update DeliveryNoteData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
                 print(command)
                 cursor_purchase.execute(command)
                 datarowid += 1

@@ -128,23 +128,26 @@
         <br>
         <ul class="nav nav-tabs">
             <li ng-if="cc.modules.Bestellen" ng-class="{active: cc.isActive('productlist_state')}">
-                <a href="" ng-click="cc.setState('productlist_state')">Bestellen</a></li>
-            <li class="btn-group" uib-dropdown is-open="cc.dropdown"
+                <a ng-click="cc.setState('productlist_state')">Bestellen</a></li>
+            <li ng-class="{active: cc.isActive('purchasedoc0_state')}" ng-if="cc.modules.Bestellen">
+                <a ng-click="cc.setState('purchasedoc0_state')">Offene Bestellungen</a></li>
+            <li ng-class="{active: cc.isActive('purchasedoc1_state')}" ng-if="cc.modules.Bestellen">
+                <a ng-click="cc.setState('purchasedoc1_state')">Verschickte Bestellungen</a></li>
+            <li ng-class="{active: cc.isActive('purchasedoc2_state')}" ng-if="cc.modules.Bestellen">
+                <a ng-if="cc.modules.Bestellen"  ng-click="cc.setState('purchasedoc2_state')">Lieferschein eintragen</a></li>
+            <li ng-if="cc.modules.Lagerausgang" ng-class="{active: cc.isActive('lagerausgang_state')}">
+                <a ng-click="cc.setState('lagerausgang_state')">Lagerausgang eintragen</a></li>
+            <li ng-if="cc.modules.Kleinmaschinen" ng-class="{active: cc.isActive('kleinmaschinen_state')}">
+                <a ng-click="cc.setState('kleinmaschinen_state')">Kleinmaschinen Übersicht</a></li>
+            <!--li class="btn-group" uib-dropdown is-open="cc.dropdown"
                 ng-class="{active: cc.isActive('purchasedoc0_state')||cc.isActive('purchasedoc1_state')}">
                 <a ng-if="cc.modules.Bestellen" id="single-button" type="button" class="dropdown-toggle" uib-dropdown-toggle
                    ng-disabled="disabled">
                     Bestellungen <span class="caret"></span>
                 </a>
                 <ul ng-if="cc.modules.Bestellen" class="uib-dropdown-menu" aria-labelledby="single-button">
-                    <li><a ng-click="cc.setState('purchasedoc0_state')">Offene Bestellungen</a></li>
-                    <li><a ng-click="cc.setState('purchasedoc1_state')">Verschickte Bestellungen</a></li>
-                    <li><a ng-click="cc.setState('purchasedoc2_state')">Lieferschein eintragen</a></li>
                 </ul>
-            </li>
-            <li ng-if="cc.modules.Lagerausgang" ng-class="{active: cc.isActive('lagerausgang_state')}">
-                <a href="" ng-click="cc.setState('lagerausgang_state')">Lagerausgang</a></li>
-            <li ng-if="cc.modules.Kleinmaschinen" ng-class="{active: cc.isActive('kleinmaschinen_state')}">
-                <a href="" ng-click="cc.setState('kleinmaschinen_state')">Kleinmaschinen</a></li>
+            </li-->
         </ul>
         <br/>
 

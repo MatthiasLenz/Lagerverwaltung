@@ -4,29 +4,38 @@ directive('bestellungen1', function () {
         templateUrl: 'static/bestellungen/directives/bestellungen1.html',
         controller: ['$scope', 'bestellungenService', 'supplierService', '$filter',
             function ($scope, bestellungenService, supplierService, $filter) {
-                var controller = this;
-                controller.select = null; //purchasedoc
-                controller.list = [];
-                controller.supplierid = '';
-                controller.suppliers = [];
-                controller.showDetail = {};
-                controller.marked = "";
-                controller.status = 1;
-                window.scope11 = controller;
+                var vm = this;
+                vm.select = null; //purchasedoc
+                vm.list = [];
+                vm.supplierid = '';
+                vm.suppliers = [];
+                vm.showDetail = {};
+                vm.marked = "";
+                vm.status = 1;
+                var now = new Date();
+                var mindate = new Date(now.setMonth(now.getMonth() - 6));
                 get_suppliers();
-
-                controller.update = function () {
+                vm.open = function($event) {
+                    vm.yearpickerOpened = true;
+                };
+                vm.update = function () {
                     updateList();
                 };
-                controller.set_status_2 = function (doc) {
+                vm.set_status_open = set_status_open;
+                function set_status_open(docid) {
+                    bestellungenService.purchasedoc.update({id: docid}, {status: 0}).then(function (response) {
+                        updateList();
+                    });
+                }
+                vm.set_status_2 = function (doc) {
                     bestellungenService.purchasedoc.update({id: doc.id}, {"status": 2})
                 };
-                controller.delete_delnote = function (rowid) {
+                vm.delete_delnote = function (rowid) {
                     bestellungenService.deliverynote.delete(rowid).then(function (result) {
                         //reload
-                        supplier = controller.select.supplier;
-                        controller.select = result;
-                        controller.select.supplier = supplier;
+                        supplier = vm.select.supplier;
+                        vm.select = result;
+                        vm.select.supplier = supplier;
                     })
                 };
                 //Todo bestellungen des lieferanten zusammenfassen, lieferung
@@ -37,36 +46,36 @@ directive('bestellungen1', function () {
                 // deliverynote.orderid               = purchasedoc.id
                 // deliverynotedata.purchasedocdataid = purchasedocdata.dataid
 
-                controller.new_edit_delnote = function () {
+                vm.new_edit_delnote = function () {
                     var data = {
-                        "module": 5, "status": 1, "orderid": controller.select.id,
-                        "supplierid": controller.select.supplierid,
+                        "module": 5, "status": 1, "orderid": vm.select.id,
+                        "supplierid": vm.select.supplierid,
                         "docdate": $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sssZ'), "data": []
                     };
-                    controller.select.data.forEach(function (item) {
+                    vm.select.data.forEach(function (item) {
                         data.data.push({
                             "rowid": null, "prodid": item.prodid, "name": item.name, "unit": item.unit, "quantity": 0,
                             "price": item.price, "amount": 0
                         });
                     });
-                    controller.edit_delnote = data;
+                    vm.edit_delnote = data;
                 };
-                controller.supplierByID = {};
+                vm.supplierByID = {};
                 function get_suppliers() {
                     bestellungenService.purchasedoc.suppliers().then(function (result) {
                         result.forEach(function (item) {
-                            controller.suppliers.push(item);
-                            controller.supplierByID[item.id] = item;
+                            vm.suppliers.push(item);
+                            vm.supplierByID[item.id] = item;
                         });
                     });
                 }
-                controller.add_delnote = function () {
+                vm.add_delnote = function () {
                     var data = {
-                        "module": 5, "status": 1, "orderid": controller.select.id,
-                        "supplierid": controller.select.supplierid,
+                        "module": 5, "status": 1, "orderid": vm.select.id,
+                        "supplierid": vm.select.supplierid,
                         "docdate": $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss.sssZ'), "data": []
                     };
-                    controller.select.data.forEach(function (item) {
+                    vm.select.data.forEach(function (item) {
                         data.data.push({
                             "rowid": null, "prodid": item.prodid, "name": item.name, "unit": item.unit, "quantity": 0,
                             "price": item.price, "amount": 0
@@ -74,56 +83,57 @@ directive('bestellungen1', function () {
                     });
                     bestellungenService.deliverynote.create(data).then(function () {
 
-                        bestellungenService.purchasedoc.get({id: controller.select.id}).then(function (result) {
+                        bestellungenService.purchasedoc.get({id: vm.select.id}).then(function (result) {
                             //reload
-                            supplier = controller.select.supplier;
-                            controller.select = result;
-                            controller.select.supplier = supplier;
+                            supplier = vm.select.supplier;
+                            vm.select = result;
+                            vm.select.supplier = supplier;
                         });
                     });
                 };
 
-                controller.status_options = [
+                vm.status_options = [
                     {id: 1, descr: "Verschickt"},
                     {id: 2, descr: "Lieferung hat begonnen"},
                     {id: 3, descr: "Lieferung wahrscheinlich abgeschlossen"}
                     //{id: 4, descr: "Abgeschlossen"}
                 ];
 
-                controller.mark = function (prodid) {
-                    controller.marked = prodid;
+                vm.mark = function (prodid) {
+                    vm.marked = prodid;
                 };
-                controller.edit_doc = function (doc) {
+                vm.edit_doc = function (doc) {
                     var temp = doc.edit;
-                    controller.list.forEach(function (item) {
+                    vm.list.forEach(function (item) {
                         item.edit = false;
                     });
                     doc.edit = !temp;
                 };
-                controller.delete_doc = function (doc) {
+                vm.delete_doc = function (doc) {
                     bestellungenService.purchasedoc.delete(doc).then(function () {
                         updateList();
                     });
                 };
 
                 function updateList() {
-                    controller.list = [];
+                    vm.list = [];
                     bestellungenService.purchasedoc.list({
                         'status': "2,3",
-                        'supplierid': controller.supplierid
+                        'supplierid': vm.supplierid,
+                        'min_date': mindate.toISOString().slice(0,10)
                     }).then(function (result) {
                         result.forEach(function (item) {
-                            supplier = controller.supplierByID[item.supplierid];
+                            supplier = vm.supplierByID[item.supplierid];
                             item.supplier = supplier;
-                            controller.list.push(item);
-                            controller.showDetail[item.id] = false;
+                            vm.list.push(item);
+                            vm.showDetail[item.id] = false;
                         });
                     });
 
                 }
 
-                controller.toggleDetail = function (id) {
-                    controller.showDetail[id] = !(controller.showDetail[id]);
+                vm.toggleDetail = function (id) {
+                    vm.showDetail[id] = !(vm.showDetail[id]);
                 };
             }],
         controllerAs: 'bestellungen1'

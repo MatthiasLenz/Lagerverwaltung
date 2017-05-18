@@ -3,6 +3,14 @@ body {
     background-color: #efefef !important;
 }
 
+.subtle-focus:focus {
+    outline: thin dotted #666666;
+    color: #FF6600;
+}
+.subtle-focus:hover {
+    outline: thin dotted #666666;
+    color: #FF6600;
+}
 .table-header{
     background-color: #D8F0BC;
     padding: 5px;
@@ -89,6 +97,7 @@ td.name-col {
 #top {
     margin-right: 80px;
 }
+
 a {
     cursor: pointer;
 }
@@ -134,7 +143,7 @@ li a { cursor:pointer;}
 tr.title { font-weight: bold; }
 tr.title +tr { border-top: 2px solid #DDD;}
 
-tr td { border-top:none !important;
+tr td,th { border-top:none !important;
     padding:2px !important;
     font-size:14px!important;}
 .ok{

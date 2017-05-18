@@ -2,24 +2,36 @@ angular.module('baseApp').
 directive('deliverynote', function () {
     return {
         templateUrl: 'static/bestellungen/directives/deliverynote.html',
-        controller: ['$scope', 'bestellungenService', '$filter', '$mdDialog', 'sessionService',
-            function ($scope, bestellungenService, $filter, $mdDialog, sessionService) {
-                var controller = this;
-                //TODO remove controller.select
+        controller: ['$scope', '$q', 'bestellungenService', '$filter', '$mdDialog', 'sessionService','stockService','projectService','alertService',
+            function ($scope, $q, bestellungenService, $filter, $mdDialog, sessionService, stockService, projectService) {
+                var vm = this;
+                //TODO remove vm.select
                 sessionService.subscribeStockIDChange($scope, function () {
                     get_suppliers();
                 });
-                controller.select = null; //purchasedoc
-                controller.articles = {};
-                controller.supplier = null;
-                controller.suppliers = [];
-                controller.showDetail = {};
-                controller.marked = "";
-                controller.extdocno = "";
-                controller.comment = "";
-                window.scope11 = controller;
+                vm.select = null; //purchasedoc
+                vm.articles = {};
+                vm.supplier = null;
+                vm.suppliers = [];
+                vm.showDetail = {};
+                vm.marked = "";
+                vm.extdocno = "";
+                vm.comment = "";
+                vm.loading = false;
                 get_suppliers();
-
+                vm.detail = false;
+                vm.getWidth = function getWidth(){
+                    if(!vm.detail){
+                      return '45';
+                    }
+                    else return '80';
+                };
+                vm.disableInput = function disableInput(id){
+                    return id.includes('999');
+                };
+                vm.toggleDetail = function toggleDetail(){
+                    vm.detail = !vm.detail;
+                };
                 function getEligibleArticles(articles) {
                     var eligible = {};
                     for (key in articles) {
@@ -36,10 +48,10 @@ directive('deliverynote', function () {
                     }
                     return eligible;
                 }
-                controller.update = function () {
+                vm.update = function () {
                     updateList();
                 };
-                controller.delivery_complete = function (prodid, articles) {
+                vm.delivery_complete = function (prodid, articles) {
                     complete = true;
                     articles.forEach(function (item) {
                         if ((item.received == undefined && item.article.quantity != 0) ||
@@ -50,7 +62,7 @@ directive('deliverynote', function () {
                     return complete;
                 };
 
-                controller.total = function (articles) {
+                vm.total = function (articles) {
                     var total = 0;
                     articles.forEach(function (item) {
                         if (item.quantity !== undefined && item.quantity != null) {
@@ -61,23 +73,23 @@ directive('deliverynote', function () {
                 };
 
                 //Datepicker
-                controller.dt = new Date();
+                vm.dt = new Date();
 
-                controller.open_datepicker = function () {
-                    controller.popup.opened = true;
+                vm.open_datepicker = function () {
+                    vm.popup.opened = true;
                 };
-                controller.disabled = function (date, mode) {
+                vm.disabled = function (date, mode) {
                     return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
                 };
-                controller.popup = {
+                vm.popup = {
                     opened: false
                 };
-                controller.dateOptions = {
+                vm.dateOptions = {
                     formatYear: 'yy',
                     startingDay: 1
                 };
 
-                controller.exdocnum;
+                vm.exdocnum;
                 //Todo bestellungen des lieferanten zusammenfassen, lieferung
                 // möglichst wenigen bestellungen zuordnen
                 // entweder total angeben, von dem abgezogen wird
@@ -121,62 +133,61 @@ directive('deliverynote', function () {
                             });
                         });
                     });
-                    controller.articles = getEligibleArticles(articles);
+                    vm.articles = getEligibleArticles(articles);
                 }
 
-                controller.supplierByID = {};
+                vm.supplierByID = {};
                 function get_suppliers() {
-                    controller.suppliers = [];
+                    vm.suppliers = [];
                     bestellungenService.purchasedoc.suppliers().then(function (result) {
                         result.forEach(function (item) {
-                            controller.suppliers.push(item);
-                            controller.supplierByID[item.id] = item;
+                            vm.suppliers.push(item);
+                            vm.supplierByID[item.id] = item;
                         });
                     });
 
                 }
 
-                controller.mark = function (prodid) {
-                    controller.marked = prodid;
+                vm.mark = function (prodid) {
+                    vm.marked = prodid;
                 };
 
                 function updateList() {
+                    vm.loading = true;
                     var purchasedocs = [];
-                    if (controller.supplier) {
-                        bestellungenService.purchasedoc.list({
-                        'status': "2,3",
-                        'supplierid': controller.supplier.id
+                    if (vm.supplier) {
+                        return bestellungenService.purchasedoc.list({
+                            'status': "2,3",
+                            'supplierid': vm.supplier.id
                         }).then(function (result) {
-                            result.forEach(function (item) {
-                                item.supplier = controller.supplierByID[item.supplierid];
+                            for (let i=0; i<result.length; i++){
+                                let item = result[i];
+                                item.supplier = vm.supplierByID[item.supplierid];
                                 purchasedocs.push(item);
-                                controller.showDetail[item.id] = false;
-                            });
-                        }).then(function (result) {
+                                vm.showDetail[item.id] = false;
+                            }
                             getArticleList(purchasedocs);
+                            vm.loading=false;
                         });
                     }
+                    else return $q.when(0);
                 }
-
-                controller.toggleDetail = function (id) {
-                    controller.showDetail[id] = !(controller.showDetail[id]);
-                };
 
                 function prepare() {
                     var deliverynotes = {};
                     var delnote, data;
-                    for (article in controller.articles) {
-                        //vergleich mit controller.articles-> quantity
-                        controller.articles[article].forEach(function (doc) {
+                    for (article in vm.articles) {
+                        //vergleich mit vm.articles-> quantity
+                        vm.articles[article].forEach(function (doc) {
                             if (doc.quantity !== undefined && doc.quantity != null) {
                                 delnote = deliverynotes[doc.purchasedocid];
                                 if (delnote === undefined) {
                                     deliverynotes[doc.purchasedocid] = {};
                                     delnote = deliverynotes[doc.purchasedocid];
-                                    delnote.supplierid = controller.supplier.id;
-                                    delnote.extdocno = controller.extdocno;
-                                    delnote.subject = controller.comment;
-                                    delnote.docdate = controller.dt;
+                                    delnote.supplierid = vm.supplier.id;
+                                    delnote.extdocno = vm.extdocno;
+                                    delnote.subject = vm.comment;
+                                    delnote.docdate = vm.dt;
                                     delnote.orderid = doc.purchasedocid;
                                     delnote.status = 1;
                                     delnote.module = 5;
@@ -205,22 +216,39 @@ directive('deliverynote', function () {
                 }
 
                 function create(delnote_list) {
-                    var last = bestellungenService.deliverynote.create(delnote_list.shift());
-                    delnote_list.forEach(function (note) {
+                    let last = bestellungenService.deliverynote.create(delnote_list[0]);
+                    delnote_list.slice(1).forEach(function (note) {
                         last = last.then(function (response) {
-                            console.log(note);
-                            console.log(delnote_list);
-                            console.log(delnote_list.length);
                             return bestellungenService.deliverynote.create(note);
                         });
                     });
-                    last.then(function (response) {
-                        updateList();
-                    });
                     return last; //return the last promise
                 }
+                function create_delnote(delnote){
+                    return bestellungenService.deliverynote.create(note);
+                }
+                let update_stock = function(deliverynote){
+                    let promises = [];
+                    for (let i = 0; i < deliverynote.data.length; i++) {
+                        let article = deliverynote.data[i];
+                        promises.push(stockService.stockdata_getbyprodid(article.prodid)
+                            .then(function(response){
+                                if (response.results[0] !== undefined){
+                                    var stockdataid = response.results[0].id;
+                                    var new_quantity = response.results[0].quantitycur+article.quantity;
+                                    return stockService.stockdata_update({id:stockdataid},
+                                        {quantitycur: new_quantity, quantityavail: new_quantity});
+                                }
+                                else return 0;
+                            }));
+                    }
+                    return $q.allSettled(promises).then(function(){
+                         return deliverynote;
+                    });
+                };
 
-                controller.save = function (ev) {
+                vm.save = save;
+                function save(ev) {
                     var delnote_list = prepare();
                     $mdDialog.show({
                             controller: confirmDialogController,
@@ -229,30 +257,67 @@ directive('deliverynote', function () {
                             targetEvent: ev,
                             clickOutsideToClose: false,
                             controllerAs: "confirm",
-                            locals: {supplier: controller.supplier, deliverynotes: delnote_list},
+                            locals: {supplier: vm.supplier, deliverynotes: delnote_list},
                             bindToController: true
                         })
-                        .then(function (answer) {
+                        .then(function success(answer) {
                             //ok
-                            create(delnote_list).then(function (response) {
-                                showAlert('Lieferscheine erfolgreich eingetragen.');
-                            }, function () {
-                                showAlert('Ein Fehler ist aufgetreten.');
+                            // create the deliverynotes sequentially, but go forward with a $q.all so we get an
+                            // array of all the results
+                            let promises = [];
+                            let last = bestellungenService.deliverynote.create(delnote_list[0]);
+                            promises.push(last);
+                            delnote_list.slice(1).forEach(function (note) {
+                                last = last.then(function () {
+                                    let notePromise = bestellungenService.deliverynote.create(note);
+                                    promises.push(notePromise);
+                                    return notePromise;
+                                });
                             });
-                        }, function () {
+                            last.then(function(){
+                                return $q.all(promises);
+                            })
+                            .then(function success(deliverynotes) {
+                                let promises = [];
+                                deliverynotes.forEach(function (note) {
+                                    promises.push(update_stock(note));
+                                });
+                                return deliverynotes;
+                            })
+                            .then(function(deliverynotes){
+                                deliverynotes[0].deliverytype = "eingang";
+                                let last = projectService.consumedproduct_createfrompurchasedoc(deliverynotes[0], true);
+                                deliverynotes.slice(1).forEach(function (note) {
+                                    note.deliverytype = "eingang";
+                                    last = last.then(function (){
+                                        return projectService.consumedproduct_createfrompurchasedoc(note, true);
+                                    });
+                                });
+                                return last;
+                            })
+                            .then(function success(response){
+                                updateList().then(function(){
+                                    return showAlert('Lieferscheine erfolgreich eingetragen.');
+                                });
+                            })
+                            .catch(function(err){
+                                showAlert("Fehler beim Eintragen der Lieferscheine.")
+                            });
+                        }, function error() {
+                            //abbrechen
                         });
-                };
+                }
                 function confirmDialogController($mdDialog) {
-                    var controller = this;
-                    controller.hide = function () {
+                    var vm = this;
+                    vm.hide = function () {
                         $mdDialog.hide();
                     };
 
-                    controller.cancel = function () {
+                    vm.cancel = function () {
                         $mdDialog.cancel();
                     };
 
-                    controller.ok = function (answer) {
+                    vm.ok = function (answer) {
                         $mdDialog.hide();
                     };
                 }

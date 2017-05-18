@@ -2,7 +2,6 @@ angular.module('baseApp.bestellen').
 controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
     // 1. Self-reference
     var vm = this;
-
     // 2. requirements
     var natureService = $injector.get('natureService');
     var stockService = $injector.get('stockService');
@@ -29,25 +28,25 @@ controller('Step1Ctrl', ['$scope', '$injector', function ($scope, $injector) {
             vm[key] = stockService.model[key];
         }
     }
-    this.stockid = sessionService.getStock();
+    vm.stockid = sessionService.getStock();
     sessionService.subscribeStockIDChange($scope, function () {
         vm.resetAndUpdate();
     });
-    this.resourcenatureids = natureService.nature_list;
-    this.sortDirection = 'sort-caret desc';
-    this.updateList = updateList;
-    this.resetAndUpdate = function () {
+    vm.resourcenatureids = natureService.stocknature_list;
+    vm.sortDirection = 'sort-caret desc';
+    vm.updateList = updateList;
+    vm.resetAndUpdate = function () {
         resetPage();
         updateList();
     };
-    this.nextPage = nextPage;
-    this.previousPage = previousPage;
-    this.setPage = setPage;
-    this.setOrder = setOrder;
-    this.getOrder = getOrder;
-    this.query = '';
-    this.items = [];
-    this.setOrder("ID"); //default
+    vm.nextPage = nextPage;
+    vm.previousPage = previousPage;
+    vm.setPage = setPage;
+    vm.setOrder = setOrder;
+    vm.getOrder = getOrder;
+    vm.query = '';
+    vm.items = [];
+    vm.setOrder("ID"); //default
     // 5. Clean up
     $scope.$on('$destroy', function () {
         // Do whatever cleanup might be necessary

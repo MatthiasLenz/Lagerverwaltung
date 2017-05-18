@@ -10,8 +10,8 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
     if we show distinct ones, the user can distribute the quantity among the purchases,
     show live view of deliverynotes to create
 -->
-
-<div class="row">
+<p ng-show="deliverynote.loading">Bestellungen werden neu geladen<ellipsis></ellipsis></p>
+<div ng-show="!deliverynote.loading" class="row" >
     <div class="col-lg-12">
         <div class="panel"
              ng-class="{'panel-primary': !deliverynote.select.edit, 'panel-edit' : deliverynote.select.edit }">
@@ -47,23 +47,25 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                     </div>
                 </div>
                 <div layout="row">
-                    <div flex="80">
+                    <div flex="{{ deliverynote.getWidth() }}">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Bestellungen</div>
+                            <div class="panel-heading">Bestellungen <a ng-click="deliverynote.toggleDetail()">(Detail anzeigen)</a></div>
                             <div class="panel-body">
                                 <table class="table">
                                     <thead>
-                                    <th flex="10">ID</th>
-                                    <th flex="15">Name</th>
-                                    <th flex="10">Bestellt</th>
-                                    <th flex="10">Geliefert</th>
-                                    <th flex="10">Einheit</th>
-                                    <th flex="10">Preis</th>
-                                    <th flex="10">Kosten</th>
-                                    <th flex="10">Datum</th>
-                                    <th flex="10">Bestellung</th>
-                                    <th flex="10">noch zu liefern</th>
-                                    <th flex="5">Lieferung</th>
+                                        <tr>
+                                            <th flex="10">ID</th>
+                                            <th flex="15">Name</th>
+                                            <th ng-show="deliverynote.detail" flex="10">Bestellt</th>
+                                            <th ng-show="deliverynote.detail" flex="10">Geliefert</th>
+                                            <th ng-show="deliverynote.detail" flex="10">Preis</th>
+                                            <th ng-show="deliverynote.detail" flex="10">Kosten</th>
+                                            <th ng-show="deliverynote.detail" flex="10">Datum</th>
+                                            <th ng-show="deliverynote.detail" flex="10">Bestellung</th>
+                                            <th flex="10">noch zu liefern</th>
+                                            <th flex="10">Einheit</th>
+                                            <th flex="5">Lieferung</th>
+                                        </tr>
                                     </thead>
                                     <tbody ng-if="!deliverynote.delivery_complete(prodid, articles)"
                                            ng-repeat="(prodid, articles) in deliverynote.articles">
@@ -71,33 +73,36 @@ Lieferant auswählen: <select class="form-control" style="width:350px;" ng-model
                                             'notok':item.article.quantity - item.received - item.quantity<0}"
                                             ng-mouseover="deliverynote.mark(prodid)"
                                             ng-repeat="item in articles">
-                                            <td> {{ item.article.prodid }}</td>
+                                            <td> {{ prodid }}</td>
                                             <td> {{ item.article.name }}</td>
-                                            <td> {{ item.article.quantity }}</td>
-                                            <td> {{ item.received }}</td>
-                                            <td> {{ item.article.unit }}</td>
-                                            <td> {{ item.article.price |currency:""}}€</td>
-                                            <td> {{ item.article.amount |currency:""}}€</td>
-                                            <td> {{ item.date|date:'d. MMM yyyy'  }}</td>
-                                            <td> {{ item.article.purchasedocid }}</td>
+                                            <td ng-show="deliverynote.detail" > {{ item.article.quantity }}</td>
+                                            <td ng-show="deliverynote.detail" > {{ item.received }}</td>
+                                            <td ng-show="deliverynote.detail" > {{ item.article.price |currency:""}}€</td>
+                                            <td ng-show="deliverynote.detail" > {{ item.article.amount |currency:""}}€</td>
+                                            <td ng-show="deliverynote.detail" > {{ item.date|date:'d. MMM yyyy'  }}</td>
+                                            <td ng-show="deliverynote.detail" > {{ item.article.purchasedocid }}</td>
                                             <td>
                                                 {{ item.article.quantity - item.received - item.quantity | number:1}}</td>
+                                            <td> {{ item.article.unit }}</td>
                                             <td><input type="number" class="form-control" ng-model="item.quantity"
-                                                       placeholder="Anzahl" style="width:100px;"></td>
+                                                       placeholder="Anzahl" style="width:100px;" ng-disabled="deliverynote.disableInput(prodid)"
+                                                ng-attr-title="{{  }}"></td>
                                         </tr>
-                                        <tr class="title" ng-if="articles.length>1"><td></td><td></td>
-                                            <td>{{ articles | total_indirect:['article','quantity']|number:1}}</td>
-                                            <td>{{ articles | total:'received' | number:1}}</td>
-                                            <td></td><td></td>
-                                            <td>{{ articles | total_indirect:['article','amount']|currency:""}}€</td>
-                                            <td></td><td></td>
+                                        <tr ng-if="articles.length>1">
+                                            <td colspan="2"></td>
+                                            <td ng-show="deliverynote.detail" >{{ articles | total_indirect:['article','quantity']|number:1}}</td>
+                                            <td ng-show="deliverynote.detail" >{{ articles | total:'received' | number:1}}</td>
+                                            <td ng-show="deliverynote.detail" ></td>
+                                            <td ng-show="deliverynote.detail" >{{ articles | total_indirect:['article','amount']|currency:""}}€</td>
+                                            <td ng-show="deliverynote.detail" colspan="2"></td>
                                             <td>{{ (articles | total_indirect:['article','quantity']) -
                                                     (articles | total:'received') - deliverynote.total(articles) | number:1 }}</td>
+                                            <td></td>
                                             <td>{{ deliverynote.total(articles) | number:1 }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <button ng-click="deliverynote.save($event)">Speichern</button>
+                                <md-button class="md-raised" ng-click="deliverynote.save($event)">Speichern</md-button>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,11 @@
-<h4>Lieferant auswählen: </h4><select class="form-control" style="width:350px;" ng-model="bestellungen1.supplierid"
-                             ng-options="supplier.id as supplier.namea for supplier in bestellungen1.suppliers | orderBy: 'namea'"
-                             ng-change="bestellungen1.update()"></select>
+<div layout="row" layout-align="start center">
+    <h4 >Lieferant auswählen: </h4>
+    <div class="spacer"></div>
+    <select  class="form-control" style="width:350px;" ng-model="bestellungen1.supplierid"
+         ng-options="supplier.id as supplier.namea for supplier in bestellungen1.suppliers | orderBy: 'namea'"
+         ng-change="bestellungen1.update()">
+    </select>
+</div>
 
 
 <h4>Bestellung auswählen:</h4>
@@ -34,11 +39,9 @@
                         <li><a ng-click="bestellungen1.delete_doc(bestellungen1.select)">Bestellung löschen</a></li>
                         <li><a ng-click="bestellungen1.edit_doc(bestellungen1.select)">Bestellung bearbeiten</a></li>
                         <!--Eingabefelder für extdocno, supplierinvoicenumber und datum hinzufügen-->
-                        <li><a ng-click="bestellungen1.set_status_2(bestellungen1.select)">Lieferung hat begonnen</a>
-                        </li>
-                        <li><a ng-click="bestellungen1.new_edit_delnote()">
+                        <!--li><a ng-click="bestellungen1.new_edit_delnote()">
                             Neuen Lieferschein anlegen</a>
-                        </li>
+                        </li-->
                     </ul>
                 </li>
 
@@ -51,6 +54,7 @@
                             <div class="panel-body">
                                 <table class="table">
                                     <thead>
+                                    <th class="col-md-1">ID</th>
                                     <th class="col-md-5">Name</th>
                                     <th class="col-md-2">Anzahl</th>
                                     <th class="col-md-1">Einheit</th>
@@ -61,6 +65,7 @@
                                     <tr ng-class="{'success':bestellungen1.marked==item.prodid}"
                                         ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
                                         ng-repeat="(key, item) in bestellungen1.select.data">
+                                        <td> {{ item.prodid }}</td>
                                         <td> {{ item.name }}</td>
                                         <td> {{ item.quantity }}</td>
                                         <td> {{ item.unit }}</td>
@@ -83,12 +88,14 @@
                                 </table>
                             </div>
                         </div>
+                        <md-button class="md-raised" ng-click="bestellungen1.set_status_open(bestellungen1.select.id)">Status auf Offen zurücksetzen</md-button>
                     </div>
                     <div class="col-lg-6" ng-class="{'scrollit': !bestellungen1.select.edit}">
                         <div ng-show="bestellungen1.edit_delnote" class="panel panel-edit">
                             <div class="panel-body">
                                 <table class="table">
                                     <thead>
+                                    <th class="col-md-1">ID</th>
                                     <th class="col-md-5">Name</th>
                                     <th class="col-md-2">Anzahl</th>
                                     <th class="col-md-1">Einheit</th>
@@ -99,6 +106,7 @@
                                     <tr ng-class="{'bg-success':bestellungen1.marked==item.prodid}"
                                         ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
                                         ng-repeat="(key, item) in bestellungen1.edit_delnote.data">
+                                        <td> {{ item.prodid }}</td>
                                         <td> {{ item.name }}</td>
                                         <td><input ng-model="item.quantity"></td>
                                         <td> {{ item.unit }}</td>
@@ -130,6 +138,7 @@
                             <div class="panel-body">
                                 <table class="table">
                                     <thead>
+                                    <th class="col-md-1">ID</th>
                                     <th class="col-md-5">Name</th>
                                     <th class="col-md-2">Anzahl</th>
                                     <th class="col-md-1">Einheit</th>
@@ -140,6 +149,7 @@
                                     <tr ng-class="{'success':bestellungen1.marked==item.prodid}"
                                         ng-mouseover="bestellungen1.mark(item.prodid)" class="text-muted"
                                         ng-repeat="(key, item) in deliverynote.data">
+                                        <td> {{ item.prodid }}</td>
                                         <td> {{ item.name }}</td>
                                         <td> {{ item.quantity }}</td>
                                         <td> {{ item.unit }}</td>

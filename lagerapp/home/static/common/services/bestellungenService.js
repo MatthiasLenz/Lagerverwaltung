@@ -3,6 +3,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
     var purchasedocCache = $cacheFactory('PurchaseDoc');
     var documentCache = $cacheFactory('Documents');
     var lagerausgangCache = $cacheFactory('Lagerausgang');
+    var productsupplierCache = $cacheFactory("Productsupplier");
     var token;
     var companies = null;
     var stockid = sessionService.getStock;
@@ -54,7 +55,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
                 });
             productsupplier = $resource(
                 "/api/productsupplier/:id", {id: "@id"},{
-                    query: {method: 'GET', isArray: false }
+                    query: {method: 'GET', cache: productsupplierCache,  isArray: false }
                 });
         }
     }
@@ -102,7 +103,7 @@ factory("bestellungenService", function ($resource, $cacheFactory, tokenService,
         return internalpurchasedoc[company].get(id).$promise;
     }
     function purchasedoc_list(kwargs) {
-        return purchasedoc[companyid].query({'status': kwargs.status, 'supplierid': kwargs.supplierid}).$promise;
+        return purchasedoc[companyid].query(kwargs).$promise;
     }
     var lagerausgang = $resource(
         "/api/lagerausgang/:id", {id: "@id"}, {

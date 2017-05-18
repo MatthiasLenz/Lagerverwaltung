@@ -5,6 +5,7 @@ angular.module('baseApp').controller('BaseCtrl', ['$q', '$location','$scope', 't
             $scope.successPath = $location.path();
             vm.setState($scope.successPath.substring(1));
         });
+        window.countellipsis = 0;
         var vm = this; //ViewModel
         vm.login = tokenService.getToken;
         vm.logout = tokenService.deleteCookie;

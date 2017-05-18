@@ -24,8 +24,8 @@ factory("stockService", function ($resource, $cacheFactory, sessionService, toke
     );
     var stockdata = $resource(
         '/api/stockdata/:id', {id: "@id"},{
-            query: {method: 'GET', isArray: false},
-            update: {method: 'PATCH',  headers: {"Authorization": getToken}}
+            query: {method: 'GET', cache: stockdataCache, isArray: false},
+            update: {method: 'PATCH',  cache: stockdataCache, headers: {"Authorization": getToken}}
         }
     );
     var stock = $resource(

@@ -4,11 +4,15 @@ angular.module('baseApp')
         var vm = this;
         vm.list = [];
         window.vm = vm;
-        updateList();
+        vm.loading = true;
+        updateList().then(function(){
+            vm.loading = false;
+        });
         sessionService.subscribeStockIDChange($scope, function () {
             updateList();
         });
         vm.randomid = "";
+
         vm.select_doc = select_doc;
         function select_doc(doc) {
             vm.randomid = utilityService.randomid();
@@ -23,13 +27,15 @@ angular.module('baseApp')
         }
 
         vm.delete_doc = function (doc) {
-            bestellungenService.purchasedoc.delete(doc).then(function () {
-                for (let i = 0; i<vm.list.length; i++){
-                    let purchasedoc = vm.list[i];
-                    if (doc.id === purchasedoc.id){
-                        vm.list.splice(i, 1);
+            alertService.showConfirm("Bestellung löschen?", "Löschen").then(function(){
+                bestellungenService.purchasedoc.delete(doc).then(function () {
+                    for (let i = 0; i<vm.list.length; i++){
+                        let purchasedoc = vm.list[i];
+                        if (doc.id === purchasedoc.id){
+                            vm.list.splice(i, 1);
+                        }
                     }
-                }
+                });
             });
         };
 
@@ -46,12 +52,14 @@ angular.module('baseApp')
         };
 
         vm.save_doc = function (doc) {
-            doc.edit = false;
-            //if all updates are started at the same time, the tokenService might not have a token yet (if the
-            //user did not log in) and it will prompt the login view for each update
-            bestellungenService.purchasedocdata.batch_update(doc.data).then(function () {
-                bestellungenService.purchasedoc.delete_documents(doc.id);
-                refresh_documents(doc);
+            alertService.showConfirm("Bestellung ändern?", "Speichern").then(function(){
+                doc.edit = false;
+                //if all updates are started at the same time, the tokenService might not have a token yet (if the
+                //user did not log in) and it will prompt the login view for each update
+                bestellungenService.purchasedocdata.batch_update(doc.data).then(function () {
+                    bestellungenService.purchasedoc.delete_documents(doc.id);
+                    refresh_documents(doc);
+                });
             });
         };
 
@@ -62,11 +70,12 @@ angular.module('baseApp')
             });
         }
 
-        vm.set_status_sent = function (doc) {
+        vm.set_status_sent = set_status_sent;
+        function set_status_sent(doc) {
             bestellungenService.purchasedoc.update({id: doc.id}, {status: 2}).then(function (response) {
                 updateList();
             });
-        };
+        }
 
         vm.sendmail = sendmail;
         function sendmail(doc) {
@@ -91,9 +100,12 @@ angular.module('baseApp')
         }
 
         vm.delete_docdata = function (id) {
-            bestellungenService.purchasedocdata.delete(id).then(function () {
-                updateList();
+            alertService.showConfirm("Position löschen?", "Löschen").then(function(){
+               bestellungenService.purchasedocdata.delete(id).then(function () {
+                    updateList();
+                });
             });
+
         };
         vm.delete_documents = function (doc) {
             delete vm.files[doc.id];
