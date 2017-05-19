@@ -2,7 +2,12 @@ body {
     height: 1800px !important;
     background-color: #efefef !important;
 }
-
+md-toolbar.narrow .md-toolbar-tools{
+    height: auto;
+}
+md-toolbar.narrow{
+    min-height: 0px;
+}
 .subtle-focus:focus {
     outline: thin dotted #666666;
     color: #FF6600;

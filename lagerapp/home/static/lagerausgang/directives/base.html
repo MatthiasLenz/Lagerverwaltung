@@ -1,7 +1,7 @@
 <!--<button ng-click="lagerVm.swap_direction()">swap Layout</button>-->
 <a ng-click="lagerVm.moveTo('overview')">zur Übersicht</a>
 <section class="demo-container md-whiteframe-z1">
-    <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
+    <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3 narrow">
         <div class="md-toolbar-tools">
             <span><md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_one_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
             'width': '48px','fill':'rgb(63,81,181)'}"></md-icon>Empfänger auswählen</span>
@@ -101,7 +101,7 @@
 
 <div layout="row" >
     <section layout="column" flex="60" class="demo-container md-whiteframe-z1">
-        <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3"><!--md-hue-3-->
+        <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3 narrow"><!--md-hue-3-->
             <div class="md-toolbar-tools">
                 <span><md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_two_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
                     'width': '48px','fill':'rgb(52,73,188)'}" ></md-icon> Artikel/Geräte eintragen</span>
@@ -208,7 +208,7 @@
     </section>
     <div layout-margin></div>
     <section layout="column" flex="40" class="demo-container md-whiteframe-z1">
-        <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3">
+        <md-toolbar class="demo-toolbar md-primary _md _md-toolbar-transitions md-hue-3 narrow">
             <div class="md-toolbar-tools">
                 <span><md-icon flex="initial" md-svg-src="static/img/icons/ic_looks_3_48px.svg" ng-style="{'font-size': '48px', 'height': '48px',
                 'width': '48px','fill':'rgb(63,81,181)'}"></md-icon> Überprüfen & Speichern </span>
@@ -342,7 +342,7 @@
             </md-autocomplete>
         </div>
         <br/>
-        <div flex="60" ng-repeat="bestellung in lagerVm.lagerausgang | orderBy: '-id'">
+        <div flex="70" ng-repeat="bestellung in lagerVm.lagerausgang | orderBy: '-id'">
             <div class="panel" ng-class="{'panel-edit' : bestellung.edit, 'panel-info': bestellung.select}"
                  ng-class-odd="{'panel-success' : !bestellung.edit && !bestellung.select}" ng-class-even="{'panel-default' : !bestellung.edit && !bestellung.select}">
                 <div  class="panel-heading" layout="row" id="{{ 'lagerausgang_' + bestellung.id }}">
@@ -364,16 +364,16 @@
                         </ul>
                     </li>
                 </div>
-                <div ng-show="bestellung.select" class="panel-body">
-                    <table class="table">
+                <div  ng-show="bestellung.select" class="panel-body">
+                    <table  class="table">
                         <thead>
                         <th class="col-md-4">Name</th>
                         <th class="col-md-1">Anzahl</th>
                         <th class="col-md-1">Einheit</th>
                         <th class="col-md-1">Preis</th>
                         <th class="col-md-1">Kosten</th>
-                        <th class="col-md-2">Verpackung</th>
-                        <th class="col-md-3">Bemerkung</th>
+                        <th class="col-md-1">Verpackung</th>
+                        <th class="col-md-4">Bemerkung</th>
                         <th ng-if="bestellung.edit"></th>
                         </thead>
                         <tbody>
@@ -440,13 +440,13 @@
                         </tbody>
                     </table>
                     <div class="well" layout="row" ng-hide="bestellung.edit">
-                        <span ng-show="bestellung.pdf">
+                        <div flex="grow" ng-show="bestellung.pdf">
                             <a target="_blank" href="{{ bestellung.pdf }}">
-                                <img ng-src="static/pdficon.png" width="32">Lagerausgang-{{ bestellung.id }}.pdf</a>
+                                <img ng-src="static/pdficon.png" width="32">Lagerausgang-{{ bestellung.id }}.pdf</a><br/>
                             <embed ng-if="bestellung.select"  src="{{ bestellung.pdf +'?q='+lagerVm.randomid+ '#page=1&amp;zoom=90'}}"
                                    width="800" height="500" title="" ></embed>
-                        </span>
-                        <div ng-hide="bestellung.edit" class="btn-group col-md-4 pull-right" role="group" aria-label="...">
+                        </div>
+                        <div flex="20" ng-hide="bestellung.edit" class="btn-group col-md-4 pull-right" role="group" aria-label="...">
                             <div class="btn-group-vertical" role="group" aria-label="...">
                                 <button type="button" class="btn btn-default"
                                         ng-click="lagerVm.refresh_documents(bestellung)">
