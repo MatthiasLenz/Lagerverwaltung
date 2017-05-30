@@ -550,3 +550,22 @@ class Installation(models.Model):
         managed = False
         db_table = 'Installation'
         app_label = 'hit_01_maintenance'
+
+class InstallationLinks(models.Model):
+    class Meta:
+        managed = False
+        db_table = 'InstallationLinks'
+        app_label = 'hit_01_maintenance'
+    id = models.ForeignKey(Installation, db_column='ID', related_name="links")
+    rowid = models.IntegerField(db_column='RowID', primary_key=True)
+    filename = models.CharField(db_column='Filename', max_length=255, blank=True)
+    name = models.CharField(db_column='Name', max_length=40, blank=True)
+    def save(self, *args, **kwargs):
+        if not self.rowid:
+            firstelem = self.__class__.objects.all().order_by('-rowid').first()
+            if firstelem != None:
+                self.rowid = firstelem.rowid + 1
+            else: self.rowid = 1
+        super(InstallationLinks, self).save(*args, **kwargs)
+    def __unicode__(self):
+        return str(self.rowid)

@@ -4,7 +4,7 @@ from rest_framework.authtoken import views
 admin.autodiscover()
 
 from django.conf import settings
-from django.conf.urls import include, patterns, url
+from django.conf.urls import include, url
 
 urlpatterns = [
     url(r'^', include('masterdata.urls')),
@@ -13,9 +13,3 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/api-token-auth/', views.obtain_auth_token),
 ]
-
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += patterns('',
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    )

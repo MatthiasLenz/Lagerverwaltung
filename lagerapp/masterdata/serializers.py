@@ -2,7 +2,7 @@ from datetime import date
 from rest_framework import serializers
 from django.db import models
 from basemodels import UserData, Stock, StockData, Product, Nature, ProductSupplier, \
-    ProductPacking, StockMovement, PurchaseDocuments, Company, Installation, Lagerausgang
+    ProductPacking, StockMovement, PurchaseDocuments, Company, Installation, Lagerausgang, InstallationLinks
 from models import Supplier01, PurchaseDoc01
 
 from django.contrib.auth.models import User, Group
@@ -290,9 +290,19 @@ class MinPurchaseDocSerializer(serializers.ModelSerializer):
         fields = ('url', 'id', 'responsible', 'doctype', 'module', 'status', 'docdate')
 
 
+class InstallationLinksSerializer(serializers.ModelSerializer):
+    rowid = serializers.IntegerField(allow_null=True)
+    class Meta:
+        model = InstallationLinks
+        fields = ('id','rowid','filename','name')
+
+
 class InstallationSerializer(serializers.ModelSerializer):
     prodid = ProductSerializer(read_only=True, allow_null=True)
+    links = InstallationLinksSerializer(many=True, allow_null=True, required=False)
+    #links = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="installationlinks-detail",
+     #                                             lookup_field="pk")
     class Meta:
         model = Installation
         fields = ('id','name1','name2','chassisnum','licenseplate','purchasevalue','availability','availabilitystatus',
-                  'availabilitystatusold','rentperdayresourceid','title','titlegrade','prodid')
+                  'availabilitystatusold','rentperdayresourceid','title','titlegrade','prodid','links')

@@ -70,7 +70,7 @@ LOGGING = {
     },
 }
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["localhost", "192.168.0.149"]
 
 # Application definition
 
@@ -85,6 +85,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     #'djangosecure',
     #'sslserver',
     #'debug_toolbar',
@@ -98,6 +99,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE_CLASSES = (
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -109,7 +111,11 @@ MIDDLEWARE_CLASSES = (
 )
 #SECURE_SSL_REDIRECT = False
 #'lagerapp.middleware.profile_middleware.ProfileMiddleware', //conflict with debug toolbar
-
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    '192.168.0.149:3000',
+    'localhost:3000'
+)
 ROOT_URLCONF = 'lagerapp.urls'
 
 TEMPLATES = [
@@ -190,7 +196,7 @@ class HitRouter(object):
         return None
 
     def db_for_write(self, model, **hints):
-        if model._meta.app_label in ['hit_01_purchase','hit_04_purchase','hit_05_purchase', 'hit_01_masterdata', 'hit_01_staff', 'hit_04_staff']:
+        if model._meta.app_label in ['hit_01_purchase','hit_01_maintenance','hit_04_purchase','hit_05_purchase', 'hit_01_masterdata', 'hit_01_staff', 'hit_04_staff']:
             return model._meta.app_label
         return None
 

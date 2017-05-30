@@ -15,6 +15,7 @@ router.register(r'productpacking', views.ProductPackingViewSet, base_name='produ
 router.register(r'productsupplier', views.ProductSupplierViewSet, base_name='productsupplier')
 router.register(r'purchasedocuments', views.PurchaseDocumentsView)
 router.register(r'lagerausgang', views.LagerausgangView)
+router.register(r'installationlinks', views.InstallationLinksViewSet, base_name='installationlinks')
 # router for company 01 api
 router01 = DefaultRouter(trailing_slash=False)
 router01.register(r'supplier', views.getSupplierViewSet(models.Supplier01), base_name='supplier01')
@@ -75,6 +76,7 @@ urlpatterns += format_suffix_patterns([url(r'^api/productall/', views.CompletePr
     url(r'^api/04/consumedproduct/(?P<id>[0-9A-Za-z-]+)$', views.get_project_data, name='project-detail', kwargs={'company':'04'}),
     url(r'^api/05/consumedproduct/(?P<id>[0-9A-Za-z-]+)$', views.get_project_data, name='project-detail', kwargs={'company': '05'}),
     url(r'^api/01/stocknatures/$', views.get_stock_natures, name='stocknature-detail', kwargs={'company': '01'}),
+    url(r'^api/sendpdf/$', views.sendpdf, name='sendpdf-detail'),
     url(r'^api/whoami$', views.whoami, name='whoami'),
     url(r'^api/companylogo$', views.companylogo, name='companylogo'),
     url(r'^api/getconfig$', views.getconfig, name='getconfig'),

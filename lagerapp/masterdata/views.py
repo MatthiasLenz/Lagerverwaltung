@@ -1,22 +1,36 @@
 # encoding=UTF-8
 import traceback
 from basemodels import Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, UserData, \
-    PurchaseDocuments, StockMovement, Company, Installation, Lagerausgang
+    PurchaseDocuments, StockMovement, Company, Installation, Lagerausgang, InstallationLinks
 from models import Project01, Staff01
 from serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, getSupplierSerializer, \
     StockMovementSerializer, ProductSerializer, NatureSerializer, FastProductSerializer, ProductSupplierSerializer, \
     ProductPackingSerializer, PurchaseDocumentsSerializer, getStaffSerializer, getDeliveryNoteSerializer, \
     getDeliveryNoteDataSerializer, getPurchaseDocDataSerializer, getPurchaseDocSerializer, getProjectSerializer,CompanySerializer,\
-    InstallationSerializer, LagerausgangSerializer
+    InstallationSerializer, LagerausgangSerializer, InstallationLinksSerializer
 from rest_framework import viewsets, mixins, pagination, filters, generics
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from django_filters import Filter, DateFilter
+from django_filters import Filter, DateFilter, CharFilter
 from django_filters.fields import Lookup
 from django.core.exceptions import ObjectDoesNotExist
+
+import json
+import pyodbc
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+import os
+import errno
+def prepare_folder(filename):
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
 
 class ListFilter1(Filter):
     def filter(self, qs, value):
@@ -96,15 +110,42 @@ def getDeliveryNoteDataViewSet(model):
                                                                              serializer_class=getDeliveryNoteDataSerializer(
                                                                                  model)))
 
+
+class StockDataFilter(filters.FilterSet):
+    # in_price = django_filters.NumberFilter(name="price", lookup_type='gte')
+    # max_price = django_filters.NumberFilter(name="price", lookup_type='lte')
+    type = ListFilter(name='prodid__producttype')
+    class Meta:
+        model = StockData
+        fields = ['prodid__nature', 'prodid__defaultsupplier', 'prodid__id', 'stockid', 'type']
+
+
+class InstallationFilter(filters.FilterSet):
+    id_prefix = Filter(name="id", lookup_type='startswith')
+    class Meta:
+        model = Installation
+        fields = ('rentperdayresourceid','title','titlegrade','id_prefix')
+
 class InstallationViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
     pagination_class = None
     serializer_class = InstallationSerializer
-    queryset = Installation.objects.filter(id__startswith=('15')).order_by('id')
+    #queryset = Installation.objects.filter(id__startswith=('15')).order_by('id')
+    id_prefix = Filter(name="id", lookup_type='startswith')
+    queryset = Installation.objects.order_by('id')
     filter_backends = (filters.DjangoFilterBackend, filters.SearchFilter)
-    filter_fields = ('rentperdayresourceid','title','titlegrade')
+    filter_class = InstallationFilter
     search_fields = ('id', 'name1', 'name2',)
+
+class InstallationLinksViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    lookup_value_regex = '[-A-Za-z0-9.]*'
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('id', 'filename')
+    queryset = InstallationLinks.objects.all()
+    serializer_class = InstallationLinksSerializer
 
 class PurchaseDocViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
@@ -476,13 +517,27 @@ def ftpupload(ftpsettings, file, filename):
     return '%s/%s/%s' % (ftpsettings['uploads'], dirname, filename)
 
 
-import pyodbc
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from django.http import JsonResponse
-
-
 def to_named_rows(rows, description):
     return [{c[0]: row[index] for index, c in enumerate(description)} for row in rows]
+
+import base64
+@api_view(['POST',])
+def sendpdf(request):
+    if request.method == 'POST':
+        with open('settings.json') as settings_file:
+            settings = json.load(settings_file)
+            data = request.data
+            machine = data["id"]
+            document_folder = settings["maschinen"]["folder"] + machine + "/"
+            filename = data["filename"]
+            pdf = data["data"]
+            pdf = pdf[pdf.index("base64,")+7:]
+            fullfilename = document_folder+filename
+            prepare_folder(fullfilename)
+            with open(fullfilename, "wb") as out:
+                out.write(base64.decodestring(pdf))
+                fileurl = 'http://%s/static/Maschinen/%s/%s' % (settings['server'], machine, filename)
+                return Response(fileurl)
 
 @api_view(['GET',])
 def get_stock_natures(request, company):
