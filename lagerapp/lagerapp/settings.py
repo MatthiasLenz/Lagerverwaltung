@@ -75,7 +75,6 @@ ALLOWED_HOSTS = ["localhost", "192.168.0.149"]
 # Application definition
 
 INSTALLED_APPS = (
-    'home',
     'masterdata',
     'rest_framework',
     'rest_framework.authtoken',
