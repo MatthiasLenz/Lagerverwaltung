@@ -304,7 +304,10 @@ class StockMovementViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = StockMovement.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('key1','modulerecordtypeid','prodid','stockid','userid')
     serializer_class = StockMovementSerializer
+
 
 
 class ProductPackingViewSet(viewsets.ReadOnlyModelViewSet):
@@ -323,7 +326,7 @@ class ProductSupplierViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_value_regex = '[-A-Za-z0-9.]*'
     queryset = ProductSupplier.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('prodid',)
+    filter_fields = ('prodid','supplierid')
     serializer_class = ProductSupplierSerializer
 
 
@@ -560,6 +563,8 @@ def get_stock_natures(request, company):
         cursor.close()
         return Response({'data': results})
 
+class Delivery:
+    In, Out = 1,2
 
 @api_view(['GET', 'POST', 'DELETE'])
 @authentication_classes((TokenAuthentication,))
@@ -589,6 +594,7 @@ def get_project_data(request, id, company, format=None):
         else:
             return 1
 
+
     if request.method == 'GET':
         data = request.data
         # project_id = request.GET.get('projectid') # api/getpr?projectid=...
@@ -608,6 +614,7 @@ def get_project_data(request, id, company, format=None):
         return Response({'data': results})
 
     elif request.method == 'POST':
+        print(id)
         try:
             print("try create consumedproduct")
             data = request.data
@@ -637,20 +644,26 @@ def get_project_data(request, id, company, format=None):
             cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)",
                            consumedproductid, docdate[0:10], '')
             cn.commit()
-            multiplier = -1 if id in ('1-7800', '4-7800', '5-7800') else 1
-            #workaround for lagereingang / deliverynote
-            if 'deliverytype' in data and data['deliverytype'] == 'eingang':
-                multiplier = 1
 
+            delivery = Delivery.In if 'deliverytype' in data and data['deliverytype'] == 'eingang' else Delivery.Out
+
+            multiplier = -1 if (delivery==Delivery.Out) and id in ('1-7800', '4-7800', '5-7800') else 1
+            #workaround for lagereingang / deliverynote
             for article in articles:
-                cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
-                               SupplierID, PurchaseRef) Values \
-                               (?,?,?,?,?,?,?,?,?,?,?)", consumedproductid, datarowid, article['prodid'], article['name'],
-                                      article['unit'], multiplier*article['quantity'], article['price'], multiplier*round(article['price'] * article['quantity'], 2),
-                                      article['comment'] if 'comment' in article else '', supplierid, purchaseref)
-                command = "Update DeliveryNoteData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
+                if delivery==Delivery.In:
+                    multiplier = 1
+                    command = "Update DeliveryNoteData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
+                else:
+                    command = "Update PurchaseDocData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
                 print(command)
                 cursor_purchase.execute(command)
+                cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
+                               SupplierID, PurchaseRef) Values \
+                               (?,?,?,?,?,?,?,?,?,?,?)", consumedproductid, datarowid,
+                               article['prodid'], article['name'],
+                               article['unit'], multiplier * article['quantity'], article['price'],
+                               multiplier * round(article['price'] * article['quantity'], 2),
+                               article['comment'] if 'comment' in article else '', supplierid, purchaseref)
                 datarowid += 1
             cn.commit()
             cn_purchase.commit()

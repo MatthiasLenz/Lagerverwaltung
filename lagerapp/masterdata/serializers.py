@@ -57,10 +57,9 @@ class UserDataSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name', allow_blank=True)
     last_name = serializers.CharField(source='user.last_name', allow_blank=True)
 
-
     class Meta:
         model = UserData
-        fields = ('user', 'username', 'email','first_name', 'last_name', 'companyid')
+        fields = ('user', 'username', 'email','first_name', 'last_name', 'companyid','hituserid')
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -73,10 +72,10 @@ class StockSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'name', 'stockkeeper', 'type', 'defaultlocationid')
 
 
-class StockMovementSerializer(serializers.HyperlinkedModelSerializer):
+class StockMovementSerializer(serializers.ModelSerializer):
     class Meta:
         model = StockMovement
-        fields = ('movementid', 'datecreation', 'datemodification', 'stockid', 'locationid', 'prodid', 'quantitydelta',
+        fields = ('movementid', 'datecreation', 'datemodification', 'stockid', 'prodid', 'quantitydelta',
                   'moduleid', 'modulerecordtypeid', 'key1', 'userid', 'comment')
 
 class NatureSerializer(serializers.HyperlinkedModelSerializer):
@@ -214,13 +213,12 @@ class DeliveryNoteSerializer(serializers.ModelSerializer):
             datamodel.objects.create(deliverynoteid=deliverynote, **data_data)
             # add stockmovement
             datecreation = "%s-%s-%s" % (date.today().year, date.today().month, date.today().day)
-            stock = Stock.objects.get(id=deliverynote.stockid)
-            product = Product.objects.get(id=data_data["prodid"])
+            #stock = Stock.objects.get(id=deliverynote.stockid)
+            #product = Product.objects.get(id=data_data["prodid"])
             #stockdata = StockData.objects.filter(stockid=0).filter(prodid__id=data_data["prodid"])
-
-            StockMovement.objects.create(datecreation=datecreation, datemodification=datecreation,
-                                         stockid=stock, prodid=product, quantitydelta=data_data["quantity"], moduleid=6,
-                                         modulerecordtypeid=6000, key1=deliverynote.id, userid=deliverynote.responsible)
+            #StockMovement.objects.create(datecreation=datecreation, datemodification=datecreation,
+            #                             stockid=stock, prodid=product, quantitydelta=data_data["quantity"], moduleid=6,
+            #                             modulerecordtypeid=6000, key1=deliverynote.id, userid=deliverynote.responsible)
         return deliverynote
 
 def getDeliveryNoteSerializer(model, datamodel):
@@ -235,7 +233,7 @@ class PurchaseDocDataSerializer(serializers.ModelSerializer):
     Meta = None
 
 def getPurchaseDocDataSerializer(model):
-    fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'packing', 'comment', 'dataid', 'projectid')
+    fields = ('rowid', 'purchasedocid', 'prodid', 'name', 'unit', 'quantity', 'price', 'amount', 'packing', 'comment', 'dataid', 'projectid', 'stockmovementid')
     return type(model.__name__+"Serializer", (PurchaseDocDataSerializer,), dict(Meta=type("Meta",(),{'fields' : fields, 'model': model})))
 
 class PurchaseDocSerializer(serializers.ModelSerializer):
@@ -294,7 +292,7 @@ class InstallationLinksSerializer(serializers.ModelSerializer):
     rowid = serializers.IntegerField(allow_null=True)
     class Meta:
         model = InstallationLinks
-        fields = ('id','rowid','filename','name')
+        fields = ('id','rowid','filename','name','date')
 
 
 class InstallationSerializer(serializers.ModelSerializer):

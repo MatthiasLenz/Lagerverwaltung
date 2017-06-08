@@ -350,11 +350,11 @@ class StockMovement(models.Model):
         db_table = 'StockMovement'
         app_label = 'hit_01_masterdata'
 
-    movementid = models.IntegerField(db_column='MovementID', primary_key=True)
+    movementid = models.IntegerField(db_column='MovementID', primary_key=True, null=True)
     datecreation = models.DateTimeField(db_column='DateCreation', blank=True, null=True)
     datemodification = models.DateTimeField(db_column='DateModification', blank=True, null=True)
     stockid = models.ForeignKey(Stock, db_column='StockID', blank=True, null=True)
-    locationid = models.ForeignKey(Stocklocation, db_column='LocationID', blank=True, null=True)
+    #locationid = models.ForeignKey(Stocklocation, db_column='LocationID', blank=True, null=True)
     prodid = models.ForeignKey(Product, db_column='ProdID', blank=True, null=True)
     quantitydelta = models.FloatField(db_column='QuantityDelta', blank=True, null=True)
     moduleid = models.IntegerField(db_column='ModuleID', blank=True, null=True)
@@ -453,6 +453,7 @@ class PurchaseDocDataBase(models.Model):
     taxcode = models.CharField(db_column='TaxCode', max_length=6, blank=True)
     resourcememo = models.TextField(db_column='ResourceMemo', blank=True)
     dataid = models.IntegerField(db_column='DataID', blank=True, null=True )
+    stockmovementid = models.IntegerField(db_column='StockMovementID', blank=True)
     def save(self, *args, **kwargs):
         self.netprice = self.price
         if not self.rowid:
@@ -509,7 +510,10 @@ class Company(models.Model):
 class UserData(models.Model):
     user = models.OneToOneField(User, db_column='userid', primary_key=True)
     companyid = models.CharField(db_column='CompanyID', max_length=2, null=True)
+    hituserid = models.CharField(db_column='hituserid', max_length=10, null=True)
     #companyid = models.ForeignKey(Company, db_column='CompanyID', blank=True, null=True)
+    def __unicode__(self):
+        return u"{{user: {0}, companyid: {1}, hituserid: {2}}}".format(self.user, self.companyid, self.hituserid)
 
 class PurchaseDocuments(models.Model):
     # extends legacy database table PurchaseDoc
@@ -560,6 +564,7 @@ class InstallationLinks(models.Model):
     rowid = models.IntegerField(db_column='RowID', primary_key=True)
     filename = models.CharField(db_column='Filename', max_length=255, blank=True)
     name = models.CharField(db_column='Name', max_length=40, blank=True)
+    date = models.DateTimeField(db_column='DateCreation', blank=True, null=True)
     def save(self, *args, **kwargs):
         if not self.rowid:
             firstelem = self.__class__.objects.all().order_by('-rowid').first()
