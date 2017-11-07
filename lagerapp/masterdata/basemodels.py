@@ -51,6 +51,14 @@ class Supplier(SupplierBase):
         db_table = 'Supplier'
         app_label = 'hit_01_bookkeeping'
 
+class PurchaseSettings(models.Model):
+    class Meta:
+        db_table = 'Settings'
+        app_label = 'hit_01_purchase'
+    key1 = models.CharField(db_column="Key1", max_length=10, blank=True)
+    key2 = models.CharField(db_column="Key2", max_length=20, primary_key=True)
+    intval = models.IntegerField(db_column="IntVal", null=True)
+
 
 class DeliveryNoteBase(models.Model):
     id = models.CharField(db_column='ID', primary_key=True, max_length=15)
@@ -93,6 +101,10 @@ class DeliveryNoteBase(models.Model):
         if not self.id:
             self.id = str(int(self.__class__.objects.all().order_by('-id')[0].id) + 1)
         super(DeliveryNoteBase, self).save(*args, **kwargs)
+        #update purchase.settings nextDeliverynote
+        nextid = PurchaseSettings.objects.get(key2="NextDeliveryNote")
+        nextid.intval = int(self.__class__.objects.all().order_by('-id')[0].id) + 1
+        nextid.save()
 
     def __unicode__(self):
         return self.id
@@ -162,6 +174,15 @@ class Nature(models.Model):
         db_table = 'Nature'
         app_label = 'hit_01_masterdata'
 
+class ProductType(models.Model):
+    id = models.CharField(db_column='ID',max_length=3, primary_key=True)
+    name = models.CharField(db_column='Name', max_length=40, blank=True, null=True)
+    def __unicode__(self):
+        return str(self.id)
+    class Meta:
+        managed = False
+        db_table = 'ProductType'
+        app_label = 'hit_01_masterdata'
 
 class Product(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)  # Field name made lowercase.
@@ -194,7 +215,7 @@ class Product(models.Model):
     customstariffid = models.CharField(db_column='CustomsTariffID', max_length=15,
                                        blank=True)  # Field name made lowercase.
     rupercu = models.FloatField(db_column='RUPerCU', blank=True, null=True)  # Field name made lowercase.
-    producttype = models.CharField(db_column='ProductType', max_length=3, blank=True)  # Field name made lowercase.
+    producttype = models.ForeignKey(ProductType, db_column='ProductType', blank=True, null=True)
     stockkeeper = models.CharField(db_column='Stockkeeper', max_length=15, blank=True)  # Field name made lowercase.
     buyer = models.CharField(db_column='Buyer', max_length=15, blank=True)  # Field name made lowercase.
     stockplace = models.CharField(db_column='StockPlace', max_length=15, blank=True)  # Field name made lowercase.
@@ -419,6 +440,10 @@ class PurchaseDocBase(models.Model):
         # super(self.__class__, self).save(*args, **kwargs)
         # #stopped working after making class abstract (recursion), should never use self.__class__ for this!
         super(PurchaseDocBase, self).save(*args, **kwargs)
+        #update nextPurchaseDoc
+        nextid = PurchaseSettings.objects.get(key2="NextPurchaseDoc")
+        nextid.intval = int(self.__class__.objects.all().order_by('-id')[0].id) + 1
+        nextid.save()
 
     def __unicode__(self):
         return self.id
@@ -476,12 +501,10 @@ class ProductSupplier(models.Model):
 
     def __unicode__(self):
         return str(self.rowid)
-
     class Meta:
         managed = False
         db_table = 'ProductSupplier'
         app_label = 'hit_01_masterdata'
-
 
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -523,6 +546,7 @@ class PurchaseDocuments(models.Model):
     odt = models.CharField(max_length=128, blank=True, null=True)
 
 class Lagerausgang(models.Model):
+    type = models.CharField(max_length=15, blank=True, null=True)
     stockid = models.CharField(max_length=15, blank=True, null=True)
     projectid1 = models.CharField(max_length=15, blank=True, null=True)
     projectid2 = models.CharField(max_length=15, blank=True, null=True)
@@ -531,7 +555,8 @@ class Lagerausgang(models.Model):
     docdate = models.DateTimeField(blank=True, null=True)
     responsible = models.CharField(max_length=15, blank=True)
     pdf = models.CharField(max_length=128, blank=True, null=True)
-    abholer =  models.CharField(max_length=128, blank=True, null=True)
+    abholer = models.CharField(max_length=128, blank=True, null=True)
+    status = models.IntegerField(null=True)
 
 class Installation(models.Model):
     id = models.CharField(db_column='ID', max_length=15, primary_key=True)
@@ -541,6 +566,8 @@ class Installation(models.Model):
     chassisnum = models.CharField(db_column='ChassisNum', max_length=30, blank=True)
     licenseplate = models.CharField(db_column='LicensePlate', max_length=30, blank=True)
     purchasevalue = models.FloatField(db_column='PurchaseValue', blank=True, null=True)
+    constructionyear = models.IntegerField(db_column='ConstructionYear', null=True)
+    datepurchase = models.DateTimeField(db_column='DatePurchase', blank=True, null=True)
     availability = models.SmallIntegerField(db_column='Availability', blank=True, null=True)
     availabilitystatus = models.CharField(db_column='AvalibilityStatus', max_length=40, blank=True)
     availabilitystatusold = models.CharField(db_column='FZ_STATUSOLD', max_length=40, blank=True)
@@ -548,6 +575,7 @@ class Installation(models.Model):
     title = models.NullBooleanField(db_column='Title')
     titlegrade = models.SmallIntegerField(db_column='TitleGrade', blank=True, null=True)
     prodid = models.ForeignKey(Product, db_column='FZ_PRODID', blank=True, null=True, related_name='supplier')
+    gpstag = models.CharField(db_column='FZ_TAG', max_length=50, blank=True)
     def __unicode__(self):
         return self.id
     class Meta:
@@ -574,3 +602,25 @@ class InstallationLinks(models.Model):
         super(InstallationLinks, self).save(*args, **kwargs)
     def __unicode__(self):
         return str(self.rowid)
+
+class InstallationConsumption(models.Model):
+    class Meta:
+        managed = False
+        db_table = 'InstallationConsumption'
+        app_label = 'hit_01_maintenance'
+    id = models.ForeignKey(Installation, db_column='InstallationID', related_name="consumption")
+    rowid = models.IntegerField(db_column='RowID', primary_key=True)
+    counter = models.IntegerField(db_column='Counter', null=True)
+    date = models.DateTimeField(db_column='DateConsumption', blank=True, null=True)
+    quantity = models.FloatField(db_column='Quantity', null=True)
+
+class InstallationCounterHistory(models.Model):
+    class Meta:
+        managed = False
+        db_table = 'InstallationCounterHistory'
+        app_label = 'hit_01_maintenance'
+        unique_together = (('id', 'datecounter'),)
+    rowid = models.IntegerField(db_column='RowID', primary_key=True)
+    id = models.ForeignKey(Installation, db_column='InstallationID', related_name="counter")
+    datecounter = models.DateTimeField(db_column='DateCounter', blank=True, null=True)
+    counter = models.IntegerField(db_column='Counter', null=True)

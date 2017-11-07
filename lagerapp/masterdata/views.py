@@ -1,13 +1,16 @@
 # encoding=UTF-8
 import traceback
 from basemodels import Stock, StockData, Product, Nature, ProductSupplier, ProductPacking, UserData, \
-    PurchaseDocuments, StockMovement, Company, Installation, Lagerausgang, InstallationLinks
+    PurchaseDocuments, StockMovement, Company, Installation, Lagerausgang, InstallationLinks, InstallationConsumption, \
+    InstallationCounterHistory, ProductType
 from models import Project01, Staff01
 from serializers import UserSerializer, UserDataSerializer, StockSerializer, StockDataSerializer, getSupplierSerializer, \
     StockMovementSerializer, ProductSerializer, NatureSerializer, FastProductSerializer, ProductSupplierSerializer, \
     ProductPackingSerializer, PurchaseDocumentsSerializer, getStaffSerializer, getDeliveryNoteSerializer, \
-    getDeliveryNoteDataSerializer, getPurchaseDocDataSerializer, getPurchaseDocSerializer, getProjectSerializer,CompanySerializer,\
-    InstallationSerializer, LagerausgangSerializer, InstallationLinksSerializer
+    getDeliveryNoteDataSerializer, getPurchaseDocDataSerializer, getPurchaseDocSerializer, getProjectSerializer, \
+    CompanySerializer, \
+    InstallationSerializer, LagerausgangSerializer, InstallationLinksSerializer, InstallationConsumptionSerializer, \
+    InstallationCounterHistorySerializer, ProductTypeSerializer
 from rest_framework import viewsets, mixins, pagination, filters, generics
 
 from rest_framework.response import Response
@@ -115,9 +118,10 @@ class StockDataFilter(filters.FilterSet):
     # in_price = django_filters.NumberFilter(name="price", lookup_type='gte')
     # max_price = django_filters.NumberFilter(name="price", lookup_type='lte')
     type = ListFilter(name='prodid__producttype')
+    type__not = ListFilter(name='prodid__producttype', exclude=True)
     class Meta:
         model = StockData
-        fields = ['prodid__nature', 'prodid__defaultsupplier', 'prodid__id', 'stockid', 'type']
+        fields = ['prodid__nature', 'prodid__defaultsupplier', 'prodid__id', 'stockid', 'type', 'type__not']
 
 
 class InstallationFilter(filters.FilterSet):
@@ -132,7 +136,6 @@ class InstallationViewSet(viewsets.ModelViewSet):
     pagination_class = None
     serializer_class = InstallationSerializer
     #queryset = Installation.objects.filter(id__startswith=('15')).order_by('id')
-    id_prefix = Filter(name="id", lookup_type='startswith')
     queryset = Installation.objects.order_by('id')
     filter_backends = (filters.DjangoFilterBackend, filters.SearchFilter)
     filter_class = InstallationFilter
@@ -146,6 +149,52 @@ class InstallationLinksViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'filename')
     queryset = InstallationLinks.objects.all()
     serializer_class = InstallationLinksSerializer
+
+class InstallationConsumptionFilter(filters.FilterSet):
+    min_date = DateFilter(name="date", lookup_type='gte')
+    max_date = DateFilter(name="date", lookup_type='lte')
+    class Meta:
+        model = InstallationConsumption
+        fields = ('id', 'min_date', 'max_date')
+
+class InstallationConsumptionViewSet(viewsets.ModelViewSet):
+    pagination_class = None
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    lookup_value_regex = '[-A-Za-z0-9.]*'
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = InstallationConsumptionFilter
+    queryset = InstallationConsumption.objects.all().order_by('id', 'date')
+    serializer_class = InstallationConsumptionSerializer
+
+class InstallationCounterHistoryFilter(filters.FilterSet):
+    min_date = DateFilter(name="datecounter", lookup_type='gte')
+    max_date = DateFilter(name="datecounter", lookup_type='lte')
+    class Meta:
+        model = InstallationCounterHistory
+        fields = ('id', 'min_date', 'max_date')
+
+class InstallationCounterHistoryViewSet(viewsets.ModelViewSet):
+    pagination_class = None
+    lookup_value_regex = '[-A-Za-z0-9.]*'
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = InstallationCounterHistoryFilter
+    queryset = InstallationCounterHistory.objects.all().order_by('id', 'datecounter')
+    serializer_class = InstallationCounterHistorySerializer
+
+class GeneralPurchaseDocViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    pagination_class = None
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('status', 'supplierid')
+
+
+def getGeneralPurchaseDocViewSet(model, datamodel, deliverynote_model, deliverynote_datamodel):
+    return type(model.__name__ + 'ViewSet', (PurchaseDocViewSet,), dict(
+        queryset=model.objects.prefetch_related('data'),
+        serializer_class=getPurchaseDocSerializer(model, datamodel, deliverynote_model, deliverynote_datamodel),
+        filter_class=getStatusFilter(model)))
 
 class PurchaseDocViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
@@ -161,6 +210,11 @@ def getPurchaseDocViewSet(model, datamodel, deliverynote_model, deliverynote_dat
         serializer_class=getPurchaseDocSerializer(model, datamodel, deliverynote_model, deliverynote_datamodel),
         filter_class=getStatusFilter(model)))
 
+def getStockReturnViewSet(model, datamodel, deliverynote_model, deliverynote_datamodel):
+    return type(model.__name__ + 'ViewSet', (PurchaseDocViewSet,), dict(
+        queryset=model.objects.filter(module=5).filter(doctype=0).prefetch_related('data'),
+        serializer_class=getPurchaseDocSerializer(model, datamodel, deliverynote_model, deliverynote_datamodel),
+        filter_class=getStatusFilter(model)))
 
 class PurchaseDocDataViewSet(viewsets.ModelViewSet):
     """
@@ -203,7 +257,7 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
 
 def getProjectViewSet(model, staffmodel):
     return type(model.__name__ + 'ViewSet', (ProjectViewSet,), dict(
-        queryset=model.objects.filter(projectsimulated=0, status__in=[0,1,2]).order_by('-start_project'),
+        queryset=model.objects.filter(projectsimulated=0, status__in=[0,1,2,3]).order_by('-start_project'),
         serializer_class=getProjectSerializer(model, staffmodel)
     ))
 
@@ -318,6 +372,14 @@ class ProductPackingViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ProductPacking.objects.all()
     serializer_class = ProductPackingSerializer
 
+class ProductTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    lookup_value_regex = '[-A-Za-z0-9.]*'
+    queryset = ProductType.objects.all()
+    serializer_class = ProductTypeSerializer
+
 
 class ProductSupplierViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -378,7 +440,6 @@ class StockDataViewSet(viewsets.ModelViewSet):
     # queryset = StockData.objects.filter(stockid = 0)
     queryset = StockData.objects.all()
     serializer_class = StockDataSerializer
-
     pagination_class = ResultsSetPagination
     # Todo: sort by nested fields
     filter_backends = (filters.DjangoFilterBackend, CustomSearchFilter, filters.OrderingFilter,)
@@ -487,7 +548,7 @@ class LagerausgangFilter(filters.FilterSet):
     min_date = DateFilter(name="docdate", lookup_type='gte')
     max_date = DateFilter(name="docdate", lookup_type='lte')
     class Meta:
-        fields = ['stockid', 'projectid1', 'projectid2', 'purchasedocid1', 'purchasedocid2', 'responsible', 'abholer', 'min_date', 'max_date']
+        fields = ['type', 'stockid', 'projectid1', 'projectid2', 'purchasedocid1', 'purchasedocid2', 'responsible', 'abholer', 'min_date', 'max_date']
         model = Lagerausgang
 
 class LagerausgangView(viewsets.ModelViewSet):
@@ -498,9 +559,7 @@ class LagerausgangView(viewsets.ModelViewSet):
     pagination_class = None
 
 
-
 from genshi.core import Markup
-
 
 def format_py3o_context_value(value):
     return Markup(unicode(value).replace('\n', '<text:line-break/>').replace('&', '&amp;'))
@@ -563,8 +622,9 @@ def get_stock_natures(request, company):
         cursor.close()
         return Response({'data': results})
 
-class Delivery:
-    In, Out = 1,2
+from threading import Lock
+lock_consumedproduct = Lock()
+lock_consumedproductdata = Lock()
 
 @api_view(['GET', 'POST', 'DELETE'])
 @authentication_classes((TokenAuthentication,))
@@ -628,43 +688,53 @@ def get_project_data(request, id, company, format=None):
                 dbserver, company, id.replace('-', '_').lower(), dbpassword))
             print("success")
             print("try maxid")
-            consumedproductid = max_consumedproductid(cn)
+
             print("success")
             print("try maxrowid")
-            datarowid = max_consumedproductdatarowid(cn)
-            print("success")
-            print(consumedproductid, datarowid)
-            cursor = cn.cursor()
 
+            print("success")
+            cursor = cn.cursor()
             cn_purchase = pyodbc.connect(
                 r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_purchase;UID=hitoffice;PWD=%s' % (
                     dbserver, company, dbpassword))
             cursor_purchase = cn_purchase.cursor()
-
-            cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)",
+            with lock_consumedproduct:
+                consumedproductid = max_consumedproductid(cn)
+                cursor.execute("INSERT INTO ConsumedProduct (ID, DocumentDate, Comment) VALUES (?, ?, ?)",
                            consumedproductid, docdate[0:10], '')
-            cn.commit()
+                cn.commit()
 
-            delivery = Delivery.In if 'deliverytype' in data and data['deliverytype'] == 'eingang' else Delivery.Out
+            multiplier = 1
 
-            multiplier = -1 if (delivery==Delivery.Out) and id in ('1-7800', '4-7800', '5-7800') else 1
+            is_deliverynote = 'orderid' in data                 # data ist Lieferschein, Bestellungen haben kein Feld orderid
+            if is_deliverynote:
+                multiplier = 1
+            else:
+                if data['module'] == 9:                        # Lagerausgang
+                    if data['stock']: multiplier = -1          # Entnahme aus Stock/7800
+                    else: multiplier = 1
+                elif data['module'] == 5:                      # Lagerrueckgabe
+                    if data['stock']: multiplier = 1           # Eingang in Stock/7800
+                    else: multiplier = -1
+
             #workaround for lagereingang / deliverynote
-            for article in articles:
-                if delivery==Delivery.In:
-                    multiplier = 1
-                    command = "Update DeliveryNoteData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
-                else:
-                    command = "Update PurchaseDocData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
-                print(command)
-                cursor_purchase.execute(command)
-                cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
-                               SupplierID, PurchaseRef) Values \
-                               (?,?,?,?,?,?,?,?,?,?,?)", consumedproductid, datarowid,
-                               article['prodid'], article['name'],
-                               article['unit'], multiplier * article['quantity'], article['price'],
-                               multiplier * round(article['price'] * article['quantity'], 2),
-                               article['comment'] if 'comment' in article else '', supplierid, purchaseref)
-                datarowid += 1
+            with lock_consumedproductdata:
+                datarowid = max_consumedproductdatarowid(cn)
+                for article in articles:
+                    if is_deliverynote:
+                        command = "Update DeliveryNoteData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
+                    else:
+                        command = "Update PurchaseDocData set DataID={0} where RowID={1}".format(datarowid,article["rowid"])
+                    print(command)
+                    cursor_purchase.execute(command)
+                    cursor.execute("INSERT INTO ConsumedProductData (ID, RowID, ProdID, Name, Unit, Quantity, Price, Amount, Comment,\
+                                   SupplierID, PurchaseRef) Values \
+                                   (?,?,?,?,?,?,?,?,?,?,?)", consumedproductid, datarowid,
+                                   article['prodid'], article['name'],
+                                   article['unit'], multiplier * article['quantity'], article['price'],
+                                   multiplier * round(article['price'] * article['quantity'], 2),
+                                   article['comment'] if 'comment' in article else '', supplierid, purchaseref)
+                    datarowid += 1
             cn.commit()
             cn_purchase.commit()
             cn.close()
@@ -702,7 +772,7 @@ def get_project_data(request, id, company, format=None):
 
 
 
-@api_view(['POST', 'DELETE'])
+@api_view(['GET','POST', 'DELETE'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticatedOrReadOnly,))
 def rental(request, id, company, format=None):
@@ -710,6 +780,20 @@ def rental(request, id, company, format=None):
     #projectid, installationid, date,
     dbserver = settings.DBSERVER
     dbpassword = settings.DBPASSWORD
+    if request.method == 'GET':
+        cn = pyodbc.connect(
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_service;UID=hitoffice;PWD=%s' % (
+                dbserver, company, dbpassword))
+        cursor = cn.cursor()
+        # query = u"Select RowID, rd.ID, ProjectID, RowType, Date, InstallationID, Quantity, Name, Discount, Comment, Unit, ProdID
+        query = u"Select RowID, ProjectID, Date, InstallationID, Name, Comment, ProdID\
+                from RentalsData rd inner join Rentals r on rd.ID = r.ID where InstallationID = '{0}' order by Date desc".format(id)
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        rows = [{c[0]: row[index].decode("windows-1252") if type(row[index]) is str else row[index] for index, c in
+                 enumerate(cursor.description)} for row in rows]
+
+        return Response(rows, status=200)
 
     if request.method == 'POST':
         print("try create rentalsdata")
@@ -717,24 +801,43 @@ def rental(request, id, company, format=None):
             r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_service;UID=hitoffice;PWD=%s' % (
                 dbserver, company, dbpassword))
         data = request.data
-        print(type(data['installationname']))
-        print(data['installationname'])
         installationname = data['installationname']
         cursor = cn.cursor()
+
+        cursor.execute("SELECT MAX(ROWID) FROM RentalsData")
+        oldrowid = cursor.fetchall()[0][0]
+
         query = u"Insert into rentalsdata (RowID, ID, RowType, Date, InstallationID, Quantity, Name, Discount, Comment, Unit, ProdID)\
             Values ((select max(rowid)+1 from rentalsdata), (select TOP 1 ID from Rentals where projectid='{0}'), 0, '{1}',\
              '{2}', 1, '{3}', 1, '', '', '')".format(id, data['date'], data['installationid'], installationname)
         cursor.execute(query)
         cursor.commit()
+        count = cursor.rowcount
+        cursor.execute("SELECT MAX(ROWID) FROM RentalsData")
+        newrowid = cursor.fetchall()[0][0]
         cursor.close()
-        return Response('OK')
+        data = {}
+        status = 500
+        if newrowid == oldrowid+1 and count == 1:
+            data["RowID"] = newrowid
+            data["ProjectID"] = id
+            data["Company"] = company
+            status = 200
+        return Response(data, status=status)
+
     if request.method == 'DELETE':
-        print("try delete rentalsdata")
+        print("Delete rentalsdata")
         data = request.data
-        print(data)
-        #cn = pyodbc.connect(
-        #    r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_service;UID=hitoffice;PWD=%s' % (
-        #        dbserver, company, dbpassword))
+        rowid = data["rowid"]
+        query = u"Delete from RentalsData where RowID = {0}".format(rowid)
+        cn = pyodbc.connect(
+            r'DRIVER={ODBC Driver 11 for SQL Server};SERVER=%s\\HITOFFICE,1433;DATABASE=hit_%s_service;UID=hitoffice;PWD=%s' % (
+                dbserver, company, dbpassword))
+        cursor = cn.cursor()
+        cursor.execute(query)
+        cursor.commit()
+        cursor.close()
+        return Response(rowid, status=200)
 
 @api_view(['GET', ])
 @authentication_classes((TokenAuthentication,))
@@ -833,3 +936,9 @@ def send(sender, recipient, filepath, sendersubject, recipientsubject, sendernam
         return Response(filepath)
     finally:
         smtp.quit()
+
+@api_view(['POST', ])
+def stacktrace(request):
+    with open("remote_log.txt", "a") as remote_log:
+        remote_log.write(request.data["content"])
+    return Response("Ok")

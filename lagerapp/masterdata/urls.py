@@ -12,18 +12,29 @@ router.register(r'stockmovement', views.StockMovementViewSet)
 router.register(r'nature', views.NatureViewSet)
 router.register(r'product', views.ProductViewSet, base_name='product')
 router.register(r'productpacking', views.ProductPackingViewSet, base_name='productpacking')
+router.register(r'producttype', views.ProductTypeViewSet, base_name='producttype')
 router.register(r'productsupplier', views.ProductSupplierViewSet, base_name='productsupplier')
 router.register(r'purchasedocuments', views.PurchaseDocumentsView)
-router.register(r'lagerausgang', views.LagerausgangView)
+router.register(r'lagerausgang', views.LagerausgangView) # Todo: Refactor, currently using Lagerausgang as general Lagerbewegung
 router.register(r'installationlinks', views.InstallationLinksViewSet, base_name='installationlinks')
+router.register(r'installationconsumption', views.InstallationConsumptionViewSet, base_name='installationconsumption')
+router.register(r'installationcounterhistory', views.InstallationCounterHistoryViewSet, base_name='installationcounterhistory')
 # router for company 01 api
 router01 = DefaultRouter(trailing_slash=False)
 router01.register(r'supplier', views.getSupplierViewSet(models.Supplier01), base_name='supplier01')
+# Lagerausgang
 router01.register(r'internalpurchasedoc', views.getInternalPurchaseDocViewSet(
     models.PurchaseDoc01, models.PurchaseDocData01, models.DeliveryNote01, models.DeliveryNoteData01), base_name='internalpurchasedoc')
+# Lagerrueckgabe
+router01.register(r'stockreturn', views.getStockReturnViewSet(models.PurchaseDoc01, models.PurchaseDocData01,
+    models.DeliveryNote01, models.DeliveryNoteData01), base_name='stockreturn')
 router01.register(r'purchasedoc', views.getPurchaseDocViewSet(models.PurchaseDoc01,models.PurchaseDocData01,
     models.DeliveryNote01, models.DeliveryNoteData01))
 router01.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.PurchaseDocData01))
+
+router01.register(r'generalpurchasedoc', views.getGeneralPurchaseDocViewSet(models.PurchaseDoc01,models.PurchaseDocData01,
+    models.DeliveryNote01, models.DeliveryNoteData01))
+
 router01.register(r'purchasedocsupplier', views.getPurchaseDocSupplierViewSet(models.PurchaseDoc01, models.Supplier01))
 router01.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote01,models.DeliveryNoteData01))
 router01.register(r'deliverynotedata', views.getDeliveryNoteDataViewSet(models.DeliveryNoteData01))
@@ -36,6 +47,10 @@ router04.register(r'internalpurchasedoc', views.getInternalPurchaseDocViewSet(
     models.PurchaseDoc04, models.PurchaseDocData04, models.DeliveryNote04, models.DeliveryNoteData04), base_name='internalpurchasedoc')
 router04.register(r'purchasedoc', views.getPurchaseDocViewSet(models.PurchaseDoc04,models.PurchaseDocData04,
     models.DeliveryNote04, models.DeliveryNoteData04))
+router04.register(r'generalpurchasedoc', views.getGeneralPurchaseDocViewSet(models.PurchaseDoc04,models.PurchaseDocData04,
+    models.DeliveryNote04, models.DeliveryNoteData04))
+router04.register(r'stockreturn', views.getStockReturnViewSet(models.PurchaseDoc04,models.PurchaseDocData04,
+    models.DeliveryNote04, models.DeliveryNoteData04))
 router04.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.PurchaseDocData04))
 router04.register(r'purchasedocsupplier', views.getPurchaseDocSupplierViewSet(models.PurchaseDoc04, models.Supplier04))
 router04.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote04,models.DeliveryNoteData04))
@@ -47,8 +62,12 @@ router05 = DefaultRouter(trailing_slash=False)
 router05.register(r'supplier', views.getSupplierViewSet(models.Supplier05), base_name='supplier05')
 router05.register(r'internalpurchasedoc', views.getInternalPurchaseDocViewSet(
     models.PurchaseDoc05, models.PurchaseDocData05, models.DeliveryNote05, models.DeliveryNoteData05), base_name='internalpurchasedoc')
+router05.register(r'stockreturn', views.getStockReturnViewSet(models.PurchaseDoc05,models.PurchaseDocData05,
+    models.DeliveryNote05, models.DeliveryNoteData05))
 router05.register(r'purchasedoc', views.getPurchaseDocViewSet(models.PurchaseDoc05,models.PurchaseDocData05,
-                                                              models.DeliveryNote05, models.DeliveryNoteData05))
+    models.DeliveryNote05, models.DeliveryNoteData05))
+router05.register(r'generalpurchasedoc', views.getGeneralPurchaseDocViewSet(models.PurchaseDoc05,models.PurchaseDocData05,
+    models.DeliveryNote05, models.DeliveryNoteData05))
 router05.register(r'purchasedocdata', views.getPurchaseDocDataViewSet(models.PurchaseDocData05))
 router05.register(r'purchasedocsupplier', views.getPurchaseDocSupplierViewSet(models.PurchaseDoc05, models.Supplier01))
 router05.register(r'deliverynote', views.getDeliveryNoteViewSet(models.DeliveryNote05,models.DeliveryNoteData05))
@@ -81,5 +100,6 @@ urlpatterns += format_suffix_patterns([url(r'^api/productall/', views.CompletePr
     url(r'^api/companylogo$', views.companylogo, name='companylogo'),
     url(r'^api/getconfig$', views.getconfig, name='getconfig'),
     url(r'^api/sendmail/?$', views.sendmail, name='sendmail'),
+    url(r'^api/stacktrace/?$', views.stacktrace, name='stacktrace'),
     url(r'^api/01/rental/(?P<id>[0-9A-Za-z-]+)$', views.rental, name='rental-detail', kwargs={'company':'01'}),
     ])

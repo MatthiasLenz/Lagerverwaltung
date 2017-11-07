@@ -1,14 +1,15 @@
 # encoding=UTF-8
 import os
 import subprocess
-
+import sys
+import traceback
 from django.utils.dateparse import parse_datetime
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from models import Staff01
+from models import Staff01, Project01
 from views import PurchaseDocuments, format_py3o_context_value
 
 companies = {'01': 'Solid SA', '04':'Sofico SA', '05': 'Solid Bau GmbH'}
@@ -91,22 +92,31 @@ def makepdf1(request):
 @api_view(['POST'])
 def lagerausgangmakepdf(request, companyid):
     """ Build a data dictionary and use py3o.template server to render a document file from an ods template.
-        Return the url of the generated file. Optional: Upload the generated pdf document to a webserver via FTP. """
+        Return the url of the generated file. Optional: Upload the generated pdf document to a webserver via FTP. 
+        We use the same function for Lagerrueckgabe, by using a different template."""
     print("lagerausgangmakepdf")
-
     with open('settings.json') as settings_file:
         #ftpsettings = settings["ftp"]
         settings = json.load(settings_file)
         document_folder = settings["lagerausgang"]["folder"]
-        data = dict(request.data["doc"])
-        dt = parse_datetime(data['docdate'])
-        data['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
+        lagerausgang = dict(request.data["doc"])
+        dt = parse_datetime(lagerausgang['docdate'])
+        lagerausgang['docdate'] = "%02d.%02d.%04d" % (dt.day, dt.month, dt.year)
         doctype = request.data['type']
         customer = request.data['kunde']
-        docname = "lagerausgang_{}.{}".format(data['id'], doctype)
-        print(data, document_folder, docname, companyid, doctype)
-        renderdoc1(data, document_folder, docname, customer, doctype)
+        docname = "lagerbewegung_{}.{}".format(lagerausgang['id'], doctype)
+        print(lagerausgang, document_folder, docname, companyid, doctype, customer)
+        if lagerausgang['type'] == 'LAGERAUSGANG':
+            template_path = os.path.abspath("masterdata/lagerausgang_template{0}.odt".format(companyid))
+        elif lagerausgang['type'] == 'LAGERRUECKGABE':
+            template_path = os.path.abspath("masterdata/lagerrueckgabe_template{0}.odt".format(companyid))
+        else:
+            print("Typ der Lagerbewegung ungültig.")
+            return Response({'data': 'Error Invalid Type'}, status='500 Invalid Type')
+        print(template_path)
+        renderdoc1(lagerausgang, document_folder, docname, customer, doctype, template_path)
         fileurl = 'http://%s/static/Lagerausgang/%s' % (settings['server'], docname)
+        print(fileurl)
         #create_purchase_document(data['id'], doctype, fileurl)
         return Response(fileurl)
 
@@ -132,8 +142,26 @@ def renderdoc(data_input, folder, name, targetformat):
         supplier = data_input['supplier']
         try:
             responsible = Staff01.objects.get(id=data_input['responsible'])
+            print(responsible.firstname)
         except Staff01.DoesNotExist:
-            responsible = type('Staff', (object,), {'firstname':'','lastname':'', 'mobile':''})
+            responsible = type('Staff', (object,), {'firstname':'','lastname':'', 'phone':''})
+        try:
+            stockinfo = Project01.objects.get(id=data_input['kostenstelle'])
+            try:
+                kontaktperson = stockinfo.leader
+            except (Staff01.DoesNotExist, Project01.DoesNotExist) as e:
+                print(traceback.format_exception(*sys.exc_info()))
+                kontaktperson = type('Staff', (object,), {'firstname':'','lastname':'', 'mobile':''})
+            try:
+                lagerist = stockinfo.manager
+            except (Staff01.DoesNotExist, Project01.DoesNotExist) as e:
+                print(traceback.format_exception(*sys.exc_info()))
+                lagerist = type('Staff', (object,), {'firstname':'','lastname':'', 'mobile':''})
+        except Project01.DoesNotExist as e:
+            print(traceback.format_exception(*sys.exc_info()))
+            kontaktperson = type('Staff', (object,), {'firstname': '', 'lastname': '', 'mobile': ''})
+            lagerist = type('Staff', (object,), {'firstname': '', 'lastname': '', 'mobile': ''})
+
         print("get staff")
         items = []
         total = '%.2f' % sum(item['amount'] for item in data_input['data'])
@@ -153,9 +181,11 @@ def renderdoc(data_input, folder, name, targetformat):
         info = {'kostenstelle': data_input['kostenstelle'],
                 'bez_kostenstelle': data_input['bez_kostenstelle'],
                 'id': data_input['id'], 'date': data_input['docdate'],
-                'bauleiter': '%s %s' % (responsible.firstname, responsible.lastname),
-                'bauleitertel': "(%s)"%responsible.mobile,
-                'polier': '', 'lieferadresse': data_input['adr_lang'],
+                'bauleiter': '%s %s' % (lagerist.firstname, lagerist.lastname),
+                'bauleitertel': "(Tel. %s)"%lagerist.mobile if lagerist.mobile else "",
+                'polier': '%s %s' % (responsible.firstname, responsible.lastname),
+                'poliertel': "(Tel. %s)"%responsible.phone if responsible.phone else "",
+                'lieferadresse': data_input['adr_lang'],
                 'infotext': format_py3o_context_value(unicode(data_input['infotext']))}
         data = dict(items=items, recipient=recipient, sender=sender, info=info, total=total)
         fields = {
@@ -183,9 +213,8 @@ def renderdoc(data_input, folder, name, targetformat):
 
 import requests
 import json
-def renderdoc1(data_input, folder, name, customer, targetformat):
+def renderdoc1(data_input, folder, name, customer, targetformat, template_path):
     url = 'http://192.168.0.199:8765/form'
-    template_path = os.path.abspath("masterdata/lagerausgang_template01.odt")
     with open(template_path, "rb") as template_file:
         files = {'tmpl_file': template_file}
         customer = companies[customer]

@@ -2,7 +2,8 @@ from datetime import date
 from rest_framework import serializers
 from django.db import models
 from basemodels import UserData, Stock, StockData, Product, Nature, ProductSupplier, \
-    ProductPacking, StockMovement, PurchaseDocuments, Company, Installation, Lagerausgang, InstallationLinks
+    ProductPacking, StockMovement, PurchaseDocuments, Company, Installation, Lagerausgang, InstallationLinks, \
+    InstallationConsumption, InstallationCounterHistory, ProductType
 from models import Supplier01, PurchaseDoc01
 
 from django.contrib.auth.models import User, Group
@@ -88,6 +89,10 @@ class NatureSerializer(serializers.HyperlinkedModelSerializer):
         model = Nature
         fields = ('url', 'id', 'title', 'name')
 
+class ProductTypeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ProductType
+        fields = ('id', 'name')
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     # def __init__(self, *args, **kwargs):
@@ -100,6 +105,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     packing = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="productpacking-detail", lookup_field="pk")
     # defaultsupplier = serializers.SlugRelatedField(read_only=True, allow_null=True, slug_field='namea')
     defaultsupplier = getSupplierSerializer(Supplier01)(read_only=True, allow_null=True)
+    producttype = ProductTypeSerializer(read_only=True, allow_null=True)
     #ToDo: getter for ProductSerializer
     class Meta:
         model = Product
@@ -294,6 +300,16 @@ class InstallationLinksSerializer(serializers.ModelSerializer):
         model = InstallationLinks
         fields = ('id','rowid','filename','name','date')
 
+class InstallationConsumptionSerializer(serializers.ModelSerializer):
+    rowid = serializers.IntegerField(allow_null=True)
+    class Meta:
+        model = InstallationConsumption
+        fields = ('id','rowid','date','quantity')
+
+class InstallationCounterHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstallationCounterHistory
+        fields = ('id','datecounter','counter')
 
 class InstallationSerializer(serializers.ModelSerializer):
     prodid = ProductSerializer(read_only=True, allow_null=True)
@@ -303,4 +319,5 @@ class InstallationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Installation
         fields = ('id','name1','name2','chassisnum','licenseplate','purchasevalue','availability','availabilitystatus',
-                  'availabilitystatusold','rentperdayresourceid','title','titlegrade','prodid','links')
+                  'availabilitystatusold','rentperdayresourceid','title','titlegrade','prodid','links','gpstag',
+                  'constructionyear','datepurchase')
